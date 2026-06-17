@@ -5,6 +5,27 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-06-17
+
+### Fixed
+- **Fonts now load reliably & consistently.** Dropped the remote Google Fonts
+  import (it doesn't reliably load in Foundry's Electron context, which caused
+  the mix of fallback fonts). The theme now uses only **local** fonts: the
+  wod5e **vampire** font for titles & subtitles and Foundry's **Signika** for
+  everything else — exactly two fonts.
+- **Character names** (header plate and window title) are now a plain, legible
+  **white** in the simple UI font instead of a thin decorative serif.
+- **Right sidebar** chrome reset rewritten. Foundry's `@layer` order puts the
+  system's styles *above* Foundry core, so `revert-layer` was only reaching the
+  system's (ugly) values. Replaced with explicit resets from the module layer,
+  so the system's black tab strip / white underline / grey directory headers /
+  blurple buttons are removed and Foundry's clean defaults show.
+- **Roll / select-roll dialogs** are no longer see-through (near-opaque dark).
+
+### Changed
+- **Chat** is now styled to match the dark glass look (translucent dark cards,
+  soft borders, light legible text) instead of the reverted grey default.
+
 ## [1.0.2] - 2026-06-17
 
 ### Fixed

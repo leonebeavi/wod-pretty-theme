@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
+/* Fonts are local-only (vampireRevised from wod5e, Signika from Foundry).
+   No remote @import — see --wpt-font-* tokens below. */
 
 /* =====================================================================
    WoD Pretty Theme
@@ -56,8 +57,11 @@ body.wod-pretty-theme {
   --wpt-shadow:    0 14px 38px rgba(0, 0, 0, 0.55);
   --wpt-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.42);
 
-  --wpt-font-display: "Cinzel", "Vollkorn", Georgia, serif;
-  --wpt-font-ui:      "Inter", "Roboto", "Segoe UI", system-ui, sans-serif;
+  /* Local fonts only (no remote @import — it doesn't reliably load in
+     Foundry's Electron context and caused inconsistent fallbacks).
+     vampireRevised ships with the wod5e system; Signika ships with Foundry. */
+  --wpt-font-display: "vampireRevised", "Modesto Condensed", Georgia, serif;
+  --wpt-font-ui:      "Signika", "Segoe UI", system-ui, Arial, sans-serif;
 }
 
 /* Per-splat accent on the sheet roots (ghouls carry the `vampire` class).
@@ -162,9 +166,20 @@ body.wod-pretty-theme .wod5e.sheet .window-header {
   border-bottom: 1px solid var(--wpt-border);
 }
 body.wod-pretty-theme .wod5e.sheet .window-header .window-title {
-  font-family: var(--wpt-font-display);
+  font-family: var(--wpt-font-ui);
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+/* Roll / select-roll dialogs (and other wod5e popups) must NOT be see-through */
+body.wod-pretty-theme .wod5e:not(.sheet) .window-content,
+body.wod-pretty-theme .roll-menu .window-content,
+body.wod-pretty-theme .application.dialog.wod5e .window-content,
+body.wod-pretty-theme .wod5e.dialog .window-content {
+  background: rgba(13, 10, 10, 0.98) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   color: var(--wpt-text);
 }
 
@@ -218,9 +233,9 @@ body.wod-pretty-theme .wod5e .actor-header input.charname,
 body.wod-pretty-theme .wod5e .charname,
 body.wod-pretty-theme .wod5e input.charname,
 body.wod-pretty-theme .wod5e input.itemname {
-  font-family: var(--wpt-font-display);
+  font-family: var(--wpt-font-ui) !important; /* simple readable font, not the gothic display */
   font-weight: 600;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   letter-spacing: 0.01em;
   line-height: 1.3;
   color: #ffffff !important;       /* simple, legible white */
@@ -316,27 +331,31 @@ body.wod-pretty-theme .wod5e .big-header {
   font-size: 1.05rem;
 }
 
-/* Standardized typography: Cinzel (gothic display) for headings/names,
-   Inter (modern sans) for everything else. !important beats the system's
-   mixed fonts (vampireRevised / Modesto Condensed / Amarante / Vollkorn).
-   Icons (.fa*, .wod5e-symbol) are never targeted, so they keep their fonts. */
+/* Standardized typography — exactly two fonts:
+   • the local "vampireRevised" gothic font ONLY for titles & subtitles
+     (section headers + the type banner), and
+   • Signika (Foundry's local UI sans) for everything else, including names.
+   !important beats the system's mixed fonts. Icons (.fa*, .wod5e-symbol)
+   are never targeted, so they keep their own fonts. */
+/* Base: everything inherits the UI sans (icons keep their own font-family
+   via their own rules, so they are unaffected by inheritance). */
 body.wod-pretty-theme .wod5e.sheet { font-family: var(--wpt-font-ui); }
+/* Titles & subtitles only → the local vampire gothic font */
 body.wod-pretty-theme .wod5e .resource-header,
 body.wod-pretty-theme .wod5e .field-header,
 body.wod-pretty-theme .wod5e .big-header,
-body.wod-pretty-theme .wod5e .charname,
-body.wod-pretty-theme .wod5e input.charname,
-body.wod-pretty-theme .wod5e input.itemname,
 body.wod-pretty-theme .wod5e .sheet-banner,
 body.wod-pretty-theme .wod5e .sheet-banner .sheet-label,
-body.wod-pretty-theme .wod5e .sheet-banner .actor-type-field,
-body.wod-pretty-theme .wod5e .specialty,
-body.wod-pretty-theme .wod5e .item-header .item-name {
+body.wod-pretty-theme .wod5e .sheet-banner .actor-type-field {
   font-family: var(--wpt-font-display) !important;
 }
+/* Force the system's stray fonts (Modesto / Amarante / Vollkorn) on content
+   elements back to the UI sans, so the sheet uses just the two fonts. */
 body.wod-pretty-theme .wod5e .collapsible-content,
 body.wod-pretty-theme .wod5e .resource-label,
 body.wod-pretty-theme .wod5e .data-item,
+body.wod-pretty-theme .wod5e .specialty,
+body.wod-pretty-theme .wod5e .item-name,
 body.wod-pretty-theme .wod5e input,
 body.wod-pretty-theme .wod5e select,
 body.wod-pretty-theme .wod5e textarea {
@@ -624,53 +643,94 @@ body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-thumb {
 body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-track { background: transparent; }
 
 /* =====================================================================
-   CHROME — restore Foundry's DEFAULT interface (.wpt-chrome)
-   The wod5e system overrides Foundry's chrome with UNLAYERED rules.
-   Foundry's own styles live in cascade layers, so `revert-layer` here
-   rolls those properties back to Foundry's native look.
+   CHROME (.wpt-chrome)
+   Foundry's @layer order is: ... applications, system, modules ...
+   The wod5e system's styles live in the `system` layer — ABOVE Foundry's
+   `applications` layer — so `revert-layer` only reaches the system value,
+   never Foundry's. We must therefore set EXPLICIT values from our `modules`
+   layer (which wins over `system`) to undo the system's chrome overrides.
    ===================================================================== */
-body.wod-pretty-theme.wpt-chrome #sidebar,
-body.wod-pretty-theme.wpt-chrome #sidebar-content,
-body.wod-pretty-theme.wpt-chrome #sidebar-tabs,
-body.wod-pretty-theme.wpt-chrome #sidebar-tabs *,
-body.wod-pretty-theme.wpt-chrome #sidebar nav.tabs,
-body.wod-pretty-theme.wpt-chrome #sidebar nav.tabs *,
-body.wod-pretty-theme.wpt-chrome .sidebar-tab,
+
+/* Right sidebar tab bar: the system forces a black strip + white underline.
+   Clearing it reveals Foundry's native tab squares (which the system never
+   restyles in V14 — they are .ui-control[data-action="tab"]). */
+body.wod-pretty-theme.wpt-chrome #sidebar-tabs {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Directory headers / footers / subfolders / settings headings:
+   drop the system greys so Foundry's clean transparent look returns. */
 body.wod-pretty-theme.wpt-chrome .directory .directory-header,
 body.wod-pretty-theme.wpt-chrome .directory .directory-footer:not(:empty),
 body.wod-pretty-theme.wpt-chrome .subdirectory,
 body.wod-pretty-theme.wpt-chrome .combat-sidebar .combat-tracker-header,
 body.wod-pretty-theme.wpt-chrome .settings-sidebar h2,
-body.wod-pretty-theme.wpt-chrome .actors-sidebar .group-item > .group-header,
-body.wod-pretty-theme.wpt-chrome .actors-sidebar .group-item.collapsed > .group-header,
-body.wod-pretty-theme.wpt-chrome .actors-sidebar .group-item > .group-header h3,
-body.wod-pretty-theme.wpt-chrome #chat-log .message,
-body.wod-pretty-theme.wpt-chrome .chat-message,
-body.wod-pretty-theme.wpt-chrome .chat-message.whisper,
-body.wod-pretty-theme.wpt-chrome .chat-message.blind,
-body.wod-pretty-theme.wpt-chrome .chat-message .message-header,
-body.wod-pretty-theme.wpt-chrome .chat-message h3,
-body.wod-pretty-theme.wpt-chrome .chat-message a.content-link,
-body.wod-pretty-theme.wpt-chrome .chat-message a.inline-roll,
+body.wod-pretty-theme.wpt-chrome .actors-sidebar .group-item > .group-header {
+  background: transparent !important;
+  border: none !important;
+  color: var(--color-text-primary, #f0f0e0) !important;
+}
+
+/* Sidebar / chat / compendium buttons: drop the system blurple (#2e2d77)
+   for a clean dark Foundry-palette button. */
+body.wod-pretty-theme.wpt-chrome .directory .action-buttons button,
+body.wod-pretty-theme.wpt-chrome .compendium-sidebar .wod5e-compendium-search,
 body.wod-pretty-theme.wpt-chrome .chat-message button,
-body.wod-pretty-theme.wpt-chrome #players,
-body.wod-pretty-theme.wpt-chrome .bar-controls,
-body.wod-pretty-theme.wpt-chrome #controls ol.control-tools > li,
-body.wod-pretty-theme.wpt-chrome #controls ol.control-tools > li.active,
-body.wod-pretty-theme.wpt-chrome #controls ol.control-tools > li:hover,
-body.wod-pretty-theme.wpt-chrome #navigation #scene-list .scene,
-body.wod-pretty-theme.wpt-chrome #navigation .nav-item,
-body.wod-pretty-theme.wpt-chrome #hotbar .macro,
-body.wod-pretty-theme.wpt-chrome #hotbar .bar-controls {
-  background: revert-layer !important;
-  background-color: revert-layer !important;
-  background-image: revert-layer !important;
-  background-blend-mode: revert-layer !important;
-  border: revert-layer !important;
-  border-color: revert-layer !important;
-  border-radius: revert-layer !important;
-  box-shadow: revert-layer !important;
-  color: revert-layer !important;
-  filter: revert-layer !important;
-  text-shadow: revert-layer !important;
+body.wod-pretty-theme.wpt-chrome .chat-controls button {
+  background: var(--color-cool-5-90, rgba(20, 22, 30, 0.85)) !important;
+  color: var(--color-text-primary, #f0f0e0) !important;
+  border: 1px solid var(--color-cool-4, rgba(255, 255, 255, 0.12)) !important;
+  border-radius: 4px !important;
+}
+
+/* ---------------------------------------------------------------------
+   Chat — glass dark, cohesive with the sheets, fully legible
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme.wpt-chrome #chat-log .message,
+body.wod-pretty-theme.wpt-chrome .chat-message {
+  background: rgba(18, 14, 13, 0.95) !important;
+  background-blend-mode: normal !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: var(--wpt-radius) !important;
+  box-shadow: var(--wpt-shadow-sm);
+  color: var(--wpt-text) !important;
+  margin: 6px 6px 6px 8px !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message.whisper {
+  background: rgba(30, 22, 32, 0.95) !important;
+  border-left: 2px solid rgba(150, 120, 200, 0.55) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message.blind {
+  background: rgba(28, 20, 19, 0.95) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-content,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-header,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-sender,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-timestamp,
+body.wod-pretty-theme.wpt-chrome .chat-message h1,
+body.wod-pretty-theme.wpt-chrome .chat-message h2,
+body.wod-pretty-theme.wpt-chrome .chat-message h3,
+body.wod-pretty-theme.wpt-chrome .chat-message h4,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-label,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-content,
+body.wod-pretty-theme.wpt-chrome .chat-message .dice-total,
+body.wod-pretty-theme.wpt-chrome .chat-message .total-title,
+body.wod-pretty-theme.wpt-chrome .chat-message .difficulty-title {
+  color: var(--wpt-text) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-sender {
+  font-family: var(--wpt-font-display);
+}
+body.wod-pretty-theme.wpt-chrome .chat-message a.content-link,
+body.wod-pretty-theme.wpt-chrome .chat-message a.inline-roll {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: var(--wpt-text) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: var(--wpt-radius-sm) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-img {
+  border: 1px solid var(--wpt-border-strong) !important;
+  border-radius: var(--wpt-radius-sm) !important;
 }
