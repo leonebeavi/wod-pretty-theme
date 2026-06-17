@@ -244,9 +244,9 @@ body.wod-pretty-theme .wod5e .actor-header input.charname,
 body.wod-pretty-theme .wod5e .charname,
 body.wod-pretty-theme .wod5e input.charname,
 body.wod-pretty-theme .wod5e input.itemname {
-  font-family: var(--wpt-font-ui) !important; /* simple readable font, not the gothic display */
+  font-family: var(--wpt-font-display) !important; /* same gothic display font as the body titles */
   font-weight: 600;
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   letter-spacing: 0.01em;
   line-height: 1.3;
   color: #ffffff !important;       /* simple, legible white */
@@ -371,6 +371,15 @@ body.wod-pretty-theme .wod5e input,
 body.wod-pretty-theme .wod5e select,
 body.wod-pretty-theme .wod5e textarea {
   font-family: var(--wpt-font-ui) !important;
+}
+/* Header labels (HEALTH / WILLPOWER / CLAN / FRENZY / HUNGER) are
+   label.field-header.resource-label — re-assert the display font here so the
+   header matches the body section titles. Body trait labels (.resource-label
+   alone, e.g. Strength) stay in the UI font via the rule above. */
+body.wod-pretty-theme .wod5e .actor-header .field-header,
+body.wod-pretty-theme .wod5e .actor-header .resource-label,
+body.wod-pretty-theme .wod5e .field-header.resource-label {
+  font-family: var(--wpt-font-display) !important;
 }
 
 /* Tighten section titles to their cards (side panel especially) */
@@ -762,4 +771,87 @@ body.wod-pretty-theme.wpt-chrome .chat-message .message-sender {
   overflow: visible !important;
   text-overflow: clip !important;
   word-break: break-word;
+}
+
+/* ---- Refined roll-card elements --------------------------------------- */
+/* Dice tiles: softer corners + a little depth */
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-img {
+  border-radius: 6px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  margin: 2px !important;
+}
+/* Total / difficulty strip → a clean dark glass bar */
+body.wod-pretty-theme.wpt-chrome .chat-message .total-and-difficulty {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: var(--wpt-radius-sm) !important;
+  overflow: hidden;
+  margin-top: 4px;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .total-title,
+body.wod-pretty-theme.wpt-chrome .chat-message .difficulty-title {
+  color: var(--wpt-text-muted) !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.72rem;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-total,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-difficulty {
+  color: var(--wpt-text) !important;
+  padding: 3px 6px;
+}
+/* Result banner → rounded, flat, legible (keeps semantic colours) */
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label {
+  border: none !important;
+  border-radius: var(--wpt-radius-sm) !important;
+  text-shadow: none !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  padding: 5px 0;
+  margin-top: 4px;
+  color: #fff !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.success,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.critical-success {
+  background: linear-gradient(180deg, #2b7a3a, #1c5226) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.failure,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.critical-failure,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.bestial-failure {
+  background: linear-gradient(180deg, #a32a32, #6e1b21) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.messy-critical {
+  background: linear-gradient(180deg, #d23226, #7e1a14) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.desperation-success,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.desperation-failure {
+  background: linear-gradient(180deg, #e08a2b, #9a5a12) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.rage-failure {
+  background: linear-gradient(180deg, #9a5524, #5e2f10) !important;
+}
+/* Modifier tags → subtle dark pills (no more white chips) */
+body.wod-pretty-theme.wpt-chrome .chat-message .modifiers .mod {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid var(--wpt-border) !important;
+  color: var(--wpt-text-muted) !important;
+  border-radius: 999px !important;
+  padding: 1px 9px !important;
+}
+/* Section labels inside the card (e.g. STRENGTH) sit in the display font */
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-label,
+body.wod-pretty-theme.wpt-chrome .chat-message h3.item-name {
+  font-family: var(--wpt-font-display) !important;
+  color: var(--wpt-text) !important;
+}
+/* Trash / control icons: muted until hovered */
+body.wod-pretty-theme.wpt-chrome .chat-message .message-delete,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-metadata a {
+  color: var(--wpt-text-dim) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-delete:hover,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-metadata a:hover {
+  color: var(--wpt-text) !important;
 }
