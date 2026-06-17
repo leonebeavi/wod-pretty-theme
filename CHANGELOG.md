@@ -5,6 +5,28 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-06-17
+
+### Fixed
+- **Per-splat accents are now truly per-splat.** The derived accent shades
+  (fills, borders, glows used by tabs, hovers, focus rings, banner) were being
+  computed once on `<body>` with the default crimson, so non-Vampire sheets
+  showed red details. They are now derived on the sheet root, so Werewolf gets
+  green, Hunter amber, Mortal slate everywhere — not just on the dots.
+- **Character names in view mode** are now plain, legible **white** on a more
+  opaque backing plate.
+
+### Changed
+- **Standardized typography:** Cinzel (gothic display) for headings, names and
+  banners; Inter (modern sans) for everything else. The system's mixed fonts
+  (vampireRevised / Modesto Condensed / Amarante / Vollkorn) are overridden so
+  the sheet reads as one cohesive, elegant, modern-gothic scheme. Icons are
+  untouched.
+- Tightened section titles to their cards (notably the Conditions / Custom Rolls
+  side panel).
+- Broadened the "restore Foundry default interface" reset to cover the right
+  sidebar tab bar, so the native Foundry sidebar tabs come back.
+
 ## [1.0.1] - 2026-06-17
 
 ### Changed
