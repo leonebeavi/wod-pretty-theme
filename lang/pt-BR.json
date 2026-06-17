@@ -1,0 +1,23 @@
+{
+  "WPT": {
+    "Settings": {
+      "Enabled": {
+        "Name": "Ativar WoD Pretty Theme",
+        "Hint": "Liga ou desliga o visual escuro/moderno. Desligado, usa a aparência padrão do wod5e."
+      },
+      "AccentMode": {
+        "Name": "Modo de cor de destaque",
+        "Hint": "Como as cores de destaque são escolhidas. Por splat mantém a identidade de cada tipo; Unificado usa um único carmesim (estilo Progeny); Neutro usa um destaque sóbrio e mais minimalista.",
+        "Choices": {
+          "splat": "Por splat (Vampiro carmesim, Lobisomem verde, Caçador âmbar)",
+          "unified": "Carmesim unificado (estilo Progeny)",
+          "neutral": "Neutro minimalista"
+        }
+      },
+      "StyleChrome": {
+        "Name": "Também estilizar a interface do Foundry",
+        "Hint": "Aplica o tema também à interface do Foundry (barra lateral, chat, diálogos, janelas). Desligue para estilizar somente as fichas do wod5e."
+      }
+    }
+  }
+}

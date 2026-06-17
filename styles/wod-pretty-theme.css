@@ -1,0 +1,896 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap");
+
+/* =====================================================================
+   WoD Pretty Theme
+   A dark, modern, minimalist override for the World of Darkness 5e
+   (wod5e) system. Inspired by the Progeny VtM v5 character creator.
+
+   Strategy
+   --------
+   Everything is scoped under the `.wod-pretty-theme` class that the
+   companion script adds to <body>. Because <body> is a CLOSER ancestor
+   than <html>/:root, redefining the system's CSS custom properties here
+   wins for all sheet content — even over the splat colors the system
+   writes inline on <html> at runtime — without needing !important.
+
+   Body classes (managed by scripts/wod-pretty-theme.mjs):
+     .wod-pretty-theme   master switch
+     .wpt-accent-splat   accent follows the splat (default)
+     .wpt-accent-unified single crimson accent everywhere
+     .wpt-accent-neutral muted neutral accent
+     .wpt-chrome         also restyle the Foundry chrome
+
+   Note on the cascade: most theming is delivered by redefining the
+   system's color variables (so the system's own rules paint our colors).
+   Where the system's direct rules out-specify ours, our selectors below
+   carry an extra `body` element + the relevant container classes so they
+   win on specificity as well as load order.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. Design tokens
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme {
+  /* Warm near-black surfaces (Progeny-style, never flat grey) */
+  --wpt-bg:          #0c0a0b;
+  --wpt-surface:     #15110f;
+  --wpt-surface-2:   #1c1715;
+  --wpt-surface-3:   #261f1c;
+  --wpt-header:      #100c0b;
+
+  /* Warm off-white text instead of clinical pure white */
+  --wpt-text:        #f1eae6;
+  --wpt-text-muted:  rgba(241, 234, 230, 0.62);
+  --wpt-text-dim:    rgba(241, 234, 230, 0.40);
+
+  /* Subtle, low-alpha structure */
+  --wpt-border:        rgba(244, 236, 232, 0.09);
+  --wpt-border-strong: rgba(244, 236, 232, 0.18);
+  --wpt-hover:         rgba(244, 236, 232, 0.05);
+
+  /* Accent palette (per-splat — applied to --wpt-accent below) */
+  --wpt-c-vampire:  #c0303a;
+  --wpt-c-werewolf: #6f9450;
+  --wpt-c-hunter:   #cf8233;
+  --wpt-c-mortal:   #8b93c9;
+  --wpt-c-neutral:  #9b9ba3;
+  --wpt-gold:       #d4af64;
+  --wpt-danger:     #d6453f;
+
+  /* Default accent (used by the chrome, which has no splat) */
+  --wpt-accent: var(--wpt-c-vampire);
+
+  /* Derived accent shades (recompute automatically when --wpt-accent changes) */
+  --wpt-accent-fill:        color-mix(in srgb, var(--wpt-accent) 16%, transparent);
+  --wpt-accent-fill-strong: color-mix(in srgb, var(--wpt-accent) 30%, transparent);
+  --wpt-accent-border:      color-mix(in srgb, var(--wpt-accent) 48%, transparent);
+  --wpt-accent-glow:        color-mix(in srgb, var(--wpt-accent) 38%, transparent);
+  --wpt-accent-contrast:    #fff;
+
+  /* Shape & depth (crisp, restrained) */
+  --wpt-radius-sm: 4px;
+  --wpt-radius:    6px;
+  --wpt-radius-lg: 10px;
+  --wpt-shadow:    0 10px 28px rgba(0, 0, 0, 0.45);
+  --wpt-shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.40);
+
+  /* Typography */
+  --wpt-font-display: "Cinzel", "Vollkorn", Georgia, serif;
+  --wpt-font-ui:      "Inter", "Roboto", "Segoe UI", system-ui, sans-serif;
+}
+
+/* Accent modes ------------------------------------------------------- */
+/* Chrome accent (no splat context) */
+body.wod-pretty-theme.wpt-accent-neutral { --wpt-accent: var(--wpt-c-neutral); }
+/* unified & splat both keep the crimson default for the chrome */
+
+/* Per-splat accent on the sheet roots (default "splat" mode) */
+body.wod-pretty-theme .wod5e { --wpt-accent: var(--wpt-c-vampire); }
+body.wod-pretty-theme.wpt-accent-splat .wod5e.vampire  { --wpt-accent: var(--wpt-c-vampire); }
+body.wod-pretty-theme.wpt-accent-splat .wod5e.werewolf { --wpt-accent: var(--wpt-c-werewolf); }
+body.wod-pretty-theme.wpt-accent-splat .wod5e.hunter   { --wpt-accent: var(--wpt-c-hunter); }
+body.wod-pretty-theme.wpt-accent-splat .wod5e.mortal   { --wpt-accent: var(--wpt-c-mortal); }
+
+/* Unified mode: crimson everywhere */
+body.wod-pretty-theme.wpt-accent-unified .wod5e { --wpt-accent: var(--wpt-c-vampire); }
+
+/* Neutral mode: muted grey everywhere */
+body.wod-pretty-theme.wpt-accent-neutral .wod5e { --wpt-accent: var(--wpt-c-neutral); }
+
+/* ---------------------------------------------------------------------
+   2. Remap the system palette to the dark tokens
+   (only unambiguous surface / accent roles; text & borders are handled
+    explicitly to avoid the system's entangled #000/#fff duotone)
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme {
+  /* Kill background-image textures */
+  --ui-background-texture:    none;
+  --sidebar-background:       none;
+  --actor-background-default: none;
+  --actor-header-default:     none;
+  --actor-background-dark:    none;
+
+  /* Neutralise the blend-mode chrome tints */
+  --base-theme-filter:     transparent;
+  --dark-theme-filter:     transparent;
+  --vampire-theme-filter:  transparent;
+  --werewolf-theme-filter: transparent;
+  --hunter-theme-filter:   transparent;
+
+  /* Base palette surfaces (NB: -5 #000 and -6 #fff are left alone — they
+     double as text/on-accent ink; their stray uses are fixed explicitly) */
+  --system-color-1:  var(--wpt-header);
+  --system-color-2:  var(--wpt-text);
+  --system-color-3:  var(--wpt-accent);
+  --system-color-4:  var(--wpt-surface);
+  --system-color-7:  var(--wpt-surface-2);
+  --system-color-8:  var(--wpt-surface-2);
+  --system-color-9:  var(--wpt-accent);
+  --system-color-10: var(--wpt-surface-3);
+  --system-color-11: var(--wpt-header);
+
+  /* Dark palette surfaces */
+  --system-dark-color-1: var(--wpt-header);
+  --system-dark-color-2: var(--wpt-surface);
+  --system-dark-color-3: var(--wpt-surface-3);
+  --system-dark-color-7: var(--wpt-surface-3);
+  --system-dark-color-8: var(--wpt-text-muted);
+
+  /* Input text follows the theme in every mode */
+  --input-text-color: var(--wpt-text);
+}
+
+/* Per-splat: route the system's splat trios to the resolved accent so
+   active dots, rollable buttons, tab indicators, etc. pick it up.
+   (Ghouls render with the `vampire` class, so they are covered too.) */
+body.wod-pretty-theme .wod5e.vampire {
+  --vampire-color-1: var(--wpt-header);
+  --vampire-color-2: var(--wpt-accent);
+  --vampire-color-3: var(--wpt-accent);
+  --coterie-group-header: color-mix(in srgb, var(--wpt-accent) 26%, var(--wpt-surface));
+}
+body.wod-pretty-theme .wod5e.werewolf {
+  --werewolf-color-1: var(--wpt-header);
+  --werewolf-color-2: var(--wpt-accent);
+  --werewolf-color-3: var(--wpt-accent);
+  --pack-group-header: color-mix(in srgb, var(--wpt-accent) 26%, var(--wpt-surface));
+}
+body.wod-pretty-theme .wod5e.hunter {
+  --hunter-color-1: var(--wpt-accent);
+  --hunter-color-2: var(--wpt-accent);
+  --hunter-color-3: var(--wpt-accent);
+  --cell-group-header: color-mix(in srgb, var(--wpt-accent) 26%, var(--wpt-surface));
+}
+body.wod-pretty-theme .wod5e.mortal {
+  --mortal-color-1: var(--wpt-accent);
+  --mortal-color-2: var(--wpt-accent);
+  --mortal-color-3: var(--wpt-accent);
+}
+
+/* ---------------------------------------------------------------------
+   3. Sheet shell (actor & item windows)
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e.sheet {
+  color: var(--wpt-text);
+  font-family: var(--wpt-font-ui);
+  box-shadow: var(--wpt-shadow);
+}
+body.wod-pretty-theme .wod5e.sheet .window-content {
+  background: var(--wpt-surface) !important; /* beats inline bg-image override */
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e.sheet,
+body.wod-pretty-theme .wod5e.sheet .window-content {
+  scrollbar-color: var(--wpt-accent-border) transparent;
+}
+
+/* Window header */
+body.wod-pretty-theme .wod5e.sheet .window-header {
+  background: var(--wpt-header);
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e.sheet .window-header .window-title {
+  font-family: var(--wpt-font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--wpt-text);
+}
+
+/* Text floor — colour-scheme independent (works in Foundry light or dark) */
+body.wod-pretty-theme .wod5e.sheet,
+body.wod-pretty-theme .wod5e .tab,
+body.wod-pretty-theme .wod5e .actor-header,
+body.wod-pretty-theme .wod5e .item-header,
+body.wod-pretty-theme .wod5e.sheet label,
+body.wod-pretty-theme .wod5e.sheet span,
+body.wod-pretty-theme .wod5e.sheet p,
+body.wod-pretty-theme .wod5e.sheet a,
+body.wod-pretty-theme .wod5e.sheet h1,
+body.wod-pretty-theme .wod5e.sheet h2,
+body.wod-pretty-theme .wod5e.sheet h3,
+body.wod-pretty-theme .wod5e.sheet h4 {
+  color: var(--wpt-text);
+}
+/* System spots that use entangled vars as text → force legible on dark */
+body.wod-pretty-theme .wod5e .collapsible-content,
+body.wod-pretty-theme .wod5e .limited-description-body {
+  color: var(--wpt-text);
+  background: var(--wpt-surface-2);
+}
+body.wod-pretty-theme .wod5e .toggle-limited,
+body.wod-pretty-theme .wod5e .toggle-limited:not(.visible) {
+  color: var(--wpt-text-muted);
+}
+
+/* ---------------------------------------------------------------------
+   4. Header / profile / name
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .actor-header,
+body.wod-pretty-theme .wod5e .item-header {
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--wpt-accent) 10%, var(--wpt-surface-2)),
+              var(--wpt-surface));
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e .header-profile-img,
+body.wod-pretty-theme .wod5e img.profile-img {
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius-sm);
+  box-shadow: var(--wpt-shadow-sm);
+}
+body.wod-pretty-theme .wod5e .charname,
+body.wod-pretty-theme .wod5e input.charname,
+body.wod-pretty-theme .wod5e input.itemname {
+  font-family: var(--wpt-font-display);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--wpt-text);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+}
+body.wod-pretty-theme .wod5e input.charname:focus,
+body.wod-pretty-theme .wod5e input.itemname:focus {
+  border-bottom-color: var(--wpt-accent-border);
+}
+
+/* ---------------------------------------------------------------------
+   5. Tab navigation
+   Actor: nav.sheet-tabs > div[data-tab] > .navicon (icon-only rail)
+   Item:  nav.sheet-tabs > a[data-tab]
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .tabs-container {
+  background: var(--wpt-header);
+  border-right: 1px solid var(--wpt-border);
+}
+/* Kill the leftover white (#fff) chips on the icon rail + lock button */
+body.wod-pretty-theme .wod5e .sheet-tabs .lock-btn,
+body.wod-pretty-theme .wod5e .sheet-tabs > [data-tab] .navicon {
+  background-color: transparent;
+  border-color: var(--wpt-border);
+  color: var(--wpt-text-muted);
+  border-radius: var(--wpt-radius-sm);
+  transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs > [data-tab]:not(.active) .navicon i,
+body.wod-pretty-theme .wod5e .sheet-tabs > [data-tab]:not(.active) .navicon .wod5e-symbol {
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .sheet-tabs > [data-tab]:hover .navicon {
+  background-color: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .sheet-tabs > [data-tab].active .navicon {
+  background-color: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+  color: var(--wpt-accent);
+}
+body.wod-pretty-theme .wod5e .sheet-tabs .lock-btn:hover {
+  color: var(--wpt-accent);
+}
+/* Item sheets use anchor tabs on a bar */
+body.wod-pretty-theme .wod5e.item .sheet-tabs {
+  background: var(--wpt-header);
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e.item .sheet-tabs a {
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e.item .sheet-tabs a.active {
+  color: var(--wpt-accent);
+  border-bottom: 2px solid var(--wpt-accent);
+}
+
+/* ---------------------------------------------------------------------
+   6. Section / column headers
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .resource-header,
+body.wod-pretty-theme .wod5e .field-header {
+  font-family: var(--wpt-font-display);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .resource-header {
+  border-bottom: 1px solid var(--wpt-border);
+  padding-bottom: 3px;
+}
+body.wod-pretty-theme .wod5e .big-header {
+  color: var(--wpt-accent);
+}
+
+/* ---------------------------------------------------------------------
+   7. Panels / containers
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .stats-container,
+body.wod-pretty-theme .wod5e .side-panel,
+body.wod-pretty-theme .wod5e .experience-trackers,
+body.wod-pretty-theme .wod5e .tracker,
+body.wod-pretty-theme .wod5e .description-field,
+body.wod-pretty-theme .wod5e .spc-stats-body,
+body.wod-pretty-theme .wod5e .general-difficulty {
+  background: var(--wpt-surface-2);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius);
+}
+body.wod-pretty-theme .wod5e .attribute,
+body.wod-pretty-theme .wod5e .skill {
+  border-radius: var(--wpt-radius-sm);
+  transition: background 0.12s ease;
+}
+/* Neutral lift on large rows; accent is reserved for small targets */
+body.wod-pretty-theme .wod5e .attribute:hover,
+body.wod-pretty-theme .wod5e .skill:hover {
+  background: var(--wpt-hover);
+}
+body.wod-pretty-theme .wod5e .rollable {
+  cursor: pointer;
+  transition: color 0.12s ease, text-shadow 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .rollable:hover {
+  color: var(--wpt-accent);
+  text-shadow: 0 0 8px var(--wpt-accent-glow);
+}
+
+/* ---------------------------------------------------------------------
+   8. Rating dots (attributes / skills / powers)
+   Active fill is delivered via the splat-trio variable overrides above;
+   the rules here style the empty/static states and add the glow.
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .resource-value .resource-value-step {
+  border: 1px solid var(--wpt-border-strong);
+  background-color: color-mix(in srgb, var(--wpt-text) 10%, transparent);
+}
+body.wod-pretty-theme .resource-value-static .resource-value-static-step {
+  border: 1px solid var(--wpt-border-strong);
+}
+body.wod-pretty-theme .wod5e .resource-value .resource-value-step.active,
+body.wod-pretty-theme .wod5e .resource-value-static .resource-value-static-step.active {
+  background-color: var(--wpt-accent);
+  border-color: var(--wpt-accent);
+  box-shadow: 0 0 6px var(--wpt-accent-glow);
+}
+/* The "+" / empty affordance: redraw its X with a dim light so it shows on dark */
+body.wod-pretty-theme .resource-value .resource-value-empty {
+  border: 1px solid var(--wpt-border);
+  background:
+    linear-gradient(45deg,  transparent 43%, var(--wpt-text-dim) 45%, var(--wpt-text-dim) 55%, transparent 57%),
+    linear-gradient(135deg, transparent 43%, var(--wpt-text-dim) 45%, var(--wpt-text-dim) 55%, transparent 57%);
+}
+
+/* ---------------------------------------------------------------------
+   9. Health / Willpower / Humanity square counters
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .resource-counter .resource-counter-step,
+body.wod-pretty-theme .cell-resource-counter .cell-resource-counter-step {
+  border: 1px solid var(--wpt-border-strong);
+  background-color: color-mix(in srgb, var(--wpt-text) 5%, transparent);
+  border-radius: 2px;
+}
+/* superficial damage "/" — warm light slash */
+body.wod-pretty-theme .resource-counter .resource-counter-step[data-state="/"],
+body.wod-pretty-theme .cell-resource-counter .cell-resource-counter-step[data-state="/"] {
+  background:
+    linear-gradient(135deg, transparent 43%, var(--wpt-text) 45%, var(--wpt-text) 55%, transparent 57%);
+}
+/* aggravated damage "x" — crimson cross */
+body.wod-pretty-theme .resource-counter .resource-counter-step[data-state="x"],
+body.wod-pretty-theme .cell-resource-counter .cell-resource-counter-step[data-state="x"] {
+  background:
+    linear-gradient(45deg,  transparent 43%, var(--wpt-danger) 45%, var(--wpt-danger) 55%, transparent 57%),
+    linear-gradient(135deg, transparent 43%, var(--wpt-danger) 45%, var(--wpt-danger) 55%, transparent 57%);
+}
+/* a marked/filled state used by some splats (e.g. humanity value) */
+body.wod-pretty-theme .resource-counter .resource-counter-step[data-state="-"] {
+  background-color: var(--wpt-accent);
+  border-color: var(--wpt-accent);
+}
+/* Humanity "stains" use the "/" state — make them distinct from health damage */
+body.wod-pretty-theme .humanity .resource-counter-step[data-state="/"] {
+  background:
+    linear-gradient(45deg,  transparent 43%, var(--wpt-danger) 45%, var(--wpt-danger) 55%, transparent 57%),
+    linear-gradient(135deg, transparent 43%, var(--wpt-danger) 45%, var(--wpt-danger) 55%, transparent 57%);
+}
+/* resource +/- controls */
+body.wod-pretty-theme .wod5e .resource-control {
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .resource-control:hover {
+  color: var(--wpt-accent);
+}
+
+/* ---------------------------------------------------------------------
+   10. Item lists / rows
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .item-list .category,
+body.wod-pretty-theme .wod5e .items-list {
+  background: transparent;
+}
+body.wod-pretty-theme .wod5e .item-list .item,
+body.wod-pretty-theme .wod5e .items-list .item {
+  border-bottom: 1px solid var(--wpt-border);
+  transition: background 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .item-list .item:hover,
+body.wod-pretty-theme .wod5e .items-list .item:hover {
+  background: var(--wpt-hover);
+}
+body.wod-pretty-theme .wod5e .item-image {
+  border-radius: var(--wpt-radius-sm);
+  border: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e .item-control,
+body.wod-pretty-theme .wod5e .item-controls a {
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .item-control:hover,
+body.wod-pretty-theme .wod5e .item-controls a:hover {
+  color: var(--wpt-accent);
+}
+
+/* ---------------------------------------------------------------------
+   11. Powers tree (disciplines / edges / gifts)
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .powers-display-tree .icon {
+  border-radius: var(--wpt-radius-sm);
+  border: 1px solid var(--wpt-border);
+  background: var(--wpt-surface-3);
+}
+body.wod-pretty-theme .wod5e .powers-display-tree .icon.selected {
+  border-color: var(--wpt-accent);
+  background: var(--wpt-accent-fill);
+  box-shadow: 0 0 8px var(--wpt-accent-glow);
+}
+/* connector lines between power nodes */
+body.wod-pretty-theme .wod5e .powers-display-tree ul::before,
+body.wod-pretty-theme .wod5e .powers-display-tree li::before {
+  border-color: var(--wpt-border-strong) !important;
+}
+body.wod-pretty-theme .wod5e .power-category-header,
+body.wod-pretty-theme .wod5e .power-description {
+  background: var(--wpt-surface-2);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm);
+}
+
+/* ---------------------------------------------------------------------
+   12. Inputs / selects / buttons
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e input,
+body.wod-pretty-theme .wod5e select,
+body.wod-pretty-theme .wod5e textarea {
+  background: var(--wpt-surface-2);
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm);
+}
+body.wod-pretty-theme .wod5e input:focus,
+body.wod-pretty-theme .wod5e select:focus,
+body.wod-pretty-theme .wod5e textarea:focus {
+  border-color: var(--wpt-accent-border);
+  box-shadow: 0 0 0 2px var(--wpt-accent-fill);
+  outline: none;
+}
+body.wod-pretty-theme .wod5e select option,
+body.wod-pretty-theme .wod5e select optgroup {
+  background: var(--wpt-surface-2);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e ::placeholder {
+  color: var(--wpt-text-dim);
+}
+body.wod-pretty-theme .wod5e button,
+body.wod-pretty-theme .wod5e .button {
+  background: var(--wpt-surface-2);
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius-sm);
+  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+body.wod-pretty-theme .wod5e button:hover,
+body.wod-pretty-theme .wod5e .button:hover {
+  background: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+  box-shadow: 0 0 12px var(--wpt-accent-glow);
+}
+/* The system's accent "rollable" + splat action buttons */
+body.wod-pretty-theme .wod5e button.rollable {
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--wpt-accent) 80%, black),
+              color-mix(in srgb, var(--wpt-accent) 62%, black));
+  color: var(--wpt-accent-contrast);
+  border-color: var(--wpt-accent-border);
+}
+body.wod-pretty-theme .wod5e button.rollable:hover {
+  box-shadow: 0 0 14px var(--wpt-accent-glow);
+}
+body.wod-pretty-theme .wod5e button.vampire-button,
+body.wod-pretty-theme .wod5e button.werewolf-button,
+body.wod-pretty-theme .wod5e .rage-button,
+body.wod-pretty-theme .wod5e .rouse-button {
+  background: var(--wpt-surface-3);
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius-sm);
+}
+body.wod-pretty-theme .wod5e button.vampire-button:hover,
+body.wod-pretty-theme .wod5e button.werewolf-button:hover,
+body.wod-pretty-theme .wod5e .rage-button:hover,
+body.wod-pretty-theme .wod5e .rouse-button:hover,
+body.wod-pretty-theme .wod5e button.vampire-button.active,
+body.wod-pretty-theme .wod5e button.werewolf-button.active {
+  background: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+  box-shadow: 0 0 12px var(--wpt-accent-glow);
+}
+/* prose-mirror editors inside sheets */
+body.wod-pretty-theme .wod5e prose-mirror,
+body.wod-pretty-theme .wod5e .editor {
+  background: var(--wpt-surface);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm);
+}
+
+/* ---------------------------------------------------------------------
+   13. Type banner
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .sheet-banner {
+  background: linear-gradient(90deg,
+              color-mix(in srgb, var(--wpt-accent) 22%, var(--wpt-header)),
+              var(--wpt-header));
+  border-top: 1px solid var(--wpt-accent-border);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .sheet-banner .sheet-label,
+body.wod-pretty-theme .wod5e .sheet-banner .actor-type-field {
+  font-family: var(--wpt-font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------------
+   14. XP trackers
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .xp-header,
+body.wod-pretty-theme .wod5e .exp-tracker {
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e .add-experience,
+body.wod-pretty-theme .wod5e .spend-experience {
+  color: var(--wpt-accent);
+}
+
+/* ---------------------------------------------------------------------
+   15. Splat extras (despair / frenzy / balance / renown / SPC / group)
+   --------------------------------------------------------------------- */
+/* Hunter despair box */
+body.wod-pretty-theme .wod5e .despair-box .despair-toggle {
+  border: 1px solid var(--wpt-border-strong);
+  background-color: color-mix(in srgb, var(--wpt-text) 5%, transparent);
+}
+body.wod-pretty-theme .wod5e .despair-box .despair-toggle.active {
+  background-color: var(--wpt-accent);
+  border-color: var(--wpt-accent);
+  box-shadow: 0 0 6px var(--wpt-accent-glow);
+}
+/* Frenzy status (vampire/werewolf) — keep it a danger signal */
+body.wod-pretty-theme .wod5e .frenzy .frenzy-status.active {
+  color: var(--wpt-danger);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--wpt-danger) 40%, transparent);
+}
+/* Werewolf balance + renown panels */
+body.wod-pretty-theme .wod5e .balance-trackers .wolf-resource,
+body.wod-pretty-theme .wod5e .renown .resource-content {
+  background: var(--wpt-surface-2);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm);
+}
+/* SPC pools */
+body.wod-pretty-theme .wod5e.spc .stat-resource-background,
+body.wod-pretty-theme .wod5e.spc .standard-pools-list,
+body.wod-pretty-theme .wod5e.spc .exceptional-pools-list {
+  background: var(--wpt-surface-2);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm);
+}
+body.wod-pretty-theme .wod5e.spc .exceptional-pools-list .exceptional-pool {
+  border-bottom: 1px solid var(--wpt-border);
+}
+/* Group / coterie / pack / cell member rows */
+body.wod-pretty-theme .wod5e .group-member {
+  background: var(--wpt-surface-2);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm);
+  transition: border-color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .group-member:hover {
+  border-color: var(--wpt-accent-border);
+}
+body.wod-pretty-theme .wod5e .group-type-label,
+body.wod-pretty-theme .wod5e .actor-name {
+  color: var(--wpt-text);
+}
+
+/* =====================================================================
+   FOUNDRY CHROME  (only when .wpt-chrome is present)
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   16. Sidebar & directories
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme.wpt-chrome #sidebar,
+body.wod-pretty-theme.wpt-chrome #sidebar-content {
+  background: var(--wpt-bg);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme.wpt-chrome #sidebar-tabs {
+  background: var(--wpt-header);
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme.wpt-chrome #sidebar-tabs > .item {
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme.wpt-chrome #sidebar-tabs > .item.active {
+  color: var(--wpt-accent);
+  background: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+}
+body.wod-pretty-theme.wpt-chrome .directory .directory-header,
+body.wod-pretty-theme.wpt-chrome .combat-sidebar .combat-tracker-header {
+  background: var(--wpt-surface-2);
+  border-bottom: 1px solid var(--wpt-border);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme.wpt-chrome .subdirectory {
+  background: var(--wpt-surface);
+}
+body.wod-pretty-theme.wpt-chrome .directory .directory-item,
+body.wod-pretty-theme.wpt-chrome .directory-list li {
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme.wpt-chrome .directory .directory-footer:not(:empty) {
+  background: var(--wpt-header);
+  border-top: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme.wpt-chrome .actors-sidebar .group-item > .group-header {
+  color: var(--wpt-text);
+  background: var(--wpt-surface-2);
+  border-top: 1px solid var(--wpt-border);
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme.wpt-chrome .actors-sidebar .group-item.collapsed > .group-header {
+  background: var(--wpt-surface);
+}
+body.wod-pretty-theme.wpt-chrome .settings-sidebar h2 {
+  background: var(--wpt-header);
+  color: var(--wpt-text);
+  border-bottom: 1px solid var(--wpt-border);
+}
+
+/* ---------------------------------------------------------------------
+   17. Chat
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme.wpt-chrome #chat-log .message,
+body.wod-pretty-theme.wpt-chrome .chat-message {
+  background: var(--wpt-surface) !important;
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border);
+  border-top: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius);
+  box-shadow: var(--wpt-shadow-sm);
+}
+body.wod-pretty-theme.wpt-chrome .chat-message.whisper {
+  background: color-mix(in srgb, var(--wpt-accent) 8%, var(--wpt-surface)) !important;
+  border-left: 2px solid var(--wpt-accent-border);
+}
+body.wod-pretty-theme.wpt-chrome .chat-message.blind {
+  background: var(--wpt-surface-3) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-header,
+body.wod-pretty-theme.wpt-chrome .chat-message h3,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-sender {
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-names {
+  font-family: var(--wpt-font-display);
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .modifiers .mod {
+  background: var(--wpt-surface-2);
+  color: var(--wpt-text-muted);
+  border-radius: var(--wpt-radius-sm);
+}
+body.wod-pretty-theme.wpt-chrome .chat-message a.content-link,
+body.wod-pretty-theme.wpt-chrome .chat-message a.inline-roll {
+  color: var(--wpt-accent);
+  background: var(--wpt-accent-fill);
+  border: 1px solid var(--wpt-accent-border);
+  border-radius: var(--wpt-radius-sm);
+}
+body.wod-pretty-theme.wpt-chrome .chat-message button,
+body.wod-pretty-theme.wpt-chrome .directory .action-buttons button,
+body.wod-pretty-theme.wpt-chrome .compendium-sidebar .wod5e-compendium-search {
+  background: var(--wpt-surface-2);
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius-sm);
+}
+body.wod-pretty-theme.wpt-chrome .chat-message button:hover {
+  background: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+}
+body.wod-pretty-theme.wpt-chrome .roll-label,
+body.wod-pretty-theme.wpt-chrome .roll-result-label {
+  font-family: var(--wpt-font-display);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme.wpt-chrome .roll-img {
+  border: 1px solid var(--wpt-border-strong) !important;
+  border-radius: var(--wpt-radius-sm);
+}
+body.wod-pretty-theme.wpt-chrome .roll-prompt-message .user-roll {
+  background-color: var(--wpt-surface-2);
+  border-radius: var(--wpt-radius-sm);
+}
+
+/* ---------------------------------------------------------------------
+   18. Controls / navigation / players / hotbar
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme.wpt-chrome #controls ol.control-tools > li {
+  background: var(--wpt-surface-2);
+  border: 1px solid var(--wpt-border);
+  box-shadow: var(--wpt-shadow-sm);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme.wpt-chrome #controls ol.control-tools > li.active,
+body.wod-pretty-theme.wpt-chrome #controls ol.control-tools > li:hover {
+  background: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+  filter: none;
+}
+body.wod-pretty-theme.wpt-chrome #players {
+  background: var(--wpt-bg);
+  border: 1px solid var(--wpt-border);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme.wpt-chrome #navigation .nav-item {
+  background: var(--wpt-surface-2);
+  border: 1px solid var(--wpt-border);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme.wpt-chrome #navigation .nav-item.active {
+  border-color: var(--wpt-accent-border);
+  color: var(--wpt-accent);
+}
+body.wod-pretty-theme.wpt-chrome #hotbar .macro {
+  background: var(--wpt-surface-2);
+  border: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme.wpt-chrome #hotbar .bar-controls {
+  background: var(--wpt-surface);
+}
+
+/* ---------------------------------------------------------------------
+   19. Dialogs / roll dialog / config menus / compendium browser
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme.wpt-chrome .dialog .window-content,
+body.wod-pretty-theme.wpt-chrome .application.dialog .window-content,
+body.wod-pretty-theme.wpt-chrome .roll-menu .window-content,
+body.wod-pretty-theme.wpt-chrome .compendium-browser .window-content {
+  background: var(--wpt-surface);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme.wpt-chrome .dialog .window-header,
+body.wod-pretty-theme.wpt-chrome .application.dialog .window-header {
+  background: var(--wpt-header);
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme.wpt-chrome .dialog-content .dice-group-header {
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme.wpt-chrome .dialog input,
+body.wod-pretty-theme.wpt-chrome .dialog select,
+body.wod-pretty-theme.wpt-chrome .dialog textarea,
+body.wod-pretty-theme.wpt-chrome .roll-menu input,
+body.wod-pretty-theme.wpt-chrome .roll-menu select {
+  background: var(--wpt-surface-2);
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm);
+}
+body.wod-pretty-theme.wpt-chrome .dialog button {
+  background: var(--wpt-surface-2);
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius-sm);
+}
+body.wod-pretty-theme.wpt-chrome .dialog button:hover,
+body.wod-pretty-theme.wpt-chrome .dialog button.default {
+  background: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+}
+body.wod-pretty-theme.wpt-chrome .situational-modifiers {
+  background: var(--wpt-surface-2);
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius);
+  box-shadow: var(--wpt-shadow);
+}
+body.wod-pretty-theme.wpt-chrome .compendium-browser .results-count {
+  background-color: var(--wpt-header);
+  border-top: 1px solid var(--wpt-border);
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme.wpt-chrome .compendium-browser-sidebar,
+body.wod-pretty-theme.wpt-chrome .roll-menu-sidebar {
+  border-right: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme.wpt-chrome .result-item:hover {
+  background: var(--wpt-accent-fill);
+}
+
+/* ---------------------------------------------------------------------
+   20. Global chrome bits: tooltips, context menus, resize handle
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme.wpt-chrome #tooltip,
+body.wod-pretty-theme.wpt-chrome .locked-tooltip {
+  background: var(--wpt-surface-2);
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius-sm);
+  box-shadow: var(--wpt-shadow-sm);
+}
+body.wod-pretty-theme.wpt-chrome #context-menu,
+body.wod-pretty-theme.wpt-chrome .context-menu {
+  background: var(--wpt-surface-2);
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius-sm);
+  box-shadow: var(--wpt-shadow);
+}
+body.wod-pretty-theme.wpt-chrome #context-menu li.context-item:hover,
+body.wod-pretty-theme.wpt-chrome .context-menu .context-item:hover {
+  background: var(--wpt-accent-fill);
+  color: var(--wpt-accent);
+}
+body.wod-pretty-theme.wpt-chrome .window-resize-handle {
+  color: var(--wpt-text-dim);
+}
+
+/* ---------------------------------------------------------------------
+   21. Scrollbars (WebKit) for themed surfaces
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar,
+body.wod-pretty-theme.wpt-chrome #sidebar ::-webkit-scrollbar,
+body.wod-pretty-theme.wpt-chrome .chat-message ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-thumb,
+body.wod-pretty-theme.wpt-chrome #sidebar ::-webkit-scrollbar-thumb {
+  background: var(--wpt-accent-border);
+  border-radius: 999px;
+}
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-track,
+body.wod-pretty-theme.wpt-chrome #sidebar ::-webkit-scrollbar-track {
+  background: transparent;
+}
