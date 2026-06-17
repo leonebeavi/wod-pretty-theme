@@ -235,11 +235,14 @@ body.wod-pretty-theme .wod5e img.profile-img {
   border-radius: var(--wpt-radius);
   box-shadow: var(--wpt-shadow-sm);
 }
-/* Widen the name plate and let it grow so names never truncate (wrap if long) */
+/* Keep the name plate anchored to the BOTTOM of the portrait, but let it grow
+   upward so long names wrap instead of truncating. */
 body.wod-pretty-theme .wod5e .actor-header .header-profile .name-field {
   width: 100%;
   height: auto !important;
   min-height: 35px;
+  top: auto !important;
+  bottom: 0 !important;
 }
 body.wod-pretty-theme .wod5e .actor-header .charname:not(input),
 body.wod-pretty-theme .wod5e .actor-header input.charname,
@@ -762,32 +765,46 @@ body.wod-pretty-theme.wpt-chrome .chat-message .portrait > img {
   border: none !important;
   border-radius: var(--wpt-radius-sm) !important;
 }
-/* Clean header layout: [avatar] [sender] ........ [timestamp + delete] */
+/* Compact, modern header: [avatar] [sender]·············[time] [trash]
+   all on one row; sender wraps internally if long, metadata stays right. */
 body.wod-pretty-theme.wpt-chrome .chat-message .message-header {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
   align-items: center;
   gap: 8px;
+  padding: 2px 2px 4px;
 }
 body.wod-pretty-theme.wpt-chrome .chat-message .message-header .portrait.token {
   flex: 0 0 auto;
+  padding: 0;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-header .portrait.token > img {
+  width: 34px !important;
+  height: 34px !important;
+  object-fit: cover;
 }
 body.wod-pretty-theme.wpt-chrome .chat-message .message-names {
   min-width: 0;
   flex: 1 1 auto;
   align-self: center;
+  padding: 0 !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-sender {
+  font-size: 0.92rem !important;
+  line-height: 1.15;
 }
 body.wod-pretty-theme.wpt-chrome .chat-message .message-metadata {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-left: auto;
   flex: 0 0 auto;
   align-self: center;
+  padding: 0;
 }
 body.wod-pretty-theme.wpt-chrome .chat-message .message-timestamp {
   color: var(--wpt-text-dim) !important;
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   font-style: normal;
   white-space: nowrap;
 }

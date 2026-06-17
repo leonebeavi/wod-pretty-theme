@@ -5,6 +5,17 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2026-06-17
+
+### Fixed
+- **Name plate is back at the bottom** of the portrait. The previous wrap fix
+  removed the `height: 100%` the view-mode name relies on (it has no `bottom`
+  in that state), which floated it to the top; now it's explicitly bottom-anchored
+  and grows upward.
+- **Chat header is now compact & modern**: a single row of avatar (smaller) ·
+  sender · timestamp + delete, with a small muted timestamp, instead of the
+  timestamp wrapping to its own line.
+
 ## [1.0.6] - 2026-06-17
 
 ### Fixed
