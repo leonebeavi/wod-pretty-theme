@@ -5,6 +5,22 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-06-17
+
+### Changed
+- Reverted the display/body fonts back to **Cinzel + Inter** (the vampire font
+  was too heavy). Still exactly two fonts, with the system's mixed fonts
+  overridden.
+
+### Fixed
+- **View-mode (locked) character name** no longer has the system's black
+  text-outline (`-webkit-text-stroke`) that made it look broken — it's now plain
+  white, matching the edit mode.
+- **Roll dialog modifier popout** ("Selectable / Custom Modifiers") is no longer
+  see-through — it now has its own opaque dark background.
+- **Chat avatar** lost its hard square border (now softly rounded), and the
+  **sender name wraps** instead of being truncated with an ellipsis.
+
 ## [1.0.3] - 2026-06-17
 
 ### Fixed
