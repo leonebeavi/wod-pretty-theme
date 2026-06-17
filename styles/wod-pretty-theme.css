@@ -235,9 +235,11 @@ body.wod-pretty-theme .wod5e img.profile-img {
   border-radius: var(--wpt-radius);
   box-shadow: var(--wpt-shadow-sm);
 }
-/* Widen the name plate and shrink the font so names fit (ellipsis if huge) */
+/* Widen the name plate and let it grow so names never truncate (wrap if long) */
 body.wod-pretty-theme .wod5e .actor-header .header-profile .name-field {
   width: 100%;
+  height: auto !important;
+  min-height: 35px;
 }
 body.wod-pretty-theme .wod5e .actor-header .charname:not(input),
 body.wod-pretty-theme .wod5e .actor-header input.charname,
@@ -246,18 +248,18 @@ body.wod-pretty-theme .wod5e input.charname,
 body.wod-pretty-theme .wod5e input.itemname {
   font-family: var(--wpt-font-display) !important; /* same gothic display font as the body titles */
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   letter-spacing: 0.01em;
-  line-height: 1.3;
+  line-height: 1.18;
   color: #ffffff !important;       /* simple, legible white */
   -webkit-text-stroke: 0 !important; /* kill the system's black outline (the "broken" view-mode effect) */
   -webkit-text-fill-color: #ffffff !important;
   text-align: center;
   width: 100%;
   max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal !important;   /* wrap long names instead of truncating */
+  overflow: visible !important;
+  text-overflow: clip !important;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
   background: rgba(8, 6, 6, 0.82); /* opaque enough to stay readable over the portrait */
   backdrop-filter: blur(10px);
@@ -760,10 +762,38 @@ body.wod-pretty-theme.wpt-chrome .chat-message .portrait > img {
   border: none !important;
   border-radius: var(--wpt-radius-sm) !important;
 }
-/* Sender name: let it wrap instead of truncating with an ellipsis */
+/* Clean header layout: [avatar] [sender] ........ [timestamp + delete] */
+body.wod-pretty-theme.wpt-chrome .chat-message .message-header {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 8px;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-header .portrait.token {
+  flex: 0 0 auto;
+}
 body.wod-pretty-theme.wpt-chrome .chat-message .message-names {
   min-width: 0;
   flex: 1 1 auto;
+  align-self: center;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-metadata {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex: 0 0 auto;
+  align-self: center;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-timestamp {
+  color: var(--wpt-text-dim) !important;
+  font-size: 0.7rem;
+  font-style: normal;
+  white-space: nowrap;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .flavor-text {
+  flex: 1 1 100%;
+  margin-top: 2px;
 }
 body.wod-pretty-theme.wpt-chrome .chat-message .message-names .message-sender,
 body.wod-pretty-theme.wpt-chrome .chat-message .message-sender {

@@ -5,6 +5,15 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2026-06-17
+
+### Fixed
+- **Character name no longer truncates** — the name plate now wraps long names
+  (and the font was sized down) instead of cutting off with an ellipsis.
+- **Chat timestamp placement** cleaned up: the header is now a tidy row
+  (avatar · sender · timestamp + delete top-right), with the timestamp small and
+  muted, instead of dropping awkwardly below the sender.
+
 ## [1.0.5] - 2026-06-17
 
 ### Changed
