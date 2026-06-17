@@ -3,20 +3,11 @@
     "Settings": {
       "Enabled": {
         "Name": "Enable WoD Pretty Theme",
-        "Hint": "Turn the dark/modern restyling on or off. When off, the default wod5e look is used."
-      },
-      "AccentMode": {
-        "Name": "Accent color mode",
-        "Hint": "How accent colors are chosen. Per-splat keeps each splat's identity; Unified uses a single crimson accent everywhere (Progeny style); Neutral uses a muted, most-minimal accent.",
-        "Choices": {
-          "splat": "Per-splat (Vampire crimson, Werewolf green, Hunter amber)",
-          "unified": "Unified crimson (Progeny style)",
-          "neutral": "Neutral minimalist"
-        }
+        "Hint": "Turn the dark/glass restyling on or off. When off, the default wod5e look is used."
       },
       "StyleChrome": {
-        "Name": "Also restyle Foundry interface",
-        "Hint": "Apply the theme to the Foundry chrome too (sidebar, chat, dialogs, windows). Turn off to theme only the wod5e sheets."
+        "Name": "Restore Foundry's default interface",
+        "Hint": "Undo the wod5e system's overrides of the Foundry chrome (right sidebar, chat, directories, controls) so the native Foundry look returns. Turn off to keep the system's interface styling."
       }
     }
   }
