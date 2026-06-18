@@ -42,54 +42,27 @@
             <div class="gg-panel gg-exp-panel">
                 <div class="gg-title-left">{{localize "WOD5E.Experience.Label"}}</div>
 
+                {{!-- Just Remaining + Total as single numbers (legacy actors
+                      use the editable exp.value/max; others the derived totals). --}}
                 <div class="experience-trackers">
-                    {{#if showLegacyXP}}
-                        <div class="tracker flexcol">
-                            <div class="field-header flex-center">
-                                <div class="field-header big-header">
-                                    {{localize "WOD5E.Experience.Remaining"}}
-                                </div>
-                            </div>
-                            <div class="flexrow">
-                                <div class="flexcol">
-                                    <input name="system.exp.value" type="number" value="{{exp.value}}"/>
-                                    <div>{{localize "WOD5E.Experience.Legacy"}}</div>
-                                </div>
-                                <div class="flexcol">
-                                    <input name="system.derivedXP.remainingXP" type="number" value="{{derivedXP.remainingXP}}" disabled/>
-                                    <div>{{localize "WOD5E.Experience.Calculated"}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tracker flexcol">
-                            <div class="field-header flex-center">
-                                <div class="field-header big-header">
-                                    {{localize "WOD5E.Experience.Total"}}
-                                </div>
-                            </div>
-                            <div class="flexrow">
-                                <div class="flexcol">
-                                    <input name="system.exp.max" type="number" value="{{exp.max}}"/>
-                                    <div>{{localize "WOD5E.Experience.Legacy"}}</div>
-                                </div>
-                                <div class="flexcol">
-                                    <input name="system.derivedXP.totalXP" type="number" value="{{derivedXP.totalXP}}" disabled/>
-                                    <div>{{localize "WOD5E.Experience.Calculated"}}</div>
-                                </div>
-                            </div>
-                        </div>
-                    {{else}}
-                        <div class="gg-grid-2 gg-exp-numbers">
-                            <div class="gg-card exp-tracker">
+                    <div class="gg-grid-2 gg-exp-numbers">
+                        <div class="gg-card exp-tracker">
+                            {{#if showLegacyXP}}
+                                <input name="system.exp.value" type="number" value="{{exp.value}}"/>
+                            {{else}}
                                 <input name="system.derivedXP.remainingXP" type="number" value="{{derivedXP.remainingXP}}" disabled/>
-                                <div class="gg-field-label">{{localize "WOD5E.Experience.Remaining"}}</div>
-                            </div>
-                            <div class="gg-card exp-tracker">
-                                <input name="system.derivedXP.totalXP" type="number" value="{{derivedXP.totalXP}}" disabled/>
-                                <div class="gg-field-label">{{localize "WOD5E.Experience.Total"}}</div>
-                            </div>
+                            {{/if}}
+                            <div class="gg-field-label">{{localize "WOD5E.Experience.Remaining"}}</div>
                         </div>
-                    {{/if}}
+                        <div class="gg-card exp-tracker">
+                            {{#if showLegacyXP}}
+                                <input name="system.exp.max" type="number" value="{{exp.max}}"/>
+                            {{else}}
+                                <input name="system.derivedXP.totalXP" type="number" value="{{derivedXP.totalXP}}" disabled/>
+                            {{/if}}
+                            <div class="gg-field-label">{{localize "WOD5E.Experience.Total"}}</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex-center flexrow gg-exp-controls">

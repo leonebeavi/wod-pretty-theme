@@ -5,6 +5,17 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.14] - 2026-06-18
+
+### Changed
+- **Experience** now shows just **Remaining** and **Total** as single numbers —
+  the Legacy / Calculated split was removed.
+- **De-bleed pass**: undo the wod5e system's global, unscoped CSS that leaked
+  into Foundry's own windows (e.g. Scene Config) — the system was shrinking and
+  squaring **every** number input (`max-width: 35px`, `border-radius: 0`) and
+  forcing a serif on collapsible text. Foundry's own windows now keep their
+  default look (plus our theme), not the system's.
+
 ## [1.7.13] - 2026-06-18
 
 ### Fixed

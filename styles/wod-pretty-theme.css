@@ -2553,3 +2553,29 @@ body.wod-pretty-theme .wod5e .gg-core .skill[data-action="roll"] {
 }
 body.wod-pretty-theme .wod5e .gg-core .attribute[data-action="roll"] .resource-label,
 body.wod-pretty-theme .wod5e .gg-core .skill[data-action="roll"] .resource-label { cursor: pointer; }
+
+/* =====================================================================
+   DE-BLEED — undo the wod5e system's GLOBAL (unscoped) CSS that leaks into
+   Foundry's own windows (Scene Config, Settings, journals, etc.), so they
+   show Foundry defaults + our theme rather than the system's styling.
+   ===================================================================== */
+/* The system squares & shrinks EVERY number input (max-width:35px; radius:0),
+   which infects core windows and caps our own fields — undo it. */
+body.wod-pretty-theme input[type="number"] {
+  max-width: none !important;
+  min-width: 0 !important;
+}
+/* Non-wod5e (Foundry core) windows: undo the system's squared inputs and let
+   their fields read normally. */
+body.wod-pretty-theme .application:not(.wod5e) input:not([type="checkbox"]),
+body.wod-pretty-theme .application:not(.wod5e) select,
+body.wod-pretty-theme .application:not(.wod5e) textarea,
+body.wod-pretty-theme .window-app:not(.wod5e) input:not([type="checkbox"]) {
+  border-radius: 4px !important;
+  min-height: revert;
+}
+/* The system forces Vollkorn serif on collapsible descriptions everywhere —
+   keep our font (also covered by the global font rule, asserted here too). */
+body.wod-pretty-theme .application:not(.wod5e) .collapsible-content {
+  font-family: var(--wpt-font-ui) !important;
+}
