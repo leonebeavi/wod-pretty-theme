@@ -1228,9 +1228,12 @@ body.wod-pretty-theme .wod5e .gg-card .feeding-roll .gg-field-label {
 }
 body.wod-pretty-theme .wod5e .gg-card .feeding-roll:hover .gg-field-label { color: var(--wpt-accent); }
 
-/* Clan Bane is a read-only enriched prosemirror display sourced from the Clan
-   item; give it the full row so the rich text has room to breathe. */
-body.wod-pretty-theme .wod5e .gg-bane-card { grid-column: 1 / -1; }
+/* Clan Bane is a read-only enriched display (sourced from the Clan item); it
+   sits as a normal grid cell like the other vitae fields (design = equal cards). */
+body.wod-pretty-theme .wod5e .gg-bane-card .bane:empty::before {
+  content: "—";
+  color: var(--wpt-text-dim);
+}
 body.wod-pretty-theme .wod5e .gg-bane-card .bane {
   font: 400 0.84rem/1.6 var(--wpt-font-ui);
   color: var(--wpt-text-muted);
@@ -1822,13 +1825,21 @@ body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-thumb:hover {
   background: color-mix(in srgb, var(--wpt-accent) 75%, transparent);
   background-clip: padding-box;
 }
-/* Tab bar + buttons (design lines 73-75) */
-body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) { padding: 4px 18px 0; }
-body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] {
-  padding: 13px 16px 14px;
-  font: 600 12px/1 var(--wpt-font-ui);
-  letter-spacing: 0.14em;
+/* Tab bar + buttons — compacted to keep all 8 tabs on ONE line (no wrap) */
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) {
+  flex-wrap: nowrap;
+  gap: 0;
+  padding: 3px 10px 0;
 }
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] {
+  padding: 11px 7px 12px;
+  gap: 5px;
+  font: 600 10px/1 var(--wpt-font-ui);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] .navicon { font-size: 12px; }
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) .tab-label { white-space: nowrap; }
 /* Footer banner (design line 308): centered, wide tracking, vertical gradient */
 body.wod-pretty-theme .wod5e .sheet-banner {
   text-align: center;
@@ -1934,6 +1945,7 @@ body.wod-pretty-theme .wod5e .gg-core .stats-footer .field-header {
   color: var(--wpt-text-muted);
   padding-bottom: 9px;
   border-bottom: 1px solid var(--wpt-border);
+  text-align: center;
 }
 body.wod-pretty-theme .wod5e .gg-core .attributes .resource-label { font-size: 14px; }
 body.wod-pretty-theme .wod5e .gg-core .skills .resource-label { font-size: 13px; }
@@ -1999,3 +2011,118 @@ body.wod-pretty-theme .wod5e .gg-gm-settings .form-fields {
 body.wod-pretty-theme .wod5e .gg-gm-settings .form-fields file-picker,
 body.wod-pretty-theme .wod5e .gg-gm-settings .form-fields select { width: 100%; }
 body.wod-pretty-theme .wod5e .gg-gm-settings .form-fields input[type="checkbox"] { flex: 0 0 auto; }
+
+/* =====================================================================
+   Glass Gótico — feedback pass (print review)
+   ===================================================================== */
+
+/* Disciplines: search + add controls side by side (were stacking) */
+body.wod-pretty-theme .wod5e .gg-disc-list-head .item-controls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Read-only tag (e.g. Clan Bane label) */
+body.wod-pretty-theme .wod5e .gg-readonly-tag {
+  font-weight: 600;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--wpt-text-dim);
+}
+
+/* ---- Advantages tab: clean 4 columns (no big red-underlined headers) ---- */
+body.wod-pretty-theme .wod5e .gg-advantages .gg-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: none !important;
+  border-bottom: 1px solid var(--wpt-border);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-advantages .gg-cat-name {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .gg-advantages .gg-col-controls { display: flex; gap: 8px; flex: 0 0 auto; }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-col-controls .item-control { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-col-controls .item-control:hover { color: var(--wpt-accent); }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row { margin-bottom: 6px; }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+}
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item .item-image { flex: 0 0 auto; line-height: 0; }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item .item-image img {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid var(--wpt-border);
+  object-fit: cover;
+}
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item .item-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item-controls { flex: 0 0 auto; display: flex; gap: 6px; }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item-controls .item-control { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item-controls .item-control:hover { color: var(--wpt-accent); }
+
+/* ---- Profile: balanced card distribution ---- */
+body.wod-pretty-theme .wod5e .gg-profile-top { align-items: stretch; }
+body.wod-pretty-theme .wod5e .gg-profile-top > .gg-panel { display: flex; flex-direction: column; }
+/* Identity field cards: even 2-col grid, equal heights */
+body.wod-pretty-theme .wod5e .gg-profile .gg-panel > .gg-grid-2 { align-items: stretch; gap: 12px; }
+body.wod-pretty-theme .wod5e .gg-profile .gg-grid-2 > .gg-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* push the Tenets card to fill the remaining Identity height */
+body.wod-pretty-theme .wod5e .gg-tenets-card { margin-top: auto; }
+body.wod-pretty-theme .wod5e .gg-tenets-card { padding-top: 12px; }
+
+/* =====================================================================
+   Thematic typography — no plain/rounded sans on sheet content.
+   Cormorant Garamond (the display serif) is used for ALL sheet text;
+   icon fonts (.fa*, .wod5e-symbol) keep their own font (set on themselves).
+   ===================================================================== */
+body.wod-pretty-theme .wod5e.sheet,
+body.wod-pretty-theme .wod5e.sheet input,
+body.wod-pretty-theme .wod5e.sheet select,
+body.wod-pretty-theme .wod5e.sheet textarea,
+body.wod-pretty-theme .wod5e.sheet button,
+body.wod-pretty-theme .wod5e.sheet .tab-label,
+body.wod-pretty-theme .wod5e.sheet .gg-field-label,
+body.wod-pretty-theme .wod5e.sheet .gg-col-head,
+body.wod-pretty-theme .wod5e.sheet .gg-cat-name,
+body.wod-pretty-theme .wod5e.sheet .gg-row-name,
+body.wod-pretty-theme .wod5e.sheet .gg-pill,
+body.wod-pretty-theme .wod5e.sheet .gg-header-subtitle,
+body.wod-pretty-theme .wod5e.sheet .gg-inv-stat,
+body.wod-pretty-theme .wod5e.sheet .gg-notepad-gm,
+body.wod-pretty-theme .wod5e.sheet .item-name,
+body.wod-pretty-theme .wod5e.sheet .resource-label,
+body.wod-pretty-theme .wod5e.sheet .data-item,
+body.wod-pretty-theme .wod5e.sheet .collapsible-content,
+body.wod-pretty-theme .wod5e.sheet .item-description,
+body.wod-pretty-theme .wod5e.sheet .gg-power-desc,
+body.wod-pretty-theme .wod5e.sheet .xp-label,
+body.wod-pretty-theme .wod5e.sheet .ProseMirror,
+body.wod-pretty-theme .wod5e.sheet prose-mirror {
+  font-family: var(--wpt-font-display) !important;
+}

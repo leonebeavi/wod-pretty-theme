@@ -68,10 +68,6 @@
                 <input class="resource" type="text" name="system.headers.sire" value="{{sire}}" placeholder="{{localize 'WOD5E.VTM.Sire'}}"/>
             </div>
             <div class="gg-card">
-                <label class="gg-field-label" for="system.headers.generation">{{localize 'WOD5E.VTM.Generation'}}</label>
-                <input class="resource" type="text" name="system.headers.generation" value="{{generation}}" placeholder="{{localize 'WOD5E.VTM.Generation'}}"/>
-            </div>
-            <div class="gg-card">
                 {{#if predator.system.dicepool}}
                     <div class="system-rollable feeding-roll" data-action="rollItem" data-item-uuid="{{predator.uuid}}" title="{{localize 'WOD5E.VTM.FeedingRoll'}}">
                         <label class="gg-field-label">{{localize 'WOD5E.VTM.PredatorType'}} <i class="fa-solid fa-dice-d10"></i></label>
@@ -117,7 +113,7 @@
                 </div>
             </div>
             <div class="gg-card gg-bane-card">
-                <label class="gg-field-label">{{localize "WOD5E.VTM.ClanBane"}}</label>
+                <label class="gg-field-label">{{localize "WOD5E.VTM.ClanBane"}} <span class="gg-readonly-tag">read-only</span></label>
                 <div class="resource-contents prosemirror-resource resource bane">
                     <div>
                         {{{enrichedBane}}}

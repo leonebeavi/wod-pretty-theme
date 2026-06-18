@@ -45,11 +45,11 @@ const CUSTOM_HEADERS = {
 /** Splat-specific tabs to preserve, keyed by Actor subtype. */
 const SPLAT_TABS = {
   vampire: [
-    { id: "disciplines", title: "WOD5E.VTM.Disciplines", icon: '<span class="wod5e-symbol">b</span>' },
+    { id: "disciplines", title: "WOD5E.VTM.Disciplines", icon: '<i class="fa-solid fa-wand-magic-sparkles"></i>' },
     { id: "blood",       title: "WOD5E.VTM.Blood",       icon: '<i class="fa-solid fa-droplet"></i>' }
   ],
   ghoul: [
-    { id: "disciplines", title: "WOD5E.VTM.Disciplines", icon: '<span class="wod5e-symbol">b</span>' }
+    { id: "disciplines", title: "WOD5E.VTM.Disciplines", icon: '<i class="fa-solid fa-wand-magic-sparkles"></i>' }
   ],
   werewolf: [
     { id: "gifts", title: "WOD5E.WTA.GiftsAndRenown", icon: '<span class="wod5e-symbol">h</span>' },

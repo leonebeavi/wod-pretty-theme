@@ -5,6 +5,24 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.3] - 2026-06-18
+
+### Fixed / Changed (print-review pass)
+- **Tab bar fits on one line** again (compacted padding/typography) now that
+  there are 8 tabs — no more wrapping to a second row.
+- **Core**: the Physical / Social / Mental column headers are centered over
+  their columns.
+- **Disciplines**: the search and add buttons sit side by side (were stacked);
+  the tab icon is now a fitting "magic powers" glyph instead of the raw symbol.
+- **Blood**: the Clan Bane card no longer stretches full-width awkwardly (it's a
+  normal field card), and the **Generation** field was removed here (it already
+  lives in the header).
+- **Advantages**: reworked — clean, subtle column headers (no oversized
+  red-underlined titles) and tidy rows.
+- **Profile**: more balanced card distribution (equal-height panels/cards).
+- **Typography**: the whole sheet now uses the elegant display serif for text —
+  no plain/rounded sans left on sheet content (icons keep their own font).
+
 ## [1.7.2] - 2026-06-18
 
 ### Changed — design-accurate polish pass

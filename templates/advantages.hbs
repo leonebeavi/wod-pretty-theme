@@ -11,10 +11,10 @@
             <div class="gg-grid-4 features-list item-list">
                 {{#each features as |feature key|}}
                     <div class="category gg-feature-col">
-                        <div class="gg-col-head item-header">
-                            <span class="item-name">{{localize (generateLocalizedLabel key 'features')}}</span>
-                            <span class="item-controls">
-                                <a class="item-control search-data-item flex-center" data-action="searchItem" title="{{localize 'WOD5E.Search'}}" data-type="feature" data-subtype="{{key}}">
+                        <div class="gg-col-head">
+                            <span class="gg-cat-name">{{localize (generateLocalizedLabel key 'features')}}</span>
+                            <span class="gg-col-controls">
+                                <a class="item-control search-data-item" data-action="searchItem" title="{{localize 'WOD5E.Search'}}" data-type="feature" data-subtype="{{key}}">
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </a>
                                 <a class="item-control item-create" data-action="createItem" title="{{localize 'WOD5E.Add'}}" data-type="feature" data-subtype="{{key}}">
