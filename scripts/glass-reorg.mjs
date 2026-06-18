@@ -177,3 +177,30 @@ Hooks.once("setup", async () => {
     }
   }
 });
+
+/**
+ * Force our sheet to be the active default for the reorganized types.
+ * `makeDefault: true` is silently ignored when the world already has a saved
+ * default sheet for a type (Foundry respects the existing choice), so we set it
+ * explicitly. GM-only, gated by the `restructure` setting; turning that off (and
+ * reloading) lets Foundry fall back to the system sheets.
+ */
+Hooks.once("ready", async () => {
+  if (!game.user?.isGM) return;
+  if (!game.settings.get(MODULE_ID, "restructure")) return;
+  const SHEET_ID = `${MODULE_ID}.GlassGothicSheet`;
+  try {
+    const current = foundry.utils.deepClone(game.settings.get("core", "sheetClasses") ?? {});
+    current.Actor ??= {};
+    let changed = false;
+    for (const type of Object.keys(SPLAT_TABS)) {
+      if (current.Actor[type] !== SHEET_ID) { current.Actor[type] = SHEET_ID; changed = true; }
+    }
+    if (changed) {
+      await game.settings.set("core", "sheetClasses", current);
+      ui.notifications?.info("WoD Pretty Theme: Glass Gótico sheets enabled — reopen actor sheets to see them.");
+    }
+  } catch (e) {
+    console.error(`${MODULE_ID} | could not set default sheets`, e);
+  }
+});

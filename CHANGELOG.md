@@ -5,6 +5,16 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-06-17
+
+### Fixed
+- **The reorganized sheets now actually apply.** `makeDefault` is silently
+  ignored by Foundry when the world already has a saved default sheet for a
+  type, so the reorg never showed (the system's tabs stayed). The module now
+  explicitly sets the Glass Gótico sheet as the default for vampire/ghoul/
+  werewolf/hunter/mortal (GM-only, gated by the "Reorganize sheets" setting).
+  Reopen actor sheets after reloading to see the new layout.
+
 ## [1.2.0] - 2026-06-17
 
 ### Added
