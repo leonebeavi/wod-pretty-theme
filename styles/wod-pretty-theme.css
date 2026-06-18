@@ -730,13 +730,27 @@ body.wod-pretty-theme.wpt-chrome .chat-controls button {
    --------------------------------------------------------------------- */
 body.wod-pretty-theme.wpt-chrome #chat-log .message,
 body.wod-pretty-theme.wpt-chrome .chat-message {
-  background: rgba(18, 14, 13, 0.95) !important;
-  background-blend-mode: normal !important;
+  background: linear-gradient(180deg, rgba(24, 15, 17, 0.92), rgba(11, 8, 9, 0.95)) !important;
   border: 1px solid var(--wpt-border) !important;
-  border-radius: var(--wpt-radius) !important;
-  box-shadow: var(--wpt-shadow-sm);
+  border-radius: 16px !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
   color: var(--wpt-text) !important;
-  margin: 6px 6px 6px 8px !important;
+  margin: 9px 4px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+/* the system's <hr> under the header is redundant with the header border */
+body.wod-pretty-theme.wpt-chrome .chat-message > hr { display: none !important; }
+/* Body padding so nothing hugs the card edges */
+body.wod-pretty-theme.wpt-chrome .chat-message .message-content {
+  padding: 14px !important;
+}
+/* Roll cards are centered (plain text messages stay left-aligned) */
+body.wod-pretty-theme.wpt-chrome .chat-message .message-content:has(.dice-roll) {
+  text-align: center;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-content:has(.dice-roll) .roll-label {
+  text-align: center;
 }
 body.wod-pretty-theme.wpt-chrome .chat-message.whisper {
   background: rgba(30, 22, 32, 0.95) !important;
@@ -786,16 +800,20 @@ body.wod-pretty-theme.wpt-chrome .chat-message .message-header {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 8px;
-  padding: 2px 2px 4px;
+  gap: 9px;
+  margin: 0;
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(90deg, var(--wpt-accent-fill), transparent 70%);
 }
 body.wod-pretty-theme.wpt-chrome .chat-message .message-header .portrait.token {
   flex: 0 0 auto;
   padding: 0;
 }
 body.wod-pretty-theme.wpt-chrome .chat-message .message-header .portrait.token > img {
-  width: 34px !important;
-  height: 34px !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
   object-fit: cover;
 }
 body.wod-pretty-theme.wpt-chrome .chat-message .message-names {
@@ -863,36 +881,38 @@ body.wod-pretty-theme.wpt-chrome .chat-message .roll-difficulty {
   color: var(--wpt-text) !important;
   padding: 3px 6px;
 }
-/* Result banner → rounded, flat, legible (keeps semantic colours) */
+/* Result banner → full-width footer bar at the card's bottom edge (design) */
 body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label {
   border: none !important;
-  border-radius: var(--wpt-radius-sm) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 0 !important;
   text-shadow: none !important;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  font-size: 0.95rem;
-  padding: 5px 0;
-  margin-top: 4px;
-  color: #fff !important;
+  font: 700 0.8rem/1 var(--wpt-font-ui) !important;
+  padding: 11px 10px !important;
+  margin: 14px -14px -14px !important;
+  color: #f0e9ea !important;
 }
+/* default (no difficulty → "X Successes"): green */
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label,
 body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.success,
 body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.critical-success {
-  background: linear-gradient(180deg, #2b7a3a, #1c5226) !important;
+  background: linear-gradient(90deg, rgba(28, 46, 32, 0.7), rgba(18, 32, 22, 0.7)) !important;
+  color: #cfe6cf !important;
 }
 body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.failure,
 body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.critical-failure,
-body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.bestial-failure {
-  background: linear-gradient(180deg, #a32a32, #6e1b21) !important;
-}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.bestial-failure,
 body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.messy-critical {
-  background: linear-gradient(180deg, #d23226, #7e1a14) !important;
+  background: linear-gradient(90deg, rgba(150, 16, 32, 0.62), rgba(70, 8, 16, 0.62)) !important;
+  color: #f4d2d6 !important;
 }
 body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.desperation-success,
-body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.desperation-failure {
-  background: linear-gradient(180deg, #e08a2b, #9a5a12) !important;
-}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.desperation-failure,
 body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.rage-failure {
-  background: linear-gradient(180deg, #9a5524, #5e2f10) !important;
+  background: linear-gradient(90deg, rgba(90, 50, 18, 0.6), rgba(50, 28, 12, 0.6)) !important;
+  color: #f0d8b0 !important;
 }
 /* Modifier tags → subtle dark pills (no more white chips) */
 body.wod-pretty-theme.wpt-chrome .chat-message .modifiers .mod {
@@ -902,11 +922,44 @@ body.wod-pretty-theme.wpt-chrome .chat-message .modifiers .mod {
   border-radius: 999px !important;
   padding: 1px 9px !important;
 }
-/* Section labels inside the card (e.g. STRENGTH) sit in the display font */
+/* Roll title (e.g. "Charisma + Composure + Auspex") — smaller, mixed-case serif */
 body.wod-pretty-theme.wpt-chrome .chat-message .roll-label,
 body.wod-pretty-theme.wpt-chrome .chat-message h3.item-name {
-  font-family: var(--wpt-font-display) !important;
+  font: 600 1.05rem/1.25 var(--wpt-font-display) !important;
+  letter-spacing: 0.01em;
+  text-transform: none !important;
   color: var(--wpt-text) !important;
+  margin: 0 0 2px !important;
+}
+/* Dice tiles — smaller and tidy, centered row */
+body.wod-pretty-theme.wpt-chrome .chat-message .dice-icons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 12px;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .dice-icons img,
+body.wod-pretty-theme.wpt-chrome .chat-message .dice-icons .roll-img {
+  width: 30px !important;
+  height: 30px !important;
+  margin: 0 !important;
+}
+/* Flavor / sub-text under the title */
+body.wod-pretty-theme.wpt-chrome .chat-message .message-content .flavor-text,
+body.wod-pretty-theme.wpt-chrome .chat-message .collapsible-content {
+  font: 400 0.82rem/1.4 var(--wpt-font-ui) !important;
+  color: var(--wpt-text-muted) !important;
+}
+/* Chat sidebar panel: no grey background (transparent, like the design) */
+body.wod-pretty-theme.wpt-chrome .chat-sidebar,
+body.wod-pretty-theme.wpt-chrome .chat-sidebar .chat-log,
+body.wod-pretty-theme.wpt-chrome #chat,
+body.wod-pretty-theme.wpt-chrome #chat-log,
+body.wod-pretty-theme.wpt-chrome section.chat-sidebar,
+body.wod-pretty-theme.wpt-chrome .sidebar-tab.chat-sidebar {
+  background: transparent !important;
+  border: none !important;
 }
 /* Trash / control icons: muted until hovered */
 body.wod-pretty-theme.wpt-chrome .chat-message .message-delete,
