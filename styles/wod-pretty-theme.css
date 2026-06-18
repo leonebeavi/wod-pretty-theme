@@ -2444,13 +2444,32 @@ body.wod-pretty-theme .application.dialog textarea,
 body.wod-pretty-theme .application.dialog select {
   font-family: var(--wpt-font-ui) !important;
 }
-/* Roomy, legible rich-text editors */
+/* Roomy, legible rich-text editors — bright text, clean sans, comfortable size */
 body.wod-pretty-theme .wod5e prose-mirror,
 body.wod-pretty-theme .wod5e .ProseMirror,
 body.wod-pretty-theme .wod5e .editor-content,
-body.wod-pretty-theme .wod5e .description-content {
-  font-size: 0.92rem !important;
-  line-height: 1.65 !important;
+body.wod-pretty-theme .wod5e .description-content,
+body.wod-pretty-theme .wod5e prose-mirror p,
+body.wod-pretty-theme .wod5e prose-mirror li,
+body.wod-pretty-theme .wod5e .ProseMirror p,
+body.wod-pretty-theme .wod5e .ProseMirror li,
+body.wod-pretty-theme .wod5e .description-content p,
+body.wod-pretty-theme .wod5e .description-content li {
+  font-size: 1rem !important;
+  line-height: 1.7 !important;
+  color: var(--wpt-text) !important;
+}
+/* Solid dark backing so the text reads with strong contrast */
+body.wod-pretty-theme .wod5e .description-content,
+body.wod-pretty-theme .wod5e .gg-notepad-editor,
+body.wod-pretty-theme .wod5e .gg-notepad-editor > prose-mirror,
+body.wod-pretty-theme .wod5e .gg-card .description-content {
+  background: rgba(0, 0, 0, 0.34) !important;
+}
+/* The editor while typing also reads bright */
+body.wod-pretty-theme .wod5e prose-mirror .editor-content.ProseMirror,
+body.wod-pretty-theme .wod5e prose-mirror .editor-content.ProseMirror * {
+  color: var(--wpt-text) !important;
 }
 
 /* =====================================================================
