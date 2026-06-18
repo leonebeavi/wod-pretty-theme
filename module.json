@@ -2,7 +2,7 @@
   "id": "wod-pretty-theme",
   "title": "WoD Pretty Theme",
   "description": "A dark, modern and minimalist theme that overrides the World of Darkness 5e (wod5e) system styling. Inspired by the Progeny VtM v5 character creator: clean panels, soft shadows, restrained typography and per-splat accent colors (Vampire crimson, Werewolf green, Hunter amber). Re-themes both the character/item sheets and the Foundry chrome (sidebar, chat, dialogs) that wod5e restyles.",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "compatibility": {
     "minimum": "14",
     "verified": "14",
@@ -53,5 +53,5 @@
   "bugs": "https://github.com/leonebeavi/wod-pretty-theme/issues",
   "license": "https://github.com/leonebeavi/wod-pretty-theme/blob/main/LICENSE",
   "manifest": "https://github.com/leonebeavi/wod-pretty-theme/releases/latest/download/module.json",
-  "download": "https://github.com/leonebeavi/wod-pretty-theme/releases/download/v1.4.1/module.zip"
+  "download": "https://github.com/leonebeavi/wod-pretty-theme/releases/download/v1.5.0/module.zip"
 }

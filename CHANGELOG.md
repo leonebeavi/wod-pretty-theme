@@ -5,6 +5,19 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-06-17
+
+### Added
+- **Custom Vampire header** matching the Obsidian design — a clean three-column
+  layout: Health/Willpower on the left, a compact portrait with the **name
+  centered below it** and a **"VAMPIRE · CLAN · GENERATION" subtitle**, and on
+  the right the Clan field plus a new **Generation field**, Hunger dots, and the
+  Resist Frenzy pill. The portrait no longer covers the name, and the name reads
+  as plain white. Reuses the system's own partials and data-actions, so editing
+  the image/name/generation, the Health/Willpower counters, Clan add/edit,
+  Hunger, Rouse and Resist/End Frenzy all keep working. Other splats keep the
+  system header (still themed) for now.
+
 ## [1.4.1] - 2026-06-17
 
 ### Changed

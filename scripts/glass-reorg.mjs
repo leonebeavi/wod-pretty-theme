@@ -30,6 +30,12 @@ const CUSTOM_TEMPLATES = {
   disciplines: `modules/${MODULE_ID}/templates/disciplines.hbs`
 };
 
+// Custom header templates, keyed by Actor subtype. A splat without an entry
+// keeps the system's own header (still re-skinned via CSS).
+const CUSTOM_HEADERS = {
+  vampire: `modules/${MODULE_ID}/templates/header-vampire.hbs`
+};
+
 /** Splat-specific tabs to preserve, keyed by Actor subtype. */
 const SPLAT_TABS = {
   vampire: [
@@ -58,16 +64,17 @@ function getSystemSheetClass(type) {
 }
 
 /** Build a tab-consolidating subclass of a given splat sheet. */
-function buildGlassSheet(Base, splatTabs) {
+function buildGlassSheet(Base, splatTabs, type) {
   const splatParts = {};
   for (const t of splatTabs) {
     if (CUSTOM_TEMPLATES[t.id]) splatParts[t.id] = { template: CUSTOM_TEMPLATES[t.id] };
     else if (Base.PARTS[t.id]) splatParts[t.id] = Base.PARTS[t.id];
   }
+  const headerPart = CUSTOM_HEADERS[type] ? { template: CUSTOM_HEADERS[type] } : Base.PARTS.header;
 
   return class GlassGothicSheet extends Base {
     static PARTS = {
-      header:        Base.PARTS.header,
+      header:        headerPart,
       tabs:          { template: NAV_TEMPLATE },
       core:          { template: CUSTOM_TEMPLATES.core },
       ...splatParts,
@@ -114,6 +121,8 @@ function buildGlassSheet(Base, splatTabs) {
       // Our renamed / merged parts have no case in the parent, so run their prep.
       let tabId = partId;
       switch (partId) {
+        // Custom header needs `generation` (only the system's Blood part sets it).
+        case "header":        context.generation = actor.system?.headers?.generation ?? ""; break;
         case "core":          context = await this.prepareStatsContext(context, actor);     tabId = "core"; break;
         case "inventory":     context = await this.prepareEquipmentContext(context, actor); tabId = "inventory"; break;
         case "pf_features":   context = await this.prepareFeaturesContext(context, actor);  tabId = "profile"; context.isGM = game.user.isGM; break;
@@ -165,7 +174,7 @@ Hooks.once("ready", async () => {
   // Make sure our nav template is available before sheets render.
   try {
     const load = foundry.applications?.handlebars?.loadTemplates ?? globalThis.loadTemplates;
-    if (load) await load([NAV_TEMPLATE, ...Object.values(CUSTOM_TEMPLATES)]);
+    if (load) await load([NAV_TEMPLATE, ...Object.values(CUSTOM_TEMPLATES), ...Object.values(CUSTOM_HEADERS)]);
   } catch (e) {
     console.warn(`${MODULE_ID} | could not preload nav template`, e);
   }
@@ -176,7 +185,7 @@ Hooks.once("ready", async () => {
     try {
       const Base = getSystemSheetClass(type);
       if (!Base) { console.warn(`${MODULE_ID} | no system sheet found for "${type}"; skipping reorg`); continue; }
-      const Sheet = buildGlassSheet(Base, splatTabs);
+      const Sheet = buildGlassSheet(Base, splatTabs, type);
       Actors.registerSheet(MODULE_ID, Sheet, {
         types: [type],
         makeDefault: true,

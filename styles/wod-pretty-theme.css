@@ -1195,3 +1195,105 @@ body.wod-pretty-theme .wod5e .frenzy .vampire-button:hover {
   background: var(--wpt-accent-fill-strong) !important;
   box-shadow: 0 0 12px var(--wpt-accent-glow);
 }
+
+/* ---- Custom Vampire header (Glass Gótico) -------------------------- */
+/* Three columns: vitals · identity · status. */
+body.wod-pretty-theme .wod5e .actor-header.gg-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px;
+}
+/* LEFT — health / willpower stacked */
+body.wod-pretty-theme .wod5e .gg-header-vitals {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+/* CENTER — portrait, name, subtitle */
+body.wod-pretty-theme .wod5e .gg-header-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  min-width: 170px;
+}
+body.wod-pretty-theme .wod5e .actor-header.gg-header .header-profile-img,
+body.wod-pretty-theme .wod5e .actor-header.gg-header .header-profile-img img {
+  width: 124px !important;
+  height: 124px !important;
+  max-width: 124px !important;
+  max-height: 124px !important;
+}
+/* Name moves IN-FLOW below the portrait (not overlaid) */
+body.wod-pretty-theme .wod5e .gg-header .name-field {
+  position: static !important;
+  inset: auto !important;
+  width: auto !important;
+  max-width: 240px;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  justify-content: center;
+}
+body.wod-pretty-theme .wod5e .gg-header .charname {
+  width: auto !important;
+  max-width: 240px;
+  text-align: center;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: none !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  background: none !important;
+  border: none !important;
+  font: 600 1.5rem/1.15 var(--wpt-font-display) !important;
+}
+body.wod-pretty-theme .wod5e .gg-header-subtitle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font: 700 0.62rem/1.2 var(--wpt-font-ui);
+  color: var(--wpt-text-dim);
+}
+body.wod-pretty-theme .wod5e .gg-sub-splat { color: var(--wpt-accent); }
+body.wod-pretty-theme .wod5e .gg-sub-sep   { opacity: 0.45; }
+body.wod-pretty-theme .wod5e .gg-sub-clan,
+body.wod-pretty-theme .wod5e .gg-sub-gen   { color: var(--wpt-text-muted); }
+/* RIGHT — clan/gen fields, hunger, frenzy */
+body.wod-pretty-theme .wod5e .gg-header-status {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+body.wod-pretty-theme .wod5e .gg-status-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field .resource-label,
+body.wod-pretty-theme .wod5e .gg-header-status .gg-hunger-block .resource-label {
+  justify-content: center;
+  text-align: center;
+}
+body.wod-pretty-theme .wod5e .gg-gen-input {
+  width: 100%;
+  text-align: center;
+}
+body.wod-pretty-theme .wod5e .gg-hunger-row {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap { display: flex; justify-content: center; }
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .frenzy { align-items: center; }
