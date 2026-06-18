@@ -42,71 +42,17 @@
             <div class="gg-panel gg-exp-panel">
                 <div class="gg-title-left">{{localize "WOD5E.Experience.Label"}}</div>
 
-                {{!-- Just Remaining + Total as single numbers (legacy actors
-                      use the editable exp.value/max; others the derived totals). --}}
-                <div class="experience-trackers">
-                    <div class="gg-grid-2 gg-exp-numbers">
-                        <div class="gg-card exp-tracker">
-                            {{#if showLegacyXP}}
-                                <input name="system.exp.value" type="number" value="{{exp.value}}"/>
-                            {{else}}
-                                <input name="system.derivedXP.remainingXP" type="number" value="{{derivedXP.remainingXP}}" disabled/>
-                            {{/if}}
-                            <div class="gg-field-label">{{localize "WOD5E.Experience.Remaining"}}</div>
-                        </div>
-                        <div class="gg-card exp-tracker">
-                            {{#if showLegacyXP}}
-                                <input name="system.exp.max" type="number" value="{{exp.max}}"/>
-                            {{else}}
-                                <input name="system.derivedXP.totalXP" type="number" value="{{derivedXP.totalXP}}" disabled/>
-                            {{/if}}
-                            <div class="gg-field-label">{{localize "WOD5E.Experience.Total"}}</div>
-                        </div>
-                    </div>
+                {{!-- Lean XP: two editable fields — Remaining + Total. --}}
+                <div class="gg-xp-bar">
+                    <label class="gg-xp-field">
+                        <span class="gg-xp-cap">{{localize "WOD5E.Experience.Remaining"}}</span>
+                        <input type="number" name="system.exp.value" value="{{exp.value}}"/>
+                    </label>
+                    <label class="gg-xp-field">
+                        <span class="gg-xp-cap">{{localize "WOD5E.Experience.Total"}}</span>
+                        <input type="number" name="system.exp.max" value="{{exp.max}}"/>
+                    </label>
                 </div>
-
-                <div class="flex-center flexrow gg-exp-controls">
-                    <a class="add-experience gg-pill" data-action="addExperience" data-operation="add">
-                        {{localize "WOD5E.Experience.AddExperience"}}
-                    </a>
-                    <a class="spend-experience gg-pill" data-action="addExperience" data-operation="spend">
-                        {{localize "WOD5E.Experience.SpendExperience"}}
-                    </a>
-                </div>
-
-                {{!-- Experience history (preserves edit/remove actions) --}}
-                {{#if experiences.length}}
-                    <div class="gg-card gg-exp-history">
-                        <div class="xp-header flexrow">
-                            <div class="xp-label xp-header-label">{{localize "WOD5E.Name"}}</div>
-                            <div class="xp-amount xp-header-label">{{localize "WOD5E.Amount"}}</div>
-                            <div class="xp-controls xp-header-label">{{localize "WOD5E.Controls"}}</div>
-                        </div>
-                        {{#each experiences as |experience key|}}
-                            <div class="flexrow{{#ifgr experience.value 0}} experience-gain{{/ifgr}}{{#ifless experience.value 0}} experience-spend{{/ifless}}">
-                                {{#ifgr experience.value 0}}
-                                    <img class="xp-icon xp-gain-icon"/>
-                                {{/ifgr}}
-                                {{#ifeq experience.value 0}}
-                                    <img class="xp-icon xp-neutral-icon"/>
-                                {{/ifeq}}
-                                {{#ifless experience.value 0}}
-                                    <img class="xp-icon xp-spend-icon"/>
-                                {{/ifless}}
-                                <div class="xp-label">{{experience.name}}</div>
-                                <div class="xp-amount">{{experience.value}}</div>
-                                <div class="xp-controls">
-                                    <a class="xp-control edit-experience" data-action="editExperience" title="{{localize 'WOD5E.Edit'}}" data-experience-id="{{experience.id}}">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a class="xp-control remove-experience" data-action="removeExperience" title="{{localize 'WOD5E.Delete'}}" data-experience-id="{{experience.id}}">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        {{/each}}
-                    </div>
-                {{/if}}
             </div>
         </div>
 

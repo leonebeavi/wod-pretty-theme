@@ -5,6 +5,16 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.15] - 2026-06-18
+
+### Changed / Fixed
+- **Experience rebuilt as a lean bar**: just two directly-editable fields —
+  **Remaining** and **Total** — side by side. Dropped the Legacy/Calculated
+  split, the Add/Spend buttons, and the history list.
+- **Header portrait**: uploaded images now fill the tile edge to edge — removed
+  the inset-shadow vignette and forced `object-fit: cover`, so no more side
+  bars/borders on custom avatars.
+
 ## [1.7.14] - 2026-06-18
 
 ### Changed
