@@ -483,12 +483,15 @@ body.wod-pretty-theme .wod5e .resource-value-static .resource-value-static-step.
   border-color: var(--wpt-accent);
   box-shadow: 0 0 6px var(--wpt-accent-glow);
 }
-/* "clear to 0" affordance: faint, neutral (not red) */
+/* "clear to 0" affordance: a faint empty ring (not an ugly cross) */
 body.wod-pretty-theme .resource-value .resource-value-empty {
   border: 1px solid var(--wpt-border);
-  background:
-    linear-gradient(45deg,  transparent 44%, var(--wpt-text-dim) 46%, var(--wpt-text-dim) 54%, transparent 56%),
-    linear-gradient(135deg, transparent 44%, var(--wpt-text-dim) 46%, var(--wpt-text-dim) 54%, transparent 56%);
+  background: none;
+  opacity: 0.4;
+}
+body.wod-pretty-theme .resource-value .resource-value-empty:hover {
+  border-color: var(--wpt-accent);
+  opacity: 1;
 }
 
 /* ---------------------------------------------------------------------
@@ -500,25 +503,25 @@ body.wod-pretty-theme .cell-resource-counter .cell-resource-counter-step {
   background-color: color-mix(in srgb, var(--wpt-text) 5%, transparent);
   border-radius: 3px;
 }
+/* Damage / track marks — clean fills (no messy line gradients):
+   superficial (/) = diagonal half-fill accent · aggravated (x) = solid danger */
 body.wod-pretty-theme .resource-counter .resource-counter-step[data-state="/"],
 body.wod-pretty-theme .cell-resource-counter .cell-resource-counter-step[data-state="/"] {
-  background:
-    linear-gradient(135deg, transparent 43%, var(--wpt-text) 45%, var(--wpt-text) 55%, transparent 57%);
+  background: linear-gradient(135deg, transparent 50%, var(--wpt-accent) 50%);
 }
 body.wod-pretty-theme .resource-counter .resource-counter-step[data-state="x"],
 body.wod-pretty-theme .cell-resource-counter .cell-resource-counter-step[data-state="x"] {
-  background:
-    linear-gradient(45deg,  transparent 43%, var(--wpt-danger) 45%, var(--wpt-danger) 55%, transparent 57%),
-    linear-gradient(135deg, transparent 43%, var(--wpt-danger) 45%, var(--wpt-danger) 55%, transparent 57%);
+  background-color: var(--wpt-danger);
+  border-color: var(--wpt-danger);
 }
+/* Humanity: value (-) = solid accent · stains (/) = solid danger */
 body.wod-pretty-theme .resource-counter .resource-counter-step[data-state="-"] {
   background-color: var(--wpt-accent);
   border-color: var(--wpt-accent);
 }
 body.wod-pretty-theme .humanity .resource-counter-step[data-state="/"] {
-  background:
-    linear-gradient(45deg,  transparent 43%, var(--wpt-danger) 45%, var(--wpt-danger) 55%, transparent 57%),
-    linear-gradient(135deg, transparent 43%, var(--wpt-danger) 45%, var(--wpt-danger) 55%, transparent 57%);
+  background: var(--wpt-danger);
+  border-color: var(--wpt-danger);
 }
 body.wod-pretty-theme .wod5e .resource-control { color: var(--wpt-text-muted); }
 body.wod-pretty-theme .wod5e .resource-control:hover { color: var(--wpt-accent); }
@@ -1349,8 +1352,10 @@ body.wod-pretty-theme .wod5e .gg-section-title::after {
   margin: 7px auto 0;
   background: linear-gradient(90deg, transparent, var(--wpt-accent), transparent);
 }
-/* Left-aligned heading variant */
+/* Left-aligned heading variant (flex so a trailing toggle centers with the text) */
 body.wod-pretty-theme .wod5e .gg-title-left {
+  display: flex;
+  align-items: center;
   font: 600 1rem/1 var(--wpt-font-display);
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -2158,8 +2163,8 @@ body.wod-pretty-theme .wod5e .gg-hunger-row .resource {
   box-shadow: none !important;
   padding: 0 !important;
 }
-/* Hunger: no leading "×" clear-affordance (design shows just dots) */
-body.wod-pretty-theme .wod5e .gg-hunger-block .resource-value-empty { display: none; }
+/* Hunger keeps the clear-to-0 ring (the only way to set hunger to 0); it's now
+   the clean faint ring styled globally, not the old "×". */
 /* Frenzy status (Active / Inactive) shown compact above the Resist Frenzy pill */
 body.wod-pretty-theme .wod5e .gg-frenzy-wrap .frenzy {
   display: flex;
@@ -2183,6 +2188,32 @@ body.wod-pretty-theme .wod5e .gg-frenzy-wrap .frenzy-status { color: var(--wpt-t
 body.wod-pretty-theme .wod5e .gg-frenzy-wrap .frenzy-status.active {
   color: var(--wpt-danger);
   text-shadow: 0 0 8px color-mix(in srgb, var(--wpt-danger) 40%, transparent);
+}
+
+/* Header values must never truncate (e.g. the Clan name) */
+body.wod-pretty-theme .wod5e .gg-header-status .data-item,
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-value {
+  overflow: visible;
+  text-overflow: clip;
+  max-width: none;
+  flex: 0 1 auto;
+}
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-value .data-item {
+  white-space: normal;
+}
+
+/* ---- Custom footer banner (rebuilt; clean in-flow bar, no overlap) ---- */
+body.wod-pretty-theme .wod5e .gg-footer {
+  position: static;
+  margin-top: 14px;
+  padding: 10px 9px;
+  text-align: center;
+  border-top: 1px solid var(--wpt-border);
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--wpt-accent) 14%, transparent));
+  font: 600 13px/1 var(--wpt-font-display);
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted);
 }
 /* Convictions (Touchstones) = the widest / most prominent description card */
 body.wod-pretty-theme .wod5e .gg-convictions-card .description-content { min-height: 200px; }
@@ -2213,27 +2244,10 @@ body.wod-pretty-theme .wod5e .gg-advantages .resource-value {
    Cormorant Garamond (the display serif) is used for ALL sheet text;
    icon fonts (.fa*, .wod5e-symbol) keep their own font (set on themselves).
    ===================================================================== */
+/* ONE font everywhere for consistency — the elegant display serif — on every
+   text element. Icons keep their own font: anything that is an <i>, has a
+   Font Awesome class (fa-…), or is a .wod5e-symbol is excluded. */
 body.wod-pretty-theme .wod5e.sheet,
-body.wod-pretty-theme .wod5e.sheet input,
-body.wod-pretty-theme .wod5e.sheet select,
-body.wod-pretty-theme .wod5e.sheet textarea,
-body.wod-pretty-theme .wod5e.sheet .tab-label,
-body.wod-pretty-theme .wod5e.sheet .gg-field-label,
-body.wod-pretty-theme .wod5e.sheet .gg-col-head,
-body.wod-pretty-theme .wod5e.sheet .gg-cat-name,
-body.wod-pretty-theme .wod5e.sheet .gg-row-name,
-body.wod-pretty-theme .wod5e.sheet .gg-pill,
-body.wod-pretty-theme .wod5e.sheet .gg-header-subtitle,
-body.wod-pretty-theme .wod5e.sheet .gg-inv-stat,
-body.wod-pretty-theme .wod5e.sheet .gg-notepad-gm,
-body.wod-pretty-theme .wod5e.sheet .item-name,
-body.wod-pretty-theme .wod5e.sheet .resource-label,
-body.wod-pretty-theme .wod5e.sheet .data-item,
-body.wod-pretty-theme .wod5e.sheet .collapsible-content,
-body.wod-pretty-theme .wod5e.sheet .item-description,
-body.wod-pretty-theme .wod5e.sheet .gg-power-desc,
-body.wod-pretty-theme .wod5e.sheet .xp-label,
-body.wod-pretty-theme .wod5e.sheet .ProseMirror,
-body.wod-pretty-theme .wod5e.sheet prose-mirror {
+body.wod-pretty-theme .wod5e.sheet *:not(i):not([class*="fa-"]):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.wod5e-symbol) {
   font-family: var(--wpt-font-display) !important;
 }

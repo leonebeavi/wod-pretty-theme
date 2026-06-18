@@ -5,6 +5,20 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.7] - 2026-06-18
+
+### Changed / Fixed
+- **Footer banner rebuilt from scratch** as a clean, in-flow bar (custom
+  template) — no more sticky overlap or content bleeding through it.
+- **One font everywhere** for consistency: the elegant display serif is now
+  applied to every text element (icons keep their own font).
+- **Health / Willpower damage marks** redesigned: superficial = a clean diagonal
+  half-fill, aggravated = a solid square (no more messy line/cross gradients).
+- **Hunger can be set to 0 again** — the clear marker is back, but as a clean
+  faint ring instead of the ugly "×".
+- **Header text no longer truncates** (e.g. the Clan name showed "New …").
+- The **eye toggle** is properly centered with its title (headings are flex).
+
 ## [1.7.6] - 2026-06-18
 
 ### Fixed (header pass)
