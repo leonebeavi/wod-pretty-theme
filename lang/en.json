@@ -11,14 +11,16 @@
       },
       "Restructure": {
         "Name": "Reorganize sheets (Glass Gótico layout)",
-        "Hint": "Consolidate the wod5e sheet tabs into Core · [splat] · Profile · Inventory · Notes with a horizontal top tab bar, and relocate Settings into a GM-only block inside Profile. Turn off (and reload) to use the system's original tabs."
+        "Hint": "Consolidate the wod5e sheet tabs into a horizontal top tab bar: Core · [splat] · Advantages · Profile · Inventory · Notes · Settings (GM-only). Turn off (and reload) to use the system's original tabs."
       }
     },
     "Tabs": {
       "Core": "Core",
+      "Advantages": "Advantages",
       "Profile": "Profile",
       "Inventory": "Inventory",
-      "Notes": "Notes"
+      "Notes": "Notes",
+      "Settings": "Settings"
     }
   }
 }

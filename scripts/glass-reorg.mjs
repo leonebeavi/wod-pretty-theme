@@ -29,6 +29,7 @@ const CUSTOM_TEMPLATES = {
   core:        `modules/${MODULE_ID}/templates/core.hbs`,
   disciplines: `modules/${MODULE_ID}/templates/disciplines.hbs`,
   blood:       `modules/${MODULE_ID}/templates/blood.hbs`,
+  advantages:  `modules/${MODULE_ID}/templates/advantages.hbs`,
   profile:     `modules/${MODULE_ID}/templates/profile.hbs`,
   inventory:   `modules/${MODULE_ID}/templates/inventory.hbs`,
   notepad:     `modules/${MODULE_ID}/templates/notepad.hbs`,
@@ -83,32 +84,35 @@ function buildGlassSheet(Base, splatTabs, type) {
       tabs:          { template: NAV_TEMPLATE },
       core:          { template: CUSTOM_TEMPLATES.core },
       ...splatParts,
+      advantages:    { template: CUSTOM_TEMPLATES.advantages },
       profile:       { template: CUSTOM_TEMPLATES.profile },
-      pf_settings:   { template: CUSTOM_TEMPLATES.settings },
       inventory:     { template: CUSTOM_TEMPLATES.inventory },
       notepad:       { template: CUSTOM_TEMPLATES.notepad },
+      settings:      { template: CUSTOM_TEMPLATES.settings },
       banner:        Base.PARTS.banner,
       limited:       Base.PARTS.limited
     };
 
-    /** Consolidated navigation: Core · [splat] · Profile · Inventory · Notes. */
+    /** Consolidated nav: Core · [splat] · Advantages · Profile · Inventory · Notes · [Settings (GM)]. */
     tabs = (() => {
       const t = {
         core: { id: "core", group: "primary", title: "WPT.Tabs.Core", icon: '<i class="fa-regular fa-chart-line"></i>' }
       };
       for (const s of splatTabs) t[s.id] = { id: s.id, group: "primary", title: s.title, icon: s.icon };
-      t.profile   = { id: "profile",   group: "primary", title: "WPT.Tabs.Profile",   icon: '<i class="fas fa-id-card"></i>' };
-      t.inventory = { id: "inventory", group: "primary", title: "WPT.Tabs.Inventory", icon: '<i class="fa-solid fa-toolbox"></i>' };
-      t.notepad   = { id: "notepad",   group: "primary", title: "WPT.Tabs.Notes",     icon: '<i class="fas fa-sticky-note"></i>' };
+      t.advantages = { id: "advantages", group: "primary", title: "WPT.Tabs.Advantages", icon: '<i class="fas fa-gem"></i>' };
+      t.profile    = { id: "profile",    group: "primary", title: "WPT.Tabs.Profile",    icon: '<i class="fas fa-id-card"></i>' };
+      t.inventory  = { id: "inventory",  group: "primary", title: "WPT.Tabs.Inventory",  icon: '<i class="fa-solid fa-toolbox"></i>' };
+      t.notepad    = { id: "notepad",    group: "primary", title: "WPT.Tabs.Notes",      icon: '<i class="fas fa-sticky-note"></i>' };
+      if (game.user?.isGM) t.settings = { id: "settings", group: "primary", title: "WPT.Tabs.Settings", icon: '<i class="fa-solid fa-gears"></i>' };
       return t;
     })();
 
     tabGroups = { primary: "core" };
 
-    /** Drop the GM-only settings part for non-GM users. */
+    /** Drop the GM-only Settings part for non-GM users. */
     _configureRenderParts(options) {
       const parts = super._configureRenderParts(options);
-      if (!game.user.isGM) delete parts.pf_settings;
+      if (!game.user.isGM) delete parts.settings;
       return parts;
     }
 
@@ -126,17 +130,18 @@ function buildGlassSheet(Base, splatTabs, type) {
       switch (partId) {
         // Custom header needs `generation` (only the system's Blood part sets it).
         case "header":    context.generation = actor.system?.headers?.generation ?? ""; break;
-        case "core":      context = await this.prepareStatsContext(context, actor);     tabId = "core"; break;
-        case "inventory": context = await this.prepareEquipmentContext(context, actor); tabId = "inventory"; break;
-        // Merged Profile = Features + Experience + Biography in one custom template.
+        case "core":       context = await this.prepareStatsContext(context, actor);     tabId = "core"; break;
+        case "inventory":  context = await this.prepareEquipmentContext(context, actor); tabId = "inventory"; break;
+        // Advantages = the character's features (backgrounds/merits/flaws/boons).
+        case "advantages": context = await this.prepareFeaturesContext(context, actor);  tabId = "advantages"; break;
+        // Profile = identity (from Features) + Experience + Biography.
         case "profile":
           context = await this.prepareFeaturesContext(context, actor);
           context = await this.prepareExperienceContext(context, actor);
           context = await this.prepareBiographyContext(context, actor);
-          context.isGM = game.user.isGM;
           tabId = "profile";
           break;
-        case "pf_settings": context = await this.prepareSettingsContext(context, actor); tabId = "profile"; context.isGM = game.user.isGM; break;
+        case "settings":   context = await this.prepareSettingsContext(context, actor);  tabId = "settings"; context.isGM = game.user.isGM; break;
       }
 
       // Bind the correct tab LAST — the system helpers above set context.tab to

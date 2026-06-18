@@ -5,6 +5,22 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-06-18
+
+### Changed — tab structure
+- **New "Advantages" tab** (before Profile) holding the character's
+  Backgrounds / Merits / Flaws / Boons in four columns with dot ratings and
+  item controls, moved out of Profile.
+- **New "Settings" tab** (after Notes, **GM-only** — hidden entirely for
+  players) holding the actor settings (header/background images, actor type,
+  input-fields toggle, splat power toggles), moved out of Profile.
+- **Profile** is now just Identity + Experience (top row) and roomier
+  Biography / Appearance editors below — cleaner, better-balanced distribution
+  now that Advantages and Settings have their own tabs.
+
+New tab bar: Core · [splat] · Advantages · Profile · Inventory · Notes ·
+Settings (GM).
+
 ## [1.6.1] - 2026-06-18
 
 ### Fixed

@@ -1776,12 +1776,26 @@ body.wod-pretty-theme .wod5e .gg-inv .category {
   padding: 0 !important;
 }
 
-/* Profile: feature category columns are open (no boxed .category) */
-body.wod-pretty-theme .wod5e .gg-profile .category {
+/* Profile / Advantages: feature category columns are open (no boxed .category) */
+body.wod-pretty-theme .wod5e .gg-profile .category,
+body.wod-pretty-theme .wod5e .gg-advantages .category {
   background: none !important;
   border: none !important;
   border-radius: 0 !important;
   padding: 0 !important;
+}
+/* Advantages tab: give the panel presence and keep the 4 columns open */
+body.wod-pretty-theme .wod5e .gg-advantages .gg-panel { min-height: 300px; }
+
+/* Profile: roomier Biography / Appearance editors (like the Notes tab) */
+body.wod-pretty-theme .wod5e .gg-profile .description-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 170px;
+}
+body.wod-pretty-theme .wod5e .gg-profile .description-content > prose-mirror {
+  flex: 1;
+  min-height: 0;
 }
 
 /* GM Settings: a tidy contained panel at the bottom of Profile */
