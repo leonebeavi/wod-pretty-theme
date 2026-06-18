@@ -1799,6 +1799,179 @@ body.wod-pretty-theme .wod5e .gg-profile .description-content > prose-mirror {
   min-height: 0;
 }
 
+/* =====================================================================
+   Glass Gótico — design-accurate polish pass (audited vs the reference HTML)
+   Typography / spacing / radii / dot sizing tightened to the exact design.
+   ===================================================================== */
+
+/* ---- Global chrome ---- */
+/* Window title in the display serif (design line 31) */
+body.wod-pretty-theme .wod5e.sheet .window-header .window-title {
+  font-family: var(--wpt-font-display) !important;
+  letter-spacing: 0.04em;
+}
+/* Scrollbar: 11px, accent-tinted thumb with padding-box inset + hover (per-splat) */
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar { width: 11px; height: 11px; }
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--wpt-accent) 55%, transparent);
+  border: 3px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--wpt-accent) 75%, transparent);
+  background-clip: padding-box;
+}
+/* Tab bar + buttons (design lines 73-75) */
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) { padding: 4px 18px 0; }
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] {
+  padding: 13px 16px 14px;
+  font: 600 12px/1 var(--wpt-font-ui);
+  letter-spacing: 0.14em;
+}
+/* Footer banner (design line 308): centered, wide tracking, vertical gradient */
+body.wod-pretty-theme .wod5e .sheet-banner {
+  text-align: center;
+  padding: 9px;
+  background: linear-gradient(180deg, transparent, rgba(130, 10, 26, 0.2)) !important;
+  border-top: 1px solid var(--wpt-border);
+  font: 600 13px/1 var(--wpt-font-display) !important;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted);
+}
+
+/* ---- Rating dots: brighter lit fill + exact per-context sizes/gaps ---- */
+body.wod-pretty-theme .wod5e .resource-value .resource-value-step.active,
+body.wod-pretty-theme .wod5e .resource-value-static .resource-value-static-step.active {
+  background-color: var(--wpt-dot-on);
+  border-color: var(--wpt-dot-on);
+}
+/* Core — Attributes 12px/gap5, Skills 10px/gap4 */
+body.wod-pretty-theme .wod5e .gg-core .stats-container.attributes .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-core .stats-container.attributes .resource-value-empty {
+  width: 12px !important; height: 12px !important;
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-container.attributes .resource-value { gap: 5px; }
+body.wod-pretty-theme .wod5e .gg-core .stats-container.skills .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-core .stats-container.skills .resource-value-empty {
+  width: 10px !important; height: 10px !important;
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-container.skills .resource-value { gap: 4px; }
+/* Disciplines list — 10px/gap5 */
+body.wod-pretty-theme .wod5e .gg-disc-item .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-disc-item .resource-value-empty {
+  width: 10px !important; height: 10px !important;
+}
+body.wod-pretty-theme .wod5e .gg-disc-item .resource-value { gap: 5px; }
+/* Blood Potency — 14px/gap6 */
+body.wod-pretty-theme .wod5e .gg-blood-center .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-blood-center .resource-value-empty {
+  width: 14px !important; height: 14px !important;
+}
+body.wod-pretty-theme .wod5e .gg-blood-center .resource-value { gap: 6px; }
+/* Advantages — 8px/gap3 */
+body.wod-pretty-theme .wod5e .gg-advantages .dot-tracker .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-advantages .dot-tracker .resource-value-empty {
+  width: 8px !important; height: 8px !important;
+}
+body.wod-pretty-theme .wod5e .gg-advantages .dot-tracker .resource-value { gap: 3px; }
+/* Hunger — 15px/gap6 + glow */
+body.wod-pretty-theme .wod5e .gg-hunger-block .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-hunger-block .resource-value-empty {
+  width: 15px !important; height: 15px !important;
+}
+body.wod-pretty-theme .wod5e .gg-hunger-block .resource-value { gap: 6px; }
+body.wod-pretty-theme .wod5e .gg-hunger-block .resource-value-step.active {
+  box-shadow: 0 0 8px var(--wpt-accent-glow);
+}
+body.wod-pretty-theme .wod5e .gg-hunger-row { gap: 6px; }
+/* Humanity squares — 18px/gap5 */
+body.wod-pretty-theme .wod5e .humanity .resource-counter-step {
+  width: 18px !important; height: 18px !important; border-radius: 4px !important;
+}
+body.wod-pretty-theme .wod5e .humanity .resource-counter { gap: 5px; }
+
+/* ---- Header typography (design lines 41-66) ---- */
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-label,
+body.wod-pretty-theme .wod5e .gg-header-vitals .willpower-roll {
+  font: 700 0.6875rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.22em;
+  margin-bottom: 8px;
+}
+body.wod-pretty-theme .wod5e .gg-header-subtitle { font-size: 0.625rem; }
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-label { font-size: 0.6875rem; }
+/* name overlay: zero horizontal padding (design line 53) */
+body.wod-pretty-theme .wod5e .gg-header .gg-name-overlay { padding: 7px 0 6px !important; }
+/* portrait diagonal hatch (only shows behind a missing/transparent image) */
+body.wod-pretty-theme .wod5e .actor-header.gg-header .gg-portrait {
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.045) 0 9px, rgba(255,255,255,0.012) 9px 18px),
+    rgba(0,0,0,0.32);
+}
+
+/* ---- Core titles: centered Cormorant 18px + short gradient underline ---- */
+body.wod-pretty-theme .wod5e .gg-core > .resource-header {
+  font-size: 18px;
+  letter-spacing: 0.2em;
+  text-align: center;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 14px;
+  position: relative;
+}
+body.wod-pretty-theme .wod5e .gg-core > .resource-header::after {
+  content: "";
+  display: block;
+  width: 46px;
+  height: 2px;
+  margin: 7px auto 0;
+  background: linear-gradient(90deg, transparent, var(--wpt-accent), transparent);
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-footer .field-header {
+  font: 700 0.66rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.2em;
+  color: var(--wpt-text-muted);
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e .gg-core .attributes .resource-label { font-size: 14px; }
+body.wod-pretty-theme .wod5e .gg-core .skills .resource-label { font-size: 13px; }
+
+/* ---- Disciplines + Blood card metrics (design lines 139/148/153/184) ---- */
+body.wod-pretty-theme .wod5e .gg-disc-item { padding: 13px 15px; border-radius: 12px; }
+body.wod-pretty-theme .wod5e .gg-disc-detail-title { font-size: 1.375rem; }
+body.wod-pretty-theme .wod5e .gg-power-card { padding: 13px 16px; border-radius: 11px; }
+body.wod-pretty-theme .wod5e .gg-kv-value {
+  font: 600 0.9375rem/1.2 var(--wpt-font-display);
+}
+
+/* ---- Profile + Advantages (design lines 208/227-228/238/242) ---- */
+body.wod-pretty-theme .wod5e .gg-profile .gg-card { padding: 11px 14px; border-radius: 11px; }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-col-head {
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-feature-row .item .item-name { font: 500 0.75rem/1.2 var(--wpt-font-ui); }
+body.wod-pretty-theme .wod5e .gg-feature-row .item .dot-tracker { display: flex; gap: 3px; }
+body.wod-pretty-theme .wod5e .gg-exp-controls .gg-pill {
+  font: 600 0.6875rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.1em;
+  border-radius: 9px;
+  padding: 9px;
+}
+
+/* ---- Inventory + Notes (design lines 271/276/278/296) ---- */
+body.wod-pretty-theme .wod5e .gg-inv-row { padding: 11px 15px; border-radius: 10px; }
+body.wod-pretty-theme .wod5e .gg-inv-stat { font-weight: 600; letter-spacing: 0.06em; }
+body.wod-pretty-theme .wod5e .gg-inv .gg-inv-head .gg-title-left { font-size: 15px; }
+body.wod-pretty-theme .wod5e .gg-notepad-editor {
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 11px;
+}
+
 /* GM Settings: a tidy contained panel at the bottom of Profile */
 body.wod-pretty-theme .wod5e .gg-gm-settings { margin-top: 2px; }
 body.wod-pretty-theme .wod5e .gg-gm-settings .form-group {

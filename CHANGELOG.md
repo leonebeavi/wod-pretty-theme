@@ -5,6 +5,24 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.2] - 2026-06-18
+
+### Changed — design-accurate polish pass
+- Audited every region against the reference design and tightened the CSS to its
+  exact values:
+  - **Dots** now use the brighter lit colour and the design's **per-context
+    sizes** (Attributes 12px, Skills 10px, Disciplines 10px, Blood Potency 14px,
+    Hunger 15px, Humanity 18px, Advantages 8px) with matching gaps.
+  - **Tab bar** padding/typography, **scrollbar** (11px, accent-tinted, hover),
+    **window title** in the display serif, and the **footer banner** (centered,
+    wide tracking) match the design.
+  - **Core** section titles centered with the short gradient underline; column
+    heads and trait-name sizing tuned.
+  - **Disciplines/Blood/Profile/Advantages/Inventory/Notes** card padding,
+    radii, and label/value typography aligned to the design (power cards 11px,
+    discipline items 13×15/12px, Profile cards 11×14, inventory rows 11×15/10px,
+    notes editor dark box 11px, etc.).
+
 ## [1.7.1] - 2026-06-18
 
 ### Changed
