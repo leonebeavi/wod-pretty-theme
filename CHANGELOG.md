@@ -5,6 +5,17 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-06-17
+
+### Added
+- **Custom Core tab** matching the Obsidian design: full-width Attributes and
+  Skills laid out in three columns (Physical / Social / Mental), no side panel
+  crowding them. Conditions and Custom Rolls are kept available in a compact row
+  below so nothing is lost. Built by reusing the system's exact rollable labels
+  and dot-counter widgets, so all interactivity (rolling, setting dots, editing
+  skills, add/remove) is preserved. First of the per-tab custom layouts; the
+  other tabs follow next.
+
 ## [1.2.3] - 2026-06-17
 
 ### Fixed

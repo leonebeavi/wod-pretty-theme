@@ -22,6 +22,7 @@
 
 const MODULE_ID = "wod-pretty-theme";
 const NAV_TEMPLATE = `modules/${MODULE_ID}/templates/tab-navigation.hbs`;
+const CORE_TEMPLATE = `modules/${MODULE_ID}/templates/core.hbs`;
 
 /** Splat-specific tabs to preserve, keyed by Actor subtype. */
 const SPLAT_TABS = {
@@ -59,7 +60,7 @@ function buildGlassSheet(Base, splatTabs) {
     static PARTS = {
       header:        Base.PARTS.header,
       tabs:          { template: NAV_TEMPLATE },
-      core:          Base.PARTS.stats,
+      core:          { template: CORE_TEMPLATE },
       ...splatParts,
       pf_features:   Base.PARTS.features,
       pf_experience: Base.PARTS.experience,
@@ -155,7 +156,7 @@ Hooks.once("ready", async () => {
   // Make sure our nav template is available before sheets render.
   try {
     const load = foundry.applications?.handlebars?.loadTemplates ?? globalThis.loadTemplates;
-    if (load) await load([NAV_TEMPLATE]);
+    if (load) await load([NAV_TEMPLATE, CORE_TEMPLATE]);
   } catch (e) {
     console.warn(`${MODULE_ID} | could not preload nav template`, e);
   }

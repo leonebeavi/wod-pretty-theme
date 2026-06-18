@@ -996,3 +996,46 @@ body.wod-pretty-theme .wod5e section.tab[data-tab="profile"].actor-settings,
 body.wod-pretty-theme .wod5e section.tab[data-tab="profile"]:last-of-type {
   opacity: 0.96;
 }
+
+/* ---- Custom CORE tab (full-width attributes + skills) --------------- */
+body.wod-pretty-theme .wod5e .gg-core {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 28px 28px;
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-container {
+  margin: 0;
+  padding: 14px 18px 16px;
+}
+/* the three attribute/skill groups span the full width evenly */
+body.wod-pretty-theme .wod5e .gg-core .stats-container .stats-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 28px;
+  padding: 6px 2px 0;
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-container .stats-list {
+  width: 100%;
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-footer.grid-3col {
+  gap: 28px;
+}
+body.wod-pretty-theme .wod5e .gg-core .attribute,
+body.wod-pretty-theme .wod5e .gg-core .skill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 6px;
+  border-radius: var(--wpt-radius-sm);
+}
+/* Conditions / Custom Rolls kept compact below */
+body.wod-pretty-theme .wod5e .gg-core-extras {
+  gap: 16px;
+  margin-top: 4px;
+}
+body.wod-pretty-theme .wod5e .gg-core-extras .stat-panel-section { min-width: 0; }
+body.wod-pretty-theme .wod5e .gg-core-extras .resource-header { font-size: 0.95rem; }
