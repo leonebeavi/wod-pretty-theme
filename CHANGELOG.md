@@ -5,6 +5,14 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.16] - 2026-06-18
+
+### Changed
+- **Editable fields are now legible**: inputs, textareas, selects and the
+  rich-text editors use the clean sans (Manrope) at a comfortable size while you
+  type, instead of the elegant serif. Display text, titles, values and character
+  names keep the serif.
+
 ## [1.7.15] - 2026-06-18
 
 ### Changed / Fixed

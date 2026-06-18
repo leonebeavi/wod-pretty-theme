@@ -2427,8 +2427,30 @@ body.wod-pretty-theme .wod5e .gg-advantages .resource-value {
    text element. Icons keep their own font: anything that is an <i>, has a
    Font Awesome class (fa-…), or is a .wod5e-symbol is excluded. */
 body.wod-pretty-theme .wod5e.sheet,
-body.wod-pretty-theme .wod5e.sheet *:not(i):not([class*="fa-"]):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.wod5e-symbol) {
+body.wod-pretty-theme .wod5e.sheet *:not(i):not([class*="fa-"]):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.wod5e-symbol):not(input):not(textarea):not(select):not(prose-mirror):not(.ProseMirror) {
   font-family: var(--wpt-font-display) !important;
+}
+/* Editable / writing fields use the clean sans for legibility while typing
+   (display text & names keep the elegant serif). */
+body.wod-pretty-theme .wod5e input:not(.charname):not(.itemname),
+body.wod-pretty-theme .wod5e textarea,
+body.wod-pretty-theme .wod5e select,
+body.wod-pretty-theme .wod5e prose-mirror,
+body.wod-pretty-theme .wod5e .ProseMirror,
+body.wod-pretty-theme .wod5e .editor,
+body.wod-pretty-theme .wod5e .editor-content,
+body.wod-pretty-theme .application.dialog input,
+body.wod-pretty-theme .application.dialog textarea,
+body.wod-pretty-theme .application.dialog select {
+  font-family: var(--wpt-font-ui) !important;
+}
+/* Roomy, legible rich-text editors */
+body.wod-pretty-theme .wod5e prose-mirror,
+body.wod-pretty-theme .wod5e .ProseMirror,
+body.wod-pretty-theme .wod5e .editor-content,
+body.wod-pretty-theme .wod5e .description-content {
+  font-size: 0.92rem !important;
+  line-height: 1.65 !important;
 }
 
 /* =====================================================================
