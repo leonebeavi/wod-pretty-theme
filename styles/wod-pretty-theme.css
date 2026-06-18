@@ -1833,22 +1833,16 @@ body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) {
   align-items: stretch;
 }
 body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] {
-  flex: 1 1 0;
-  min-width: 0;
+  flex: 1 1 auto;
   justify-content: center;
-  padding: 12px 4px 13px;
+  padding: 12px 6px 13px;
   gap: 6px;
   font: 600 11px/1 var(--wpt-font-display);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   white-space: nowrap;
-  overflow: hidden;
 }
 body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] .navicon { font-size: 13px; flex: 0 0 auto; }
-body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) .tab-label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) .tab-label { white-space: nowrap; }
 /* Footer banner: OPAQUE bar (content scrolls behind it without bleeding through),
    centered, wide tracking, subtle accent gradient. */
 body.wod-pretty-theme .wod5e .sheet-banner {
@@ -2097,9 +2091,39 @@ body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item-controls .item
 body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item-controls .item-control:hover { color: var(--wpt-accent); }
 
 /* ---- Profile: balanced card distribution ---- */
-/* Top row at natural height so the Experience panel isn't padded with empty space */
-body.wod-pretty-theme .wod5e .gg-profile-top { align-items: start; }
+/* Experience panel matches the Identity panel's height (equal top row) */
+body.wod-pretty-theme .wod5e .gg-profile-top { align-items: stretch; }
 body.wod-pretty-theme .wod5e .gg-profile .gg-panel > .gg-grid-2 { gap: 12px; }
+/* spread Experience content so it fills the equal-height panel without a gap */
+body.wod-pretty-theme .wod5e .gg-exp-panel { display: flex; flex-direction: column; }
+body.wod-pretty-theme .wod5e .gg-exp-panel .gg-exp-controls { margin-top: auto; }
+
+/* Eye / eye-slash "reveal to all" toggle — small, subtle, inline with the title */
+body.wod-pretty-theme .wod5e .gg-profile .toggle-limited,
+body.wod-pretty-theme .wod5e .gg-title-left .toggle-limited {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  font-size: 0.7em;
+  color: var(--wpt-text-dim);
+  opacity: 0.55;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: opacity 0.12s ease, color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .gg-profile .toggle-limited:hover,
+body.wod-pretty-theme .wod5e .gg-title-left .toggle-limited:hover {
+  opacity: 1;
+  color: var(--wpt-accent);
+}
+
+/* Header vitals: label + squares both left-aligned (were misaligned/centered) */
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource,
+body.wod-pretty-theme .wod5e .gg-header-vitals .flex-group-center,
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-content {
+  justify-content: flex-start !important;
+  align-items: flex-start;
+}
 /* Convictions (Touchstones) = the widest / most prominent description card */
 body.wod-pretty-theme .wod5e .gg-convictions-card .description-content { min-height: 200px; }
 body.wod-pretty-theme .wod5e .gg-profile .gg-panel > .gg-card { margin-top: 12px; }
@@ -2133,7 +2157,6 @@ body.wod-pretty-theme .wod5e.sheet,
 body.wod-pretty-theme .wod5e.sheet input,
 body.wod-pretty-theme .wod5e.sheet select,
 body.wod-pretty-theme .wod5e.sheet textarea,
-body.wod-pretty-theme .wod5e.sheet button,
 body.wod-pretty-theme .wod5e.sheet .tab-label,
 body.wod-pretty-theme .wod5e.sheet .gg-field-label,
 body.wod-pretty-theme .wod5e.sheet .gg-col-head,

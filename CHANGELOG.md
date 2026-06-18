@@ -5,6 +5,21 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.5] - 2026-06-18
+
+### Fixed
+- **Window control buttons** (collapse / config / close) render again — the
+  universal-font rule was overriding their Font Awesome glyphs.
+- **Tab labels no longer truncate** ("Merit & Fla…") — tabs now size to their
+  content and grow to fill the bar, so every label shows in full.
+- **Biography / Appearance** no longer show a duplicated title (the panel title
+  and the editor's inner label were both rendering).
+- The **"reveal to all" eye toggle** is now a small, subtle inline icon next to
+  the card title (was a large, awkward icon on its own line).
+- **Experience** panel now matches the **Identity** panel's height.
+- **Header vitals** (Health / Willpower) labels and square trackers are
+  left-aligned together (were misaligned).
+
 ## [1.7.4] - 2026-06-18
 
 ### Changed (print-review pass 2)
