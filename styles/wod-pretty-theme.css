@@ -1039,3 +1039,127 @@ body.wod-pretty-theme .wod5e .gg-core-extras {
 }
 body.wod-pretty-theme .wod5e .gg-core-extras .stat-panel-section { min-width: 0; }
 body.wod-pretty-theme .wod5e .gg-core-extras .resource-header { font-size: 0.95rem; }
+
+/* ---- Custom DISCIPLINES tab (master-detail) ------------------------ */
+body.wod-pretty-theme .wod5e .gg-disc {
+  display: grid;
+  grid-template-columns: minmax(240px, 360px) 1fr;
+  gap: 18px;
+  padding: 18px 24px 24px;
+  align-items: start;
+}
+body.wod-pretty-theme .wod5e .gg-disc-list {
+  background: var(--wpt-glass);
+  backdrop-filter: var(--wpt-blur);
+  -webkit-backdrop-filter: var(--wpt-blur);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius);
+  box-shadow: var(--wpt-hilite), 0 12px 30px rgba(0, 0, 0, 0.4);
+  padding: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-disc-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 6px 8px;
+}
+body.wod-pretty-theme .wod5e .gg-disc-list-head .resource-header { border: none; padding: 0; }
+body.wod-pretty-theme .wod5e .gg-disc-items { display: flex; flex-direction: column; gap: 6px; }
+body.wod-pretty-theme .wod5e .gg-disc-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--wpt-border);
+  border-left: 3px solid transparent;
+  border-radius: var(--wpt-radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .gg-disc-item:hover { background: var(--wpt-accent-fill); }
+body.wod-pretty-theme .wod5e .gg-disc-item.selected {
+  border-color: var(--wpt-accent-border);
+  border-left-color: var(--wpt-accent);
+  background: var(--wpt-accent-fill);
+  box-shadow: 0 0 12px var(--wpt-accent-glow);
+}
+body.wod-pretty-theme .wod5e .gg-disc-name {
+  font-family: var(--wpt-font-display);
+  font-size: 1.02rem;
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .gg-disc-item .power-resource-dots { margin: 0; }
+
+body.wod-pretty-theme .wod5e .gg-disc-detail { min-width: 0; }
+body.wod-pretty-theme .wod5e .gg-disc-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 4px 12px;
+  border-bottom: 1px solid var(--wpt-border);
+  margin-bottom: 12px;
+}
+body.wod-pretty-theme .wod5e .gg-disc-detail-title {
+  font-family: var(--wpt-font-display);
+  font-size: 1.5rem;
+  color: var(--wpt-text);
+  letter-spacing: 0.02em;
+}
+body.wod-pretty-theme .wod5e .gg-power-cards { display: flex; flex-direction: column; gap: 10px; }
+body.wod-pretty-theme .wod5e .gg-power-card {
+  background: var(--wpt-glass);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius);
+  box-shadow: var(--wpt-hilite);
+  padding: 12px 14px;
+  transition: border-color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .gg-power-card:hover { border-color: var(--wpt-accent-border); }
+body.wod-pretty-theme .wod5e .gg-power-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-power-name {
+  font-family: var(--wpt-font-display);
+  font-size: 1.08rem;
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .gg-power-lv {
+  flex: 0 0 auto;
+  font: 700 0.66rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wpt-accent);
+  background: var(--wpt-accent-fill);
+  border: 1px solid var(--wpt-accent-border);
+  border-radius: 999px;
+  padding: 4px 9px;
+}
+body.wod-pretty-theme .wod5e .gg-power-desc {
+  color: var(--wpt-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin-top: 6px;
+}
+body.wod-pretty-theme .wod5e .gg-power-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .gg-power-card:hover .gg-power-controls { opacity: 1; }
+body.wod-pretty-theme .wod5e .gg-power-controls .item-control { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .gg-power-controls .item-control:hover { color: var(--wpt-accent); }
+body.wod-pretty-theme .wod5e .gg-disc-empty {
+  color: var(--wpt-text-dim);
+  text-align: center;
+  padding: 32px 12px;
+  font-style: italic;
+}

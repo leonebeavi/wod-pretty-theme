@@ -22,7 +22,13 @@
 
 const MODULE_ID = "wod-pretty-theme";
 const NAV_TEMPLATE = `modules/${MODULE_ID}/templates/tab-navigation.hbs`;
-const CORE_TEMPLATE = `modules/${MODULE_ID}/templates/core.hbs`;
+
+// Custom per-tab templates that replace the system's (keyed by part/tab id).
+// Tabs not listed here keep the system's own template, re-skinned via CSS.
+const CUSTOM_TEMPLATES = {
+  core:        `modules/${MODULE_ID}/templates/core.hbs`,
+  disciplines: `modules/${MODULE_ID}/templates/disciplines.hbs`
+};
 
 /** Splat-specific tabs to preserve, keyed by Actor subtype. */
 const SPLAT_TABS = {
@@ -54,13 +60,16 @@ function getSystemSheetClass(type) {
 /** Build a tab-consolidating subclass of a given splat sheet. */
 function buildGlassSheet(Base, splatTabs) {
   const splatParts = {};
-  for (const t of splatTabs) if (Base.PARTS[t.id]) splatParts[t.id] = Base.PARTS[t.id];
+  for (const t of splatTabs) {
+    if (CUSTOM_TEMPLATES[t.id]) splatParts[t.id] = { template: CUSTOM_TEMPLATES[t.id] };
+    else if (Base.PARTS[t.id]) splatParts[t.id] = Base.PARTS[t.id];
+  }
 
   return class GlassGothicSheet extends Base {
     static PARTS = {
       header:        Base.PARTS.header,
       tabs:          { template: NAV_TEMPLATE },
-      core:          { template: CORE_TEMPLATE },
+      core:          { template: CUSTOM_TEMPLATES.core },
       ...splatParts,
       pf_features:   Base.PARTS.features,
       pf_experience: Base.PARTS.experience,
@@ -156,7 +165,7 @@ Hooks.once("ready", async () => {
   // Make sure our nav template is available before sheets render.
   try {
     const load = foundry.applications?.handlebars?.loadTemplates ?? globalThis.loadTemplates;
-    if (load) await load([NAV_TEMPLATE, CORE_TEMPLATE]);
+    if (load) await load([NAV_TEMPLATE, ...Object.values(CUSTOM_TEMPLATES)]);
   } catch (e) {
     console.warn(`${MODULE_ID} | could not preload nav template`, e);
   }

@@ -1,0 +1,83 @@
+{{!-- WoD Pretty Theme — custom DISCIPLINES tab (Glass Gótico).
+      Master–detail: left = selectable discipline list with dots; right = the
+      selected discipline's powers as cards (name · level · description).
+      Reuses the system's exact data-actions (selectDiscipline, dotCounter*,
+      roll, disciplineChat, addDiscipline, createItem, itemEdit/Chat/Delete,
+      rollItem) so everything stays functional.
+      Context from prepareDisciplinesContext: disciplines, selectedDiscipline. --}}
+<section class="tab {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+    <div class="gg-disc">
+
+        {{!-- LEFT: discipline list (master) --}}
+        <div class="gg-disc-list">
+            <div class="gg-disc-list-head">
+                <span class="resource-header"><label class="header-label">{{localize 'WOD5E.VTM.Disciplines'}}</label></span>
+                <div class="item-controls">
+                    <a class="item-control" data-action="searchItem" title="{{localize 'WOD5E.Search'}}" data-type="power"><i class="fa-solid fa-magnifying-glass"></i></a>
+                    <a class="item-control" data-action="addDiscipline" title="{{localize 'WOD5E.VTM.AddDiscipline'}}"><i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="gg-disc-items">
+                {{#each disciplines as |discipline key|}}
+                    {{#if discipline.visible}}
+                        <div class="gg-disc-item{{#if discipline.selected}} selected{{/if}}" data-action="selectDiscipline" data-discipline="{{key}}">
+                            <span class="gg-disc-name select-label">{{discipline.displayName}}</span>
+                            {{#if (and (ne key "rituals") (ne key "ceremonies"))}}
+                                <div class="power-resource-dots">
+                                    <div class="resource-value" data-value="{{discipline.value}}" data-name="system.disciplines.{{key}}.value">
+                                        <span class="resource-value-empty" data-action="dotCounterEmpty"></span>
+                                        {{#numLoop 5}}<span class="resource-value-step" data-action="dotCounterChange" data-index="{{this}}"></span>{{/numLoop}}
+                                    </div>
+                                </div>
+                            {{/if}}
+                        </div>
+                    {{/if}}
+                {{/each}}
+            </div>
+        </div>
+
+        {{!-- RIGHT: selected discipline's powers (detail) --}}
+        <div class="gg-disc-detail">
+            {{#if selectedDiscipline}}
+                <div class="gg-disc-detail-head">
+                    <span class="gg-disc-detail-title">{{selectedDiscipline.displayName}}</span>
+                    <div class="item-controls">
+                        {{#if (and (ne selectedDiscipline.id "rituals") (ne selectedDiscipline.id "ceremonies"))}}
+                            <a class="rollable" data-action="roll" title="{{localize 'WOD5E.RollList.Label'}}" data-value-paths="disciplines.{{selectedDiscipline.id}}.value" data-discipline="{{selectedDiscipline.id}}" data-select-dialog="true"><i class="fa-solid fa-dice-d10"></i></a>
+                        {{/if}}
+                        <a class="item-control" data-action="disciplineChat" title="{{localize 'WOD5E.ItemsList.ShowToChat'}}" data-discipline="{{selectedDiscipline.id}}"><i class="fas fa-comment-alt"></i></a>
+                        <a class="item-control item-create" data-action="createItem" title="{{localize 'WOD5E.VTM.AddDiscipline'}}" data-type="power" data-subtype="{{selectedDiscipline.id}}"><i class="fas fa-plus"></i></a>
+                    </div>
+                </div>
+
+                <div class="gg-power-cards">
+                    {{#each selectedDiscipline.powers as |power key|}}
+                        <div class="gg-power-card">
+                            <div class="gg-power-card-head">
+                                <span class="gg-power-name">{{power.name}}</span>
+                                <span class="gg-power-lv">{{localize "WOD5E.Level"}} {{power.system.level}}</span>
+                            </div>
+                            {{#if power.system.description}}
+                                <div class="gg-power-desc">{{{power.system.description}}}</div>
+                            {{/if}}
+                            <div class="gg-power-controls item-controls">
+                                {{#if (isNotEmpty power.system.dicepool)}}
+                                    <a class="item-control rollable-item" data-action="rollItem" data-item-uuid="{{power.uuid}}" title="{{localize 'WOD5E.RollList.Label'}}"><i class="fa-solid fa-dice-d10"></i></a>
+                                {{/if}}
+                                <a class="item-control item-edit" data-action="itemEdit" data-item-id="{{power._id}}" title="{{localize 'WOD5E.Edit'}}"><i class="fas fa-edit"></i></a>
+                                <a class="item-control item-chat" data-action="itemChat" data-item-id="{{power._id}}" title="{{localize 'WOD5E.ItemsList.ShowToChat'}}"><i class="fas fa-comment-alt"></i></a>
+                                <a class="item-control item-delete" data-action="itemDelete" data-item-id="{{power._id}}" title="{{localize 'WOD5E.Delete'}}"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                    {{/each}}
+                    {{#unless selectedDiscipline.powers.length}}
+                        <div class="gg-disc-empty">{{localize 'WOD5E.VTM.NoPowerSelected'}}</div>
+                    {{/unless}}
+                </div>
+            {{else}}
+                <div class="gg-disc-empty">{{localize 'WOD5E.VTM.NoDisciplineSelected'}}</div>
+            {{/if}}
+        </div>
+
+    </div>
+</section>
