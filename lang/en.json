@@ -12,6 +12,10 @@
       "Restructure": {
         "Name": "Reorganize sheets (Glass Gótico layout)",
         "Hint": "Consolidate the wod5e sheet tabs into a horizontal top tab bar: Core · [splat] · Advantages · Profile · Inventory · Notes · Settings (GM-only). Turn off (and reload) to use the system's original tabs."
+      },
+      "HumanityLabel": {
+        "Name": "Custom Humanity track name",
+        "Hint": "Rename this actor's Humanity track (leave blank to keep \"Humanity\")."
       }
     },
     "Tabs": {

@@ -27,6 +27,14 @@
             </div>
         </div>
 
+        {{!-- WoD Pretty Theme extra: rename the Humanity track (per actor) --}}
+        <div class="form-group">
+            <label>{{localize "WPT.Settings.HumanityLabel.Name"}}</label>
+            <div class="form-fields">
+                <input type="text" name="flags.wod-pretty-theme.humanityLabel" value="{{customHumanityLabel}}" placeholder="{{localize 'WOD5E.VTM.Humanity'}}"/>
+            </div>
+        </div>
+
         {{#if hasSkillAttributeData}}
             <div class="form-group">
                 <label>{{localize "WOD5E.ActorSettings.UseInputFieldsForStats"}}</label>

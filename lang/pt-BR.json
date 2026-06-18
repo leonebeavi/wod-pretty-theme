@@ -12,6 +12,10 @@
       "Restructure": {
         "Name": "Reorganizar fichas (layout Glass Gótico)",
         "Hint": "Junta as abas das fichas do wod5e numa barra de abas no topo: Núcleo · [splat] · Vantagens · Perfil · Inventário · Notas · Configurações (só-GM). Desligue (e recarregue) para usar as abas originais do sistema."
+      },
+      "HumanityLabel": {
+        "Name": "Nome personalizado da trilha de Humanidade",
+        "Hint": "Renomeie a trilha de Humanidade deste ator (deixe em branco para manter \"Humanidade\")."
       }
     },
     "Tabs": {

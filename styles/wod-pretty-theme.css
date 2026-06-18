@@ -1191,12 +1191,12 @@ body.wod-pretty-theme .wod5e .gg-blood-center .humanity .resource-content {
 }
 /* Humanity title is a roll affordance — keep the dice icon inline with text */
 body.wod-pretty-theme .wod5e .gg-blood-center .remorse-roll { cursor: pointer; }
+/* keep block layout so the gradient underline (::after) stays BELOW the title,
+   with the dice icon inline after the text */
 body.wod-pretty-theme .wod5e .gg-blood-center .remorse-roll .gg-section-title {
-  display: inline-flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 8px;
+  display: block;
 }
+body.wod-pretty-theme .wod5e .gg-blood-center .remorse-roll .gg-section-title i { margin-left: 8px; }
 body.wod-pretty-theme .wod5e .gg-blood-center .remorse-roll:hover .gg-section-title {
   color: var(--wpt-accent);
 }
@@ -2251,3 +2251,39 @@ body.wod-pretty-theme .wod5e.sheet,
 body.wod-pretty-theme .wod5e.sheet *:not(i):not([class*="fa-"]):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.wod5e-symbol) {
   font-family: var(--wpt-font-display) !important;
 }
+
+/* =====================================================================
+   Header feedback pass 3
+   ===================================================================== */
+/* Frenzy: clear spacing between the status line and the Resist Frenzy pill */
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .flexcol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 9px;
+}
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .field-header { margin: 0; }
+
+/* Clan: the edit pen sits inline AFTER the name (was overlapping it in edit mode) */
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-value {
+  flex-wrap: nowrap;
+  position: relative;
+}
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-value .data-item {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+body.wod-pretty-theme .wod5e .gg-header-status .edit-data-item,
+body.wod-pretty-theme .wod5e .gg-header-status .search-data-item,
+body.wod-pretty-theme .wod5e .gg-header-status .add-data-item {
+  position: static !important;
+  flex: 0 0 auto;
+}
+
+/* Vitals: square trackers sit closer to their Health / Willpower labels */
+body.wod-pretty-theme .wod5e .gg-header-vitals .field-section { gap: 0; }
+body.wod-pretty-theme .wod5e .gg-header-vitals .field-section > .flexcol { gap: 2px; }
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-label,
+body.wod-pretty-theme .wod5e .gg-header-vitals .willpower-roll { margin-bottom: 3px !important; }
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource { margin-top: 0 !important; }
