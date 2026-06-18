@@ -5,6 +5,14 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.11] - 2026-06-18
+
+### Changed
+- On the Core tab, the **entire attribute / skill row is now the roll target**
+  (not just the name) — click anywhere on the row to roll. The dots still set
+  the value (Foundry fires only the closest control), and in input-fields mode
+  the row isn't rollable so the number field stays editable.
+
 ## [1.7.10] - 2026-06-18
 
 ### Changed

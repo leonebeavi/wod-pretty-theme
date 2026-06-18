@@ -2413,3 +2413,14 @@ body.wod-pretty-theme .wod5e .gg-header-vitals .field-section > .flexcol { gap: 
 body.wod-pretty-theme .wod5e .gg-header-vitals .resource-label,
 body.wod-pretty-theme .wod5e .gg-header-vitals .willpower-roll { margin-bottom: 3px !important; }
 body.wod-pretty-theme .wod5e .gg-header-vitals .resource { margin-top: 0 !important; }
+
+/* Core: the whole attribute/skill row is the roll target (the dots still set
+   values — Foundry dispatches only the closest data-action). */
+body.wod-pretty-theme .wod5e .gg-core .attribute[data-action="roll"],
+body.wod-pretty-theme .wod5e .gg-core .skill[data-action="roll"] {
+  cursor: pointer;
+  padding: 3px 8px;
+  margin: 0 -8px;
+}
+body.wod-pretty-theme .wod5e .gg-core .attribute[data-action="roll"] .resource-label,
+body.wod-pretty-theme .wod5e .gg-core .skill[data-action="roll"] .resource-label { cursor: pointer; }

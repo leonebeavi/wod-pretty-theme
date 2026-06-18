@@ -20,7 +20,7 @@
                 {{#each sortedAttributes as |type key|}}
                     <div class="attributes stats-list">
                         {{#each type as |attribute key|}}
-                            <div class="attribute">
+                            <div class="attribute"{{#unless ../../settings.skillAttributeInputs}} data-action="roll" data-value-paths="attributes.{{attribute.id}}.value" data-select-dialog="true" data-attribute="{{attribute.id}}"{{/unless}}>
                                 <label for="actor.system.attributes.{{attribute.id}}.value" class="resource-label rollable" data-action="roll" data-value-paths="attributes.{{attribute.id}}.value" data-select-dialog="true"
                                     data-attribute="{{attribute.id}}">{{attribute.displayName}}</label>
                                 {{#if ../../settings.skillAttributeInputs}}
@@ -56,7 +56,7 @@
                 {{#each sortedSkills as |type key|}}
                     <div class="skills stats-list">
                         {{#each type as |skill key|}}
-                            <div class="skill">
+                            <div class="skill"{{#unless ../../settings.skillAttributeInputs}} data-action="roll" data-value-paths="skills.{{skill.id}}.value" data-skill="{{skill.id}}" data-select-dialog="true" data-use-flavor-path="true" data-flavor-path="skills.{{skill.id}}.description" data-macroid="{{skill.macroid}}"{{/unless}}>
                                 <div class="resource-label">
                                     <a class="edit-skill" data-action="editSkill" title="Edit skill" data-skill="{{skill.id}}">
                                         <i class="fas fa-edit"></i>
