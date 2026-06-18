@@ -53,6 +53,7 @@ body.wod-pretty-theme {
   --wpt-radius-sm: 8px;
   --wpt-radius:    14px;
   --wpt-radius-lg: 22px;
+  --wpt-radius-window: 6px;   /* window corners: subtle, Foundry-like */
   --wpt-shadow:    0 40px 100px rgba(0, 0, 0, 0.65);
   --wpt-shadow-sm: 0 12px 30px rgba(0, 0, 0, 0.40);
   --wpt-panel-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 30px rgba(0, 0, 0, 0.40);
@@ -155,7 +156,7 @@ body.wod-pretty-theme .wod5e.sheet {
   font-family: var(--wpt-font-ui);
   box-shadow: var(--wpt-shadow);
   border: 1px solid var(--wpt-border);
-  border-radius: var(--wpt-radius-lg);
+  border-radius: var(--wpt-radius-window);
   overflow: hidden;
 }
 /* Solid warm-black base with a per-splat glow at the top (panels glass over it) */
