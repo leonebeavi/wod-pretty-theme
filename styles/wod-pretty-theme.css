@@ -1837,8 +1837,55 @@ body.wod-pretty-theme .wod5e .gg-profile .exp-tracker .gg-field-label {
   margin-bottom: 0;
   text-align: center;
 }
-/* Legacy-XP branch big headers stay centered if that branch renders */
-body.wod-pretty-theme .wod5e .gg-exp-panel .big-header { text-align: center; }
+/* ---- Legacy-XP branch (manual XP tracking) — clean, not "buggy" ---- */
+body.wod-pretty-theme .wod5e .gg-exp-panel .experience-trackers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--wpt-border);
+  border-radius: 11px;
+  padding: 12px 14px;
+}
+/* the "Remaining EXP" / "Total EXP" titles → subtle label, not big red */
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker .big-header {
+  color: var(--wpt-text-muted) !important;
+  font: 700 0.62rem/1 var(--wpt-font-ui) !important;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker > .flexrow {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 9px;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker > .flexrow > .flexcol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker input {
+  width: 66px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.32) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: 8px !important;
+  color: var(--wpt-text) !important;
+  font: 700 1.5rem/1 var(--wpt-font-display) !important;
+  padding: 6px 4px !important;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker input:disabled { opacity: 0.75; }
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker > .flexrow > .flexcol > div {
+  font: 700 0.55rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wpt-text-dim);
+}
 
 /* Add / Spend controls as centered pills */
 body.wod-pretty-theme .wod5e .gg-exp-controls {
