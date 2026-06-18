@@ -5,6 +5,17 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2026-06-17
+
+### Fixed
+- **Blank tabs.** The system's `prepare*Context` helpers each set
+  `context.tab = context.tabs.<originalId>` themselves. Because we renamed
+  stats→core / equipment→inventory and merged features/experience/biography into
+  Profile, those lookups were undefined and (since we set the tab before calling
+  the helper) the section ended up with no `tab` → it rendered empty. Now the
+  helper runs first and we bind the correct tab last, so Core/Inventory/Profile
+  render their content and the merged Profile parts correctly share the Profile tab.
+
 ## [1.2.2] - 2026-06-17
 
 ### Fixed

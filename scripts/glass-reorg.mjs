@@ -94,46 +94,29 @@ function buildGlassSheet(Base, splatTabs) {
 
     async _preparePartContext(partId, context, options) {
       const actor = this.actor;
-      const setTab = (id) => { if (context?.tabs && id in context.tabs) context.tab = context.tabs[id]; };
 
+      // Parent prep first. This handles the splat-specific tabs (disciplines,
+      // blood, gifts, wolf, edges), notepad, limited, etc., AND — crucially —
+      // the system's prepare* helpers each set `context.tab = context.tabs.<id>`
+      // using their ORIGINAL id. We override that at the very end.
+      context = { ...(await super._preparePartContext(partId, context, options)) };
+
+      // Our renamed / merged parts have no case in the parent, so run their prep.
+      let tabId = partId;
       switch (partId) {
-        case "core":
-          context = { ...(await super._preparePartContext(partId, context, options)) };
-          setTab("core");
-          return this.prepareStatsContext(context, actor);
-
-        case "inventory":
-          context = { ...(await super._preparePartContext(partId, context, options)) };
-          setTab("inventory");
-          return this.prepareEquipmentContext(context, actor);
-
-        case "pf_features":
-          context = { ...(await super._preparePartContext(partId, context, options)) };
-          setTab("profile"); context.isGM = game.user.isGM;
-          return this.prepareFeaturesContext(context, actor);
-
-        case "pf_experience":
-          context = { ...(await super._preparePartContext(partId, context, options)) };
-          setTab("profile");
-          return this.prepareExperienceContext(context, actor);
-
-        case "pf_biography":
-          context = { ...(await super._preparePartContext(partId, context, options)) };
-          setTab("profile");
-          return this.prepareBiographyContext(context, actor);
-
-        case "pf_settings":
-          context = { ...(await super._preparePartContext(partId, context, options)) };
-          setTab("profile"); context.isGM = game.user.isGM;
-          return this.prepareSettingsContext(context, actor);
-
-        default:
-          // header / tabs / banner / limited / notepad / splat-specific:
-          // let the parent prepare them, then attach the matching tab.
-          context = await super._preparePartContext(partId, context, options);
-          setTab(partId);
-          return context;
+        case "core":          context = await this.prepareStatsContext(context, actor);     tabId = "core"; break;
+        case "inventory":     context = await this.prepareEquipmentContext(context, actor); tabId = "inventory"; break;
+        case "pf_features":   context = await this.prepareFeaturesContext(context, actor);  tabId = "profile"; context.isGM = game.user.isGM; break;
+        case "pf_experience": context = await this.prepareExperienceContext(context, actor); tabId = "profile"; break;
+        case "pf_biography":  context = await this.prepareBiographyContext(context, actor); tabId = "profile"; break;
+        case "pf_settings":   context = await this.prepareSettingsContext(context, actor);  tabId = "profile"; context.isGM = game.user.isGM; break;
       }
+
+      // Bind the correct tab LAST — the system helpers above set context.tab to
+      // their original id (undefined after our rename/merge), so this fixes it
+      // and makes the merged Profile parts share data-tab="profile".
+      if (context?.tabs && tabId in context.tabs) context.tab = context.tabs[tabId];
+      return context;
     }
   };
 }
