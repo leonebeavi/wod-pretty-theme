@@ -1,30 +1,28 @@
-{{!-- WoD Pretty Theme — custom VAMPIRE header (Glass Gótico).
-      Three columns: vitals (health/willpower) · identity (portrait, name,
-      "VAMPIRE · CLAN · GENERATION" subtitle) · status (clan, generation,
-      hunger, Resist Frenzy pill).
-      Reuses the system's own partials and data-actions so every control stays
+{{!-- WoD Pretty Theme — custom VAMPIRE header (Glass Gótico), matching the
+      Obsidian design HTML. Three columns: vitals · identity · status.
+      Reuses the system's own partials/data-actions so every control stays
       functional (edit image, name, health/willpower counters, clan add/edit,
       hunger dots, rouse, resist/end frenzy). The only added datum is
       `generation` (system.headers.generation), set in _preparePartContext. --}}
 <header class="actor-header gg-header"{{#if headerbg}} style="background: url({{headerbg}}) center;"{{/if}}>
 
-    {{!-- LEFT: vitals --}}
+    {{!-- LEFT — health / willpower --}}
     <div class="gg-header-vitals">
         {{> "systems/wod5e/display/shared/actors/parts/health.hbs"}}
         {{> "systems/wod5e/display/shared/actors/parts/willpower.hbs"}}
     </div>
 
-    {{!-- CENTER: portrait + identity --}}
+    {{!-- CENTER — portrait (name overlaid at the bottom) + subtitle below --}}
     <div class="gg-header-identity">
-        <div class="header-profile-img">
+        <div class="header-profile-img gg-portrait">
             <img class="profile-img" data-action="editImage" src="{{img}}" data-edit="img" title="{{actor.name}}"/>
-        </div>
-        <div class="flexrow name-field{{#if locked}} clickthrough{{/if}}">
-            {{#if locked}}
-                <div class="charname">{{name}}</div>
-            {{else}}
-                <input class="charname" name="name" type="text" value="{{name}}" placeholder="{{localize 'WOD5E.Name'}}"/>
-            {{/if}}
+            <div class="name-field gg-name-overlay{{#if locked}} clickthrough{{/if}}">
+                {{#if locked}}
+                    <div class="charname">{{name}}</div>
+                {{else}}
+                    <input class="charname" name="name" type="text" value="{{name}}" placeholder="{{localize 'WOD5E.Name'}}"/>
+                {{/if}}
+            </div>
         </div>
         <div class="gg-header-subtitle">
             <span class="gg-sub-splat">{{localize currentTypeLabel}}</span>
@@ -33,12 +31,12 @@
         </div>
     </div>
 
-    {{!-- RIGHT: clan / generation / hunger / frenzy --}}
+    {{!-- RIGHT — clan / generation, hunger, resist frenzy --}}
     <div class="gg-header-status">
         <div class="gg-status-fields">
-            <div class="flexcol shared-row gg-field">
-                <label class="resource-label field-header">{{localize 'WOD5E.VTM.Clan'}}</label>
-                <div class="resource resource-content">
+            <div class="gg-field gg-field-clan">
+                <label class="gg-field-label">{{localize 'WOD5E.VTM.Clan'}}</label>
+                <div class="gg-field-value resource resource-content">
                     {{#if clan}}
                         <span class="data-item nowrap">{{clan.name}}</span>
                         <a class="edit-data-item" data-action="itemEdit" data-item-id="{{clan.id}}" title="{{localize 'WOD5E.Edit'}}"><i class="fa-solid fa-pen-nib"></i></a>
@@ -48,9 +46,10 @@
                     {{/if}}
                 </div>
             </div>
-            <div class="flexcol shared-row gg-field">
-                <label class="resource-label field-header">{{localize 'WOD5E.VTM.Generation'}}</label>
-                <div class="resource resource-content">
+            <div class="gg-field-divider"></div>
+            <div class="gg-field gg-field-gen">
+                <label class="gg-field-label">{{localize 'WOD5E.VTM.Generation'}}</label>
+                <div class="gg-field-value resource resource-content">
                     {{#if locked}}
                         <span class="data-item nowrap">{{#if generation}}{{generation}}{{else}}—{{/if}}</span>
                     {{else}}
@@ -60,9 +59,9 @@
             </div>
         </div>
 
-        <div class="flexcol field-section gg-hunger-block">
-            <label class="resource-label field-header">{{localize "WOD5E.VTM.Hunger"}}</label>
-            <div class="flexrow gg-hunger-row">
+        <div class="gg-hunger-block">
+            <label class="gg-field-label">{{localize "WOD5E.VTM.Hunger"}}</label>
+            <div class="gg-hunger-row">
                 {{> "systems/wod5e/display/vtm/actors/parts/hunger.hbs"}}
                 {{> "systems/wod5e/display/vtm/actors/parts/rouse.hbs"}}
             </div>

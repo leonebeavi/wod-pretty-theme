@@ -1,0 +1,45 @@
+{{!-- WoD Pretty Theme — custom NOTEPAD tab (Glass Gótico).
+      Two-column layout: left = Public Notes panel, right = Private Notes panel
+      (gated to owners, "GM only" tag in the title, matching the Obsidian design).
+      Reuses the system's exact <prose-mirror> editors VERBATIM (name=system.notes /
+      system.privatenotes, value + enriched body) so rich-text editing keeps working,
+      and preserves the system's {{#if isOwner}} gating and the group/private label
+      switch via baseActorType.
+      Context from prepareNotepadContext: notes, enrichedNotes, privatenotes,
+      enrichedPrivateNotes (plus base-context isOwner, baseActorType, tab). --}}
+<section class="tab {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+    <div class="gg-notepad gg-grid-2">
+
+        {{!-- PUBLIC NOTES --}}
+        <div class="gg-panel gg-notepad-panel">
+            <div class="gg-title-left">{{localize "WOD5E.Tabs.PublicNotes"}}</div>
+            <div class="resource gg-notepad-editor">
+                <prose-mirror name="system.notes" value="{{notes}}"
+                    toggled="true" compact="true">
+                    {{{enrichedNotes}}}
+                </prose-mirror>
+            </div>
+        </div>
+
+        {{!-- PRIVATE NOTES (owner-gated) --}}
+        {{#if isOwner}}
+            <div class="gg-panel gg-notepad-panel">
+                <div class="gg-title-left">
+                    {{#ifeq baseActorType 'group'}}
+                        {{localize "WOD5E.Tabs.StorytellerNotes"}}
+                    {{else}}
+                        {{localize "WOD5E.Tabs.PrivateNotes"}}
+                    {{/ifeq}}
+                    <span class="gg-notepad-gm">GM only</span>
+                </div>
+                <div class="resource gg-notepad-editor">
+                    <prose-mirror name="system.privatenotes" value="{{privatenotes}}"
+                        toggled="true" compact="true">
+                        {{{enrichedPrivateNotes}}}
+                    </prose-mirror>
+                </div>
+            </div>
+        {{/if}}
+
+    </div>
+</section>

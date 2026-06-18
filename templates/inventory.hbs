@@ -1,0 +1,98 @@
+{{!-- WoD Pretty Theme — custom INVENTORY tab (Glass Gótico).
+      One frosted panel per equipment group (keyed by item type, exactly as
+      prepareEquipmentContext.equipmentItems is grouped), each with a left title
+      and the system's search/create controls on the right, then the item rows.
+      Every interactive element (itemChat on the image, rollItem, expend/restore
+      uses, itemEdit, itemDelete, createItem/searchItem, drag attributes) is
+      copied VERBATIM from the system's equipment.hbs so all functionality is
+      preserved. The Equipment Notes panel reuses the system's <prose-mirror>
+      editor for the equipment field.
+      Context from prepareEquipmentContext: equipment, enrichedEquipment,
+      equipmentItems (+ top-level baseActorType). --}}
+<section class="tab {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+    <div class="gg-stack gg-inv">
+
+        {{!-- EQUIPMENT GROUPS (one panel per item type) --}}
+        {{#each equipmentItems as |equipment key|}}
+            <div class="gg-panel gg-pad-sm equipment-list item-list">
+                <div class="category">
+                    <div class="gg-inv-head">
+                        <div class="gg-title-left item-name">{{localize (concat 'TYPES.Item.' key)}}</div>
+                        <div class="item-controls">
+                            <a class="item-control search-data-item flex-center" data-action="searchItem" title="{{localize 'WOD5E.Search'}}" data-type="{{key}}">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </a>
+                            <a class="item-control item-create" data-action="createItem" title="{{localize 'WOD5E.Add'}}" data-type="{{key}}">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="gg-inv-items">
+                        {{#each equipment as |item key|}}
+                            <div class="collapsible-container">
+                                <div class="gg-card gg-inv-row flexrow item" data-drag="true" data-item-id="{{item.id}}" data-document-uuid="{{item.uuid}}" data-type="Item">
+                                    <div class="item-image">
+                                        <img src="{{item.img}}" class="clickable" data-action="itemChat" data-item-id="{{item._id}}" title="{{localize 'WOD5E.ItemsList.ShowToChat'}}">
+                                    </div>
+                                    <div class="item-name{{#if item.system.enrichedDescription}} collapsible{{/if}}" {{#if item.system.enrichedDescription}}data-action="toggleCollapse"{{/if}}>
+                                        {{item.name}}
+                                        {{#if item.system.uses.enabled}}
+                                            <span class="gg-inv-stat">({{item.system.uses.current}}/{{item.system.uses.max}})</span>
+                                        {{/if}}
+                                    </div>
+                                    <div class="item-controls">
+                                        {{!-- Roll the item if a dicepool is available and the actor is not a group sheet --}}
+                                        {{#ifnoteq ../../baseActorType 'group'}}
+                                            {{#if item.system.dicepool}}
+                                                {{#if (isNotEmpty item.system.dicepool)}}
+                                                    <a class="item-image rollable-item" data-action="rollItem" data-item-uuid="{{item.uuid}}">
+                                                        <i class="fa-solid fa-dice-d10"></i>
+                                                    </a>
+                                                {{/if}}
+                                            {{/if}}
+                                        {{/ifnoteq}}
+                                        {{#if item.system.uses.enabled}}
+                                            {{!-- Consume a use of the feature --}}
+                                            <a class="item-control item-use" data-action="expendItemUse" data-item-id="{{item._id}}" title="{{localize 'WOD5E.ItemsList.ExpendUse'}}">
+                                                <i class="fa-solid fa-angle-down"></i>
+                                            </a>
+                                            {{!-- Restore the uses of the feature back to max --}}
+                                            <a class="item-control item-restore" data-action="restoreItemUses" data-item-id="{{item._id}}" title="{{localize 'WOD5E.ItemsList.ResetUses'}}">
+                                                <i class="fa-solid fa-rotate-left"></i>
+                                            </a>
+                                        {{/if}}
+                                        {{!-- Edit the item --}}
+                                        <a class="item-control item-edit" data-action="itemEdit" data-item-id="{{item._id}}" title="{{localize 'WOD5E.Edit'}}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        {{!-- Delete the item --}}
+                                        <a class="item-control item-delete" data-action="itemDelete" data-item-id="{{item._id}}" title="{{localize 'WOD5E.Delete'}}">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="collapsible-content item-description">
+                                    {{{item.system.enrichedDescription}}}
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+
+        {{!-- EQUIPMENT NOTES (system prose-mirror editor, verbatim) --}}
+        <div class="gg-panel equipment-notes">
+            <div class="gg-title-left">{{localize "WOD5E.EquipmentList.EquipmentNotes"}}</div>
+            <div class="description-field">
+                <div class="description-content resource">
+                    <prose-mirror name="system.equipment" value="{{equipment}}"
+                        toggled="true" compact="true">
+                        {{{enrichedEquipment}}}
+                    </prose-mirror>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

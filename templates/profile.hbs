@@ -1,0 +1,308 @@
+{{!-- WoD Pretty Theme — merged PROFILE tab (Glass Gótico).
+      Union of prepareFeaturesContext + prepareExperienceContext + prepareBiographyContext.
+      Reuses the system's EXACT interactive markup verbatim (identity header inputs,
+      experience inputs + add/spend actions, feature dot widgets + item controls,
+      prose-mirror editors) — only re-arranged into the new layout.
+      Context: concept, chronicle, ambition, desire, features, tenets, enrichedTenets,
+      showAmbitionDesire, settings, locked (features); experiences, exp, derivedXP,
+      showLegacyXP (experience); biography, enrichedBiography, appearance,
+      enrichedAppearance, currentActorType (biography). --}}
+<section class="tab {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+    <div class="gg-stack gg-profile">
+
+        {{!-- ROW 1: Identity (wide) + Experience --}}
+        <div class="gg-grid-2 gg-profile-top">
+
+            {{!-- IDENTITY --}}
+            <div class="gg-panel">
+                <div class="gg-title-left">Identity</div>
+                <div class="gg-grid-2">
+                    <div class="gg-card">
+                        <label class="gg-field-label" for="system.headers.concept">{{localize "WOD5E.BiographyList.Concept"}}</label>
+                        <input id="system.headers.concept" type="text" name="system.headers.concept" value="{{concept}}" placeholder="{{localize 'WOD5E.BiographyList.Concept'}}" />
+                    </div>
+                    <div class="gg-card">
+                        <label class="gg-field-label" for="system.headers.chronicle">{{localize "WOD5E.BiographyList.Chronicle"}}</label>
+                        <input id="system.headers.chronicle" type="text" name="system.headers.chronicle" value="{{chronicle}}" placeholder="{{localize 'WOD5E.BiographyList.Chronicle'}}" />
+                    </div>
+                    {{#if showAmbitionDesire}}
+                        <div class="gg-card">
+                            <label class="gg-field-label" for="system.headers.ambition">{{localize "WOD5E.BiographyList.Ambition"}}</label>
+                            <input id="system.headers.ambition" type="text" name="system.headers.ambition" value="{{ambition}}" placeholder="{{localize 'WOD5E.BiographyList.Ambition'}}" />
+                        </div>
+                        <div class="gg-card">
+                            <label class="gg-field-label" for="system.headers.desire">{{localize "WOD5E.BiographyList.Desire"}}</label>
+                            <input id="system.headers.desire" type="text" name="system.headers.desire" value="{{desire}}" placeholder="{{localize 'WOD5E.BiographyList.Desire'}}" />
+                        </div>
+                    {{/if}}
+                </div>
+
+                {{!-- Chronicle Tenets (verbatim prose-mirror editor) --}}
+                <div class="gg-card gg-tenets-card">
+                    <div class="description-field">
+                        <div class="flex-center field-header">
+                            <label class="resource-label gg-field-label">
+                                {{localize "WOD5E.BiographyList.ChronicleTenets"}}
+                                <div class="toggle-limited{{#if settings.limited.tenets}} visible{{/if}}" data-action="toggleLimited" data-name="system.settings.limited.tenets"
+                                    title="{{#if settings.limited.tenets}}{{localize "WOD5E.Tabs.IsVisible"}}{{else}}{{localize "WOD5E.Tabs.IsNotVisible"}}{{/if}}">
+                                    {{#ifnoteq baseActorType 'group'}}
+                                        {{#if settings.limited.tenets}}
+                                            <i class="fa-solid fa-eye"></i>
+                                        {{else}}
+                                            <i class="fa-solid fa-eye-slash"></i>
+                                        {{/if}}
+                                    {{/ifnoteq}}
+                                </div>
+                            </label>
+                        </div>
+                        <div class="description-content resource">
+                            <prose-mirror name="system.headers.tenets" value="{{tenets}}"
+                                toggled="true" compact="true">
+                                {{{enrichedTenets}}}
+                            </prose-mirror>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{!-- EXPERIENCE --}}
+            <div class="gg-panel gg-exp-panel">
+                <div class="gg-title-left">{{localize "WOD5E.Experience.Label"}}</div>
+
+                <div class="experience-trackers">
+                    {{#if showLegacyXP}}
+                        <div class="tracker flexcol">
+                            <div class="field-header flex-center">
+                                <div class="field-header big-header">
+                                    {{localize "WOD5E.Experience.Remaining"}}
+                                </div>
+                            </div>
+                            <div class="flexrow">
+                                <div class="flexcol">
+                                    <input name="system.exp.value" type="number" value="{{exp.value}}"/>
+                                    <div>{{localize "WOD5E.Experience.Legacy"}}</div>
+                                </div>
+                                <div class="flexcol">
+                                    <input name="system.derivedXP.remainingXP" type="number" value="{{derivedXP.remainingXP}}" disabled/>
+                                    <div>{{localize "WOD5E.Experience.Calculated"}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tracker flexcol">
+                            <div class="field-header flex-center">
+                                <div class="field-header big-header">
+                                    {{localize "WOD5E.Experience.Total"}}
+                                </div>
+                            </div>
+                            <div class="flexrow">
+                                <div class="flexcol">
+                                    <input name="system.exp.max" type="number" value="{{exp.max}}"/>
+                                    <div>{{localize "WOD5E.Experience.Legacy"}}</div>
+                                </div>
+                                <div class="flexcol">
+                                    <input name="system.derivedXP.totalXP" type="number" value="{{derivedXP.totalXP}}" disabled/>
+                                    <div>{{localize "WOD5E.Experience.Calculated"}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    {{else}}
+                        <div class="gg-grid-2 gg-exp-numbers">
+                            <div class="gg-card exp-tracker">
+                                <input name="system.derivedXP.remainingXP" type="number" value="{{derivedXP.remainingXP}}" disabled/>
+                                <div class="gg-field-label">{{localize "WOD5E.Experience.Remaining"}}</div>
+                            </div>
+                            <div class="gg-card exp-tracker">
+                                <input name="system.derivedXP.totalXP" type="number" value="{{derivedXP.totalXP}}" disabled/>
+                                <div class="gg-field-label">{{localize "WOD5E.Experience.Total"}}</div>
+                            </div>
+                        </div>
+                    {{/if}}
+                </div>
+
+                <div class="flex-center flexrow gg-exp-controls">
+                    <a class="add-experience gg-pill" data-action="addExperience" data-operation="add">
+                        {{localize "WOD5E.Experience.AddExperience"}}
+                    </a>
+                    <a class="spend-experience gg-pill" data-action="addExperience" data-operation="spend">
+                        {{localize "WOD5E.Experience.SpendExperience"}}
+                    </a>
+                </div>
+
+                {{!-- Experience history (preserves edit/remove actions) --}}
+                {{#if experiences.length}}
+                    <div class="gg-card gg-exp-history">
+                        <div class="xp-header flexrow">
+                            <div class="xp-label xp-header-label">{{localize "WOD5E.Name"}}</div>
+                            <div class="xp-amount xp-header-label">{{localize "WOD5E.Amount"}}</div>
+                            <div class="xp-controls xp-header-label">{{localize "WOD5E.Controls"}}</div>
+                        </div>
+                        {{#each experiences as |experience key|}}
+                            <div class="flexrow{{#ifgr experience.value 0}} experience-gain{{/ifgr}}{{#ifless experience.value 0}} experience-spend{{/ifless}}">
+                                {{#ifgr experience.value 0}}
+                                    <img class="xp-icon xp-gain-icon"/>
+                                {{/ifgr}}
+                                {{#ifeq experience.value 0}}
+                                    <img class="xp-icon xp-neutral-icon"/>
+                                {{/ifeq}}
+                                {{#ifless experience.value 0}}
+                                    <img class="xp-icon xp-spend-icon"/>
+                                {{/ifless}}
+                                <div class="xp-label">{{experience.name}}</div>
+                                <div class="xp-amount">{{experience.value}}</div>
+                                <div class="xp-controls">
+                                    <a class="xp-control edit-experience" data-action="editExperience" title="{{localize 'WOD5E.Edit'}}" data-experience-id="{{experience.id}}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a class="xp-control remove-experience" data-action="removeExperience" title="{{localize 'WOD5E.Delete'}}" data-experience-id="{{experience.id}}">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+
+        {{!-- ROW 2: Advantages (feature categories) --}}
+        <div class="gg-panel">
+            <div class="gg-title-left">Advantages</div>
+            <div class="gg-grid-4 features-list item-list">
+                {{#each features as |feature key|}}
+                    <div class="category gg-feature-col">
+                        <div class="gg-col-head item-header">
+                            <span class="item-name">{{localize (generateLocalizedLabel key 'features')}}</span>
+                            <span class="item-controls">
+                                <a class="item-control search-data-item flex-center" data-action="searchItem" title="{{localize 'WOD5E.Search'}}" data-type="feature" data-subtype="{{key}}">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </a>
+                                <a class="item-control item-create" data-action="createItem" title="{{localize 'WOD5E.Add'}}" data-type="feature" data-subtype="{{key}}">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </span>
+                        </div>
+                        {{#each feature as |item key|}}
+                            <div class="collapsible-container gg-feature-row">
+                                <div class="flexrow item" data-drag="true" data-item-id="{{item.id}}" data-document-uuid="{{item.uuid}}" data-type="Item">
+                                    <div class="item-image">
+                                        <img src="{{item.img}}" class="clickable" data-action="itemChat" data-item-id="{{item._id}}" title="{{localize 'WOD5E.ItemsList.ShowToChat'}}">
+                                    </div>
+                                    <div class="item-name{{#if item.system.enrichedDescription}} collapsible{{/if}}" {{#if item.system.enrichedDescription}}data-action="toggleCollapse"{{/if}}>
+                                        {{item.name}}
+                                    </div>
+                                    {{#if ../../locked}}
+                                        {{#ifnoteq item.system.featuretype 'boon'}}
+                                            <div class="dot-tracker">
+                                                <div class="resource-value" data-value="{{item.system.points}}" data-name="items.{{item._id}}">
+                                                    <span class="resource-value-empty" data-action="dotCounterEmpty"></span>
+                                                    {{#numLoop 5}}
+                                                        <span class="resource-value-step" data-action="dotCounterChange" data-index="{{this}}"></span>
+                                                    {{/numLoop}}
+                                                </div>
+                                            </div>
+                                        {{/ifnoteq}}
+                                    {{/if}}
+                                    <div class="item-controls">
+                                        <a class="item-control item-edit" data-action="itemEdit" data-item-id="{{item._id}}" title="{{localize 'WOD5E.Edit'}}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a class="item-control item-delete" data-action="itemDelete" data-item-id="{{item._id}}" title="{{localize 'WOD5E.Delete'}}">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="flexrow">
+                                    {{#if item.system.uses.enabled}}
+                                        <div>
+                                            <span>
+                                                {{localize "WOD5E.ItemsList.UsesRemaining"}}: {{item.system.uses.current}}/{{item.system.uses.max}}
+                                            </span>
+                                            <a class="item-control item-use" data-action="expendItemUse" data-item-id="{{item._id}}" title="{{localize 'WOD5E.ItemsList.ExpendUse'}}">
+                                                <i class="fa-solid fa-angle-down"></i>
+                                            </a>
+                                            <a class="item-control item-restore" data-action="restoreItemUses" data-item-id="{{item._id}}" title="{{localize 'WOD5E.ItemsList.ResetUses'}}">
+                                                <i class="fa-solid fa-rotate-left"></i>
+                                            </a>
+                                        </div>
+                                    {{/if}}
+                                    {{#unless ../../locked}}
+                                        {{#ifnoteq item.system.featuretype 'boon'}}
+                                            <div class="dot-tracker">
+                                                <div class="resource-value" data-value="{{item.system.points}}" data-name="items.{{item._id}}">
+                                                    <span class="resource-value-empty" data-action="dotCounterEmpty"></span>
+                                                    {{#numLoop 5}}
+                                                        <span class="resource-value-step" data-action="dotCounterChange" data-index="{{this}}"></span>
+                                                    {{/numLoop}}
+                                                </div>
+                                            </div>
+                                        {{/ifnoteq}}
+                                    {{/unless}}
+                                </div>
+                                <div class="collapsible-content item-description">
+                                    {{{item.system.enrichedDescription}}}
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+
+        {{!-- ROW 3: Biography + Appearance --}}
+        <div class="gg-grid-2">
+            <div class="gg-panel">
+                <div class="gg-title-left">{{localize "WOD5E.BiographyList.Label"}}</div>
+                <div class="gg-card">
+                    <div class="description-field">
+                        <div class="flex-center field-header">
+                            <label class="resource-label">
+                                {{localize "WOD5E.BiographyList.Label"}}
+                                <div class="toggle-limited{{#if settings.limited.biography}} visible{{/if}}" data-action="toggleLimited" data-name="system.settings.limited.biography"
+                                    title="{{#if settings.limited.biography}}{{localize "WOD5E.Tabs.IsVisible"}}{{else}}{{localize "WOD5E.Tabs.IsNotVisible"}}{{/if}}">
+                                    {{#if settings.limited.biography}}
+                                        <i class="fa-solid fa-eye"></i>
+                                    {{else}}
+                                        <i class="fa-solid fa-eye-slash"></i>
+                                    {{/if}}
+                                </div>
+                            </label>
+                        </div>
+                        <div class="description-content resource">
+                            <prose-mirror name="system.biography" value="{{biography}}"
+                                toggled="true" compact="true">
+                                {{{enrichedBiography}}}
+                            </prose-mirror>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="gg-panel">
+                <div class="gg-title-left">{{localize "WOD5E.BiographyList.Appearance"}}</div>
+                <div class="gg-card">
+                    <div class="description-field">
+                        <div class="flex-center field-header">
+                            <label class="resource-label">
+                                {{localize "WOD5E.BiographyList.Appearance"}}
+                                <div class="toggle-limited{{#if settings.limited.appearance}} visible{{/if}}" data-action="toggleLimited" data-name="system.settings.limited.appearance"
+                                    title="{{#if settings.limited.appearance}}{{localize "WOD5E.Tabs.IsVisible"}}{{else}}{{localize "WOD5E.Tabs.IsNotVisible"}}{{/if}}">
+                                    {{#if settings.limited.appearance}}
+                                        <i class="fa-solid fa-eye"></i>
+                                    {{else}}
+                                        <i class="fa-solid fa-eye-slash"></i>
+                                    {{/if}}
+                                </div>
+                            </label>
+                        </div>
+                        <div class="description-content resource">
+                            <prose-mirror name="system.appearance" value="{{appearance}}"
+                                toggled="true" compact="true">
+                                {{{enrichedAppearance}}}
+                            </prose-mirror>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

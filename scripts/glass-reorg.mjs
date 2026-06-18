@@ -27,7 +27,11 @@ const NAV_TEMPLATE = `modules/${MODULE_ID}/templates/tab-navigation.hbs`;
 // Tabs not listed here keep the system's own template, re-skinned via CSS.
 const CUSTOM_TEMPLATES = {
   core:        `modules/${MODULE_ID}/templates/core.hbs`,
-  disciplines: `modules/${MODULE_ID}/templates/disciplines.hbs`
+  disciplines: `modules/${MODULE_ID}/templates/disciplines.hbs`,
+  blood:       `modules/${MODULE_ID}/templates/blood.hbs`,
+  profile:     `modules/${MODULE_ID}/templates/profile.hbs`,
+  inventory:   `modules/${MODULE_ID}/templates/inventory.hbs`,
+  notepad:     `modules/${MODULE_ID}/templates/notepad.hbs`
 };
 
 // Custom header templates, keyed by Actor subtype. A splat without an entry
@@ -78,12 +82,10 @@ function buildGlassSheet(Base, splatTabs, type) {
       tabs:          { template: NAV_TEMPLATE },
       core:          { template: CUSTOM_TEMPLATES.core },
       ...splatParts,
-      pf_features:   Base.PARTS.features,
-      pf_experience: Base.PARTS.experience,
-      pf_biography:  Base.PARTS.biography,
+      profile:       { template: CUSTOM_TEMPLATES.profile },
       pf_settings:   Base.PARTS.settings,
-      inventory:     Base.PARTS.equipment,
-      notepad:       Base.PARTS.notepad,
+      inventory:     { template: CUSTOM_TEMPLATES.inventory },
+      notepad:       { template: CUSTOM_TEMPLATES.notepad },
       banner:        Base.PARTS.banner,
       limited:       Base.PARTS.limited
     };
@@ -122,13 +124,18 @@ function buildGlassSheet(Base, splatTabs, type) {
       let tabId = partId;
       switch (partId) {
         // Custom header needs `generation` (only the system's Blood part sets it).
-        case "header":        context.generation = actor.system?.headers?.generation ?? ""; break;
-        case "core":          context = await this.prepareStatsContext(context, actor);     tabId = "core"; break;
-        case "inventory":     context = await this.prepareEquipmentContext(context, actor); tabId = "inventory"; break;
-        case "pf_features":   context = await this.prepareFeaturesContext(context, actor);  tabId = "profile"; context.isGM = game.user.isGM; break;
-        case "pf_experience": context = await this.prepareExperienceContext(context, actor); tabId = "profile"; break;
-        case "pf_biography":  context = await this.prepareBiographyContext(context, actor); tabId = "profile"; break;
-        case "pf_settings":   context = await this.prepareSettingsContext(context, actor);  tabId = "profile"; context.isGM = game.user.isGM; break;
+        case "header":    context.generation = actor.system?.headers?.generation ?? ""; break;
+        case "core":      context = await this.prepareStatsContext(context, actor);     tabId = "core"; break;
+        case "inventory": context = await this.prepareEquipmentContext(context, actor); tabId = "inventory"; break;
+        // Merged Profile = Features + Experience + Biography in one custom template.
+        case "profile":
+          context = await this.prepareFeaturesContext(context, actor);
+          context = await this.prepareExperienceContext(context, actor);
+          context = await this.prepareBiographyContext(context, actor);
+          context.isGM = game.user.isGM;
+          tabId = "profile";
+          break;
+        case "pf_settings": context = await this.prepareSettingsContext(context, actor); tabId = "profile"; context.isGM = game.user.isGM; break;
       }
 
       // Bind the correct tab LAST — the system helpers above set context.tab to

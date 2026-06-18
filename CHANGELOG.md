@@ -5,6 +5,31 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-06-18
+
+### Added — the sheet now matches the Obsidian design end to end
+- **All remaining tabs rebuilt as custom layouts** matching the reference design,
+  each reusing the system's own data-actions so everything stays functional:
+  - **Blood** — Blood Potency dots + Humanity squares in two centered glass
+    panels, the six derived blood-potency stat cards, and the Sire / Generation /
+    Predator / Resonance / Clan-Bane fields.
+  - **Profile** — a single merged page: **Identity** (concept/chronicle/ambition/
+    desire + Chronicle Tenets), **Experience** (remaining/total + Add/Spend +
+    history), **Advantages** (backgrounds/merits/flaws/boons with dots), and
+    **Biography / Appearance** editors.
+  - **Inventory** — equipment grouped by type as glass panels + Equipment Notes.
+  - **Notes** — Public and Private (owner-gated) notes side by side.
+
+### Changed
+- **Header rebuilt to the exact design**: 16px rounded-square Health/Willpower
+  boxes, a **128px rounded-square portrait** with the **name overlaid at the
+  bottom** in plain white and a **"VAMPIRE · CLAN · GENERATION" subtitle** below,
+  and a right-aligned **Clan │ Gen · Hunger · Resist Frenzy pill** stack.
+- **Design tokens tuned to the reference**: 22px window radius, brighter lit
+  dots, accent-soft, and a shared set of building-block classes (panels, cards,
+  section titles with gradient underline, column heads, pills) so every tab is
+  visually consistent.
+
 ## [1.5.0] - 2026-06-17
 
 ### Added
