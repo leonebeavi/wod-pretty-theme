@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
 
 /* =====================================================================
    WoD Pretty Theme
@@ -28,20 +28,20 @@ body.wod-pretty-theme {
   --wpt-text-muted: rgba(241, 234, 230, 0.62);
   --wpt-text-dim:  rgba(241, 234, 230, 0.40);
 
-  /* Glass surfaces — translucent so they layer over the frosted sheet */
-  --wpt-sheet:     rgba(13, 10, 10, 0.86);   /* window-content (frosted) */
-  --wpt-glass:     rgba(28, 22, 21, 0.46);   /* panels / cards          */
-  --wpt-glass-2:   rgba(40, 32, 30, 0.40);   /* elevated / inputs       */
-  --wpt-glass-3:   rgba(52, 42, 40, 0.46);   /* hover / active surfaces */
-  --wpt-blur:      blur(16px);
+  /* Glass surfaces (Obsidian "Glass Gótico" design) — translucent + frosted */
+  --wpt-sheet:     rgba(13, 8, 10, 0.84);    /* window-content (frosted) */
+  --wpt-glass:     rgba(17, 11, 13, 0.50);   /* panels / cards          */
+  --wpt-glass-2:   rgba(28, 18, 21, 0.46);   /* elevated / inputs       */
+  --wpt-glass-3:   rgba(44, 28, 32, 0.52);   /* hover / active surfaces */
+  --wpt-blur:      blur(13px);
 
   /* Very subtle structure — no hard white outlines */
-  --wpt-border:        rgba(245, 238, 234, 0.07);
-  --wpt-border-strong: rgba(245, 238, 234, 0.13);
+  --wpt-border:        rgba(255, 255, 255, 0.08);
+  --wpt-border-strong: rgba(255, 255, 255, 0.16);
   --wpt-hilite:        inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
-  /* Per-splat accent colours */
-  --wpt-c-vampire:  #c0303a;
+  /* Per-splat accent colours (vampire = approved Obsidian crimson) */
+  --wpt-c-vampire:  #d2122e;
   --wpt-c-werewolf: #6f9450;
   --wpt-c-hunter:   #cf8233;
   --wpt-c-mortal:   #8b93c9;
@@ -49,17 +49,17 @@ body.wod-pretty-theme {
 
   --wpt-accent-contrast:    #fff;
 
-  /* Soft, rounded shape — no pointy corners */
-  --wpt-radius-sm: 6px;
-  --wpt-radius:    10px;
-  --wpt-radius-lg: 14px;
-  --wpt-shadow:    0 14px 38px rgba(0, 0, 0, 0.55);
-  --wpt-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.42);
+  /* Rounded, soft, glassy shape */
+  --wpt-radius-sm: 8px;
+  --wpt-radius:    14px;
+  --wpt-radius-lg: 18px;
+  --wpt-shadow:    0 40px 100px rgba(0, 0, 0, 0.65);
+  --wpt-shadow-sm: 0 12px 30px rgba(0, 0, 0, 0.40);
 
-  /* Two fonts: Cinzel (elegant gothic display) for titles, Inter (clean
-     modern sans) for everything else. Georgia/Signika are local fallbacks. */
-  --wpt-font-display: "Cinzel", "Signika", Georgia, serif;
-  --wpt-font-ui:      "Inter", "Signika", "Segoe UI", system-ui, sans-serif;
+  /* Two fonts (approved design): Cormorant Garamond (elegant serif display)
+     for titles, Manrope (modern sans) for everything else. */
+  --wpt-font-display: "Cormorant Garamond", "Cinzel", Georgia, serif;
+  --wpt-font-ui:      "Manrope", "Inter", "Segoe UI", system-ui, sans-serif;
 }
 
 /* Per-splat accent on the sheet roots (ghouls carry the `vampire` class).
@@ -149,11 +149,15 @@ body.wod-pretty-theme .wod5e.sheet {
   color: var(--wpt-text);
   font-family: var(--wpt-font-ui);
   box-shadow: var(--wpt-shadow);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-lg);
+  overflow: hidden;
 }
+/* Solid warm-black base with a per-splat glow at the top (panels glass over it) */
 body.wod-pretty-theme .wod5e.sheet .window-content {
-  background: var(--wpt-sheet) !important;
-  backdrop-filter: var(--wpt-blur);
-  -webkit-backdrop-filter: var(--wpt-blur);
+  background:
+    radial-gradient(120% 70% at 50% -6%, color-mix(in srgb, var(--wpt-accent) 30%, transparent), transparent 52%),
+    linear-gradient(180deg, #150d10, #0c0709 58%, #0a0607) !important;
   color: var(--wpt-text);
   scrollbar-color: var(--wpt-accent-border) transparent;
 }
@@ -416,9 +420,11 @@ body.wod-pretty-theme .wod5e.spc .standard-pools-list,
 body.wod-pretty-theme .wod5e.spc .exceptional-pools-list,
 body.wod-pretty-theme .wod5e .group-member {
   background: var(--wpt-glass) !important;
+  backdrop-filter: var(--wpt-blur);
+  -webkit-backdrop-filter: var(--wpt-blur);
   border: 1px solid var(--wpt-border) !important;
   border-radius: var(--wpt-radius) !important;
-  box-shadow: var(--wpt-hilite);
+  box-shadow: var(--wpt-hilite), 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 /* Resource boxes (health / willpower / hunger / data items) → glass, rounded */
 body.wod-pretty-theme .wod5e .resource {

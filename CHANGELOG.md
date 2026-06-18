@@ -5,6 +5,22 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-17
+
+### Changed
+- **New "Glass Gótico" (Obsidian) visual** — the approved redesign. Solid warm-black
+  sheet base with a per-splat glow at the top, **frosted translucent panels**
+  (backdrop blur, soft borders, depth shadows), rounded 18px window, rubi dot
+  trackers, and the **Cormorant Garamond + Manrope** type pairing. Applied to
+  **all splats** with the per-splat accent (Vampire = Obsidian crimson #d2122e,
+  Werewolf green, Hunter amber, Mortal slate). Foundry-default sidebar and the
+  glass chat cards are retained.
+
+### Note
+- This release is the **visual** layer of the Glass Gótico guide. The structural
+  reorganization (10→6 tabs, merged Profile tab, top tab bar, Settings relocated)
+  is coming in 1.2.0 as a sheet subclass, validated per-splat.
+
 ## [1.0.7] - 2026-06-17
 
 ### Fixed
