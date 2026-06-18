@@ -150,8 +150,24 @@ Hooks.once("init", () => {
   });
 });
 
-Hooks.once("setup", async () => {
+/**
+ * Register + activate the reorganized sheets at READY.
+ *
+ * Timing matters: the system registers its sheets during init, but those
+ * registrations are queued and only flushed by DocumentSheetConfig.initializeSheets()
+ * which runs just BEFORE the "ready" hook. So at "setup", CONFIG.Actor.sheetClasses
+ * is still empty and we can't find the system's base classes. At "ready" they exist.
+ *
+ * Activation: Foundry's _getSheetClass() picks the registered entry whose
+ * `.default === true`; `makeDefault` is ignored when the world already has a saved
+ * default. So after registering we set the `.default` flag on our entries directly
+ * (this session) and persist the choice to the core "sheetClasses" setting (future
+ * reloads). The `restructure` setting gates all of this — turn it off and reload to
+ * fall back to the system's sheets.
+ */
+Hooks.once("ready", async () => {
   if (!game.settings.get(MODULE_ID, "restructure")) return;
+  const SHEET_ID = `${MODULE_ID}.GlassGothicSheet`;
 
   // Make sure our nav template is available before sheets render.
   try {
@@ -161,6 +177,7 @@ Hooks.once("setup", async () => {
     console.warn(`${MODULE_ID} | could not preload nav template`, e);
   }
 
+  // Register a reorganized subclass for each supported splat.
   const Actors = foundry.documents?.collections?.Actors ?? globalThis.Actors;
   for (const [type, splatTabs] of Object.entries(SPLAT_TABS)) {
     try {
@@ -176,31 +193,33 @@ Hooks.once("setup", async () => {
       console.error(`${MODULE_ID} | failed to register reorganized sheet for "${type}"`, e);
     }
   }
-});
 
-/**
- * Force our sheet to be the active default for the reorganized types.
- * `makeDefault: true` is silently ignored when the world already has a saved
- * default sheet for a type (Foundry respects the existing choice), so we set it
- * explicitly. GM-only, gated by the `restructure` setting; turning that off (and
- * reloading) lets Foundry fall back to the system sheets.
- */
-Hooks.once("ready", async () => {
-  if (!game.user?.isGM) return;
-  if (!game.settings.get(MODULE_ID, "restructure")) return;
-  const SHEET_ID = `${MODULE_ID}.GlassGothicSheet`;
-  try {
-    const current = foundry.utils.deepClone(game.settings.get("core", "sheetClasses") ?? {});
-    current.Actor ??= {};
-    let changed = false;
-    for (const type of Object.keys(SPLAT_TABS)) {
-      if (current.Actor[type] !== SHEET_ID) { current.Actor[type] = SHEET_ID; changed = true; }
+  // Make our sheet the ACTIVE default for this session (set the .default flag).
+  for (const type of Object.keys(SPLAT_TABS)) {
+    const sheets = CONFIG.Actor?.sheetClasses?.[type];
+    if (sheets?.[SHEET_ID]) {
+      for (const s of Object.values(sheets)) s.default = false;
+      sheets[SHEET_ID].default = true;
     }
-    if (changed) {
-      await game.settings.set("core", "sheetClasses", current);
-      ui.notifications?.info("WoD Pretty Theme: Glass Gótico sheets enabled — reopen actor sheets to see them.");
+  }
+
+  // Persist the choice so it survives reloads (GM only — it's a world setting).
+  if (game.user?.isGM) {
+    try {
+      const current = foundry.utils.deepClone(game.settings.get("core", "sheetClasses") ?? {});
+      current.Actor ??= {};
+      let changed = false;
+      for (const type of Object.keys(SPLAT_TABS)) {
+        if (CONFIG.Actor?.sheetClasses?.[type]?.[SHEET_ID] && current.Actor[type] !== SHEET_ID) {
+          current.Actor[type] = SHEET_ID; changed = true;
+        }
+      }
+      if (changed) {
+        await game.settings.set("core", "sheetClasses", current);
+        ui.notifications?.info("WoD Pretty Theme: Glass Gótico sheets enabled — close and reopen actor sheets to see them.");
+      }
+    } catch (e) {
+      console.error(`${MODULE_ID} | could not persist default sheets`, e);
     }
-  } catch (e) {
-    console.error(`${MODULE_ID} | could not set default sheets`, e);
   }
 });

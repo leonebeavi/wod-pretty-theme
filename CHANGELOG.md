@@ -5,6 +5,18 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-06-17
+
+### Fixed
+- **The reorganized sheets really register now.** They were being registered at
+  the `setup` phase, but Foundry only flushes queued sheet registrations (and
+  populates `CONFIG.Actor.sheetClasses`) just before `ready` — so at `setup` the
+  system's base sheet classes weren't found yet and the reorg was silently
+  skipped. Registration moved to the `ready` hook, and the Glass Gótico sheet is
+  now forced active by setting its registration `default` flag directly (Foundry
+  picks the entry whose `default === true`), with the choice persisted for
+  reloads. Close and reopen an actor sheet after reloading.
+
 ## [1.2.1] - 2026-06-17
 
 ### Fixed
