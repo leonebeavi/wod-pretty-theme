@@ -5,6 +5,18 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.6] - 2026-06-18
+
+### Fixed (header pass)
+- The **"reveal to all" eye toggle** is now vertically centered next to its title.
+- **Health & Willpower** labels and square rows are uniformly left-aligned
+  (Willpower was drifting toward center).
+- Removed the **ugly boxes** around **Clan / Generation / Hunger** in the header
+  (now bare label+value / dots, matching the design).
+- **Hunger** no longer shows the leading "×" clear marker (just the dots).
+- **Re-added the Frenzy status** (Active / Inactive) above the Resist Frenzy
+  pill, as in the original sheet.
+
 ## [1.7.5] - 2026-06-18
 
 ### Fixed
