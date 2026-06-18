@@ -5,6 +5,17 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.10] - 2026-06-18
+
+### Changed
+- **Roll & prompt windows fully re-themed**: every dialog (the dice roll dialog,
+  select dialogs, confirmations, modifier popouts) is now an **opaque, elegant
+  dark-glass window** standardized with the sheet — themed header/title, dark
+  content (no more see-through), themed inputs/selects, and buttons where the
+  default/Roll action carries the splat accent.
+- **Chat cards**: softer, more subtle shadow; slightly less rounded corners; and
+  the modifier pills (Blood Potency, Blood Surge…) are centered in the card.
+
 ## [1.7.9] - 2026-06-18
 
 ### Changed — chat redesigned to match the glass-gothic concept

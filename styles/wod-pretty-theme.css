@@ -180,24 +180,89 @@ body.wod-pretty-theme .wod5e.sheet .window-header .window-title {
   color: #fff;
 }
 
-/* Roll / select-roll dialogs (and other wod5e popups) must NOT be see-through */
+/* =====================================================================
+   Dialogs / roll & prompt windows — opaque, elegant, standardized with the
+   sheet theme. Covers DialogV2 (.application.dialog), the wod5e roll dialog
+   (.wod5e.roll-dialog), select dialogs, roll-menu, and legacy .dialog popups.
+   ===================================================================== */
+/* Generic (non-wod5e) dialogs need a default accent for the themed buttons */
+body.wod-pretty-theme .application.dialog:not(.wod5e) {
+  --wpt-accent: var(--wpt-c-vampire);
+  --wpt-accent-fill:   color-mix(in srgb, var(--wpt-accent) 18%, transparent);
+  --wpt-accent-border: color-mix(in srgb, var(--wpt-accent) 46%, transparent);
+}
+/* Window frame */
+body.wod-pretty-theme .application.dialog,
+body.wod-pretty-theme .wod5e.roll-dialog,
+body.wod-pretty-theme .wod5e.dialog,
+body.wod-pretty-theme .roll-menu {
+  border: 1px solid var(--wpt-border-strong) !important;
+  border-radius: var(--wpt-radius) !important;
+  box-shadow: var(--wpt-shadow) !important;
+  color: var(--wpt-text) !important;
+}
+/* Header */
+body.wod-pretty-theme .application.dialog .window-header,
+body.wod-pretty-theme .wod5e.dialog .window-header,
+body.wod-pretty-theme .roll-menu .window-header {
+  background: rgba(8, 6, 6, 0.92) !important;
+  border-bottom: 1px solid var(--wpt-border) !important;
+}
+body.wod-pretty-theme .application.dialog .window-title {
+  color: #fff !important;
+  font-family: var(--wpt-font-display) !important;
+}
+/* Content — opaque dark glass (no longer see-through) */
+body.wod-pretty-theme .application.dialog .window-content,
+body.wod-pretty-theme .application.dialog .dialog-content,
 body.wod-pretty-theme .wod5e:not(.sheet) .window-content,
 body.wod-pretty-theme .roll-menu .window-content,
-body.wod-pretty-theme .application.dialog.wod5e .window-content,
 body.wod-pretty-theme .wod5e.dialog .window-content {
-  background: rgba(13, 10, 10, 0.98) !important;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  color: var(--wpt-text);
+  background: linear-gradient(180deg, rgba(20, 13, 15, 0.985), rgba(12, 8, 9, 0.99)) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--wpt-text) !important;
 }
-/* The roll dialog's floating modifier popout is positioned outside the
-   window-content, so it needs its own opaque background (was see-through). */
+body.wod-pretty-theme .application.dialog label,
+body.wod-pretty-theme .application.dialog .dialog-content,
+body.wod-pretty-theme .application.dialog p { color: var(--wpt-text) !important; }
+/* Inputs / selects */
+body.wod-pretty-theme .application.dialog input,
+body.wod-pretty-theme .application.dialog select,
+body.wod-pretty-theme .roll-menu input,
+body.wod-pretty-theme .roll-menu select {
+  background: var(--wpt-glass-2) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: var(--wpt-radius-sm) !important;
+  color: var(--wpt-text) !important;
+}
+/* Buttons — themed; the default/roll action carries the accent */
+body.wod-pretty-theme .application.dialog button,
+body.wod-pretty-theme .application.dialog .dialog-buttons button,
+body.wod-pretty-theme .application.dialog .form-footer button {
+  background: var(--wpt-glass-2) !important;
+  border: 1px solid var(--wpt-border-strong) !important;
+  border-radius: var(--wpt-radius-sm) !important;
+  color: var(--wpt-text) !important;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+body.wod-pretty-theme .application.dialog button:hover {
+  background: var(--wpt-accent-fill) !important;
+  border-color: var(--wpt-accent-border) !important;
+}
+body.wod-pretty-theme .application.dialog button.default,
+body.wod-pretty-theme .application.dialog button[data-action="roll"] {
+  background: var(--wpt-accent-fill) !important;
+  border-color: var(--wpt-accent-border) !important;
+  color: #fff !important;
+}
+/* The roll dialog's floating modifier popouts need their own opaque backing */
 body.wod-pretty-theme .dialog-content .situational-modifiers,
 body.wod-pretty-theme .situational-modifiers,
 body.wod-pretty-theme .roll-menu .roll-menu-sidebar,
 body.wod-pretty-theme .selectable-modifiers,
 body.wod-pretty-theme .custom-modifiers {
-  background: rgba(13, 10, 10, 0.98) !important;
+  background: rgba(14, 9, 10, 0.99) !important;
   border: 1px solid var(--wpt-border-strong) !important;
   border-radius: var(--wpt-radius) !important;
   box-shadow: var(--wpt-shadow) !important;
@@ -732,8 +797,8 @@ body.wod-pretty-theme.wpt-chrome #chat-log .message,
 body.wod-pretty-theme.wpt-chrome .chat-message {
   background: linear-gradient(180deg, rgba(24, 15, 17, 0.92), rgba(11, 8, 9, 0.95)) !important;
   border: 1px solid var(--wpt-border) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+  border-radius: 12px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.32) !important;
   color: var(--wpt-text) !important;
   margin: 9px 4px !important;
   padding: 0 !important;
@@ -914,13 +979,21 @@ body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.rage-failure {
   background: linear-gradient(90deg, rgba(90, 50, 18, 0.6), rgba(50, 28, 12, 0.6)) !important;
   color: #f0d8b0 !important;
 }
-/* Modifier tags → subtle dark pills (no more white chips) */
+/* Modifier tags → subtle dark pills, centered as a row in the card */
+body.wod-pretty-theme.wpt-chrome .chat-message .modifiers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0 0;
+}
 body.wod-pretty-theme.wpt-chrome .chat-message .modifiers .mod {
   background: rgba(255, 255, 255, 0.06) !important;
   border: 1px solid var(--wpt-border) !important;
   color: var(--wpt-text-muted) !important;
   border-radius: 999px !important;
-  padding: 1px 9px !important;
+  padding: 2px 10px !important;
+  margin: 0 !important;
 }
 /* Roll title (e.g. "Charisma + Composure + Auspex") — smaller, mixed-case serif */
 body.wod-pretty-theme.wpt-chrome .chat-message .roll-label,
