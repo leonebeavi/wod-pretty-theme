@@ -5,6 +5,15 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.12] - 2026-06-18
+
+### Changed
+- **Item sheets themed to the Obsidian item design**: rounded icon tile, a clean
+  name field, the Level / Cost / Type stats as small-labelled glass field cards,
+  and comfortable body padding — applied to every item type. (The Level/Cost
+  fields stay as styled inputs; an exact dots/stepper would need a custom item
+  template.)
+
 ## [1.7.11] - 2026-06-18
 
 ### Changed
