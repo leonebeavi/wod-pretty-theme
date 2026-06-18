@@ -1163,3 +1163,35 @@ body.wod-pretty-theme .wod5e .gg-disc-empty {
   padding: 32px 12px;
   font-style: italic;
 }
+/* give the master-detail panels presence so the tab doesn't look empty */
+body.wod-pretty-theme .wod5e .gg-disc-list,
+body.wod-pretty-theme .wod5e .gg-disc-detail { min-height: 360px; }
+
+/* ---- Header polish (more compact, pill Resist Frenzy) -------------- */
+body.wod-pretty-theme .wod5e .actor-header .header-profile-img,
+body.wod-pretty-theme .wod5e .actor-header .header-profile-img img {
+  width: 156px !important;
+  height: 156px !important;
+  max-width: 156px !important;
+  max-height: 156px !important;
+}
+body.wod-pretty-theme .wod5e .actor-header { padding-top: 8px; padding-bottom: 6px; }
+/* Frenzy resist/end button → crimson pill (matches the design) */
+body.wod-pretty-theme .wod5e .frenzy .vampire-button,
+body.wod-pretty-theme .wod5e .frenzy-roll,
+body.wod-pretty-theme .wod5e .end-frenzy {
+  background: var(--wpt-accent-fill) !important;
+  border: 1px solid var(--wpt-accent-border) !important;
+  color: var(--wpt-text) !important;
+  border-radius: 999px !important;
+  padding: 7px 16px !important;
+  font: 700 0.72rem/1 var(--wpt-font-ui) !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  width: fit-content;
+  align-self: center;
+}
+body.wod-pretty-theme .wod5e .frenzy .vampire-button:hover {
+  background: var(--wpt-accent-fill-strong) !important;
+  box-shadow: 0 0 12px var(--wpt-accent-glow);
+}
