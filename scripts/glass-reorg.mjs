@@ -31,7 +31,8 @@ const CUSTOM_TEMPLATES = {
   blood:       `modules/${MODULE_ID}/templates/blood.hbs`,
   profile:     `modules/${MODULE_ID}/templates/profile.hbs`,
   inventory:   `modules/${MODULE_ID}/templates/inventory.hbs`,
-  notepad:     `modules/${MODULE_ID}/templates/notepad.hbs`
+  notepad:     `modules/${MODULE_ID}/templates/notepad.hbs`,
+  settings:    `modules/${MODULE_ID}/templates/settings.hbs`
 };
 
 // Custom header templates, keyed by Actor subtype. A splat without an entry
@@ -83,7 +84,7 @@ function buildGlassSheet(Base, splatTabs, type) {
       core:          { template: CUSTOM_TEMPLATES.core },
       ...splatParts,
       profile:       { template: CUSTOM_TEMPLATES.profile },
-      pf_settings:   Base.PARTS.settings,
+      pf_settings:   { template: CUSTOM_TEMPLATES.settings },
       inventory:     { template: CUSTOM_TEMPLATES.inventory },
       notepad:       { template: CUSTOM_TEMPLATES.notepad },
       banner:        Base.PARTS.banner,

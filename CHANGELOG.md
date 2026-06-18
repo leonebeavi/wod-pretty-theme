@@ -5,6 +5,18 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2026-06-18
+
+### Fixed
+- **Header Health/Willpower** now show as bare square trackers under their
+  labels (removed the boxed container that wrapped them) to match the design.
+- **Inventory** equipment group panels now span the **full width** (they were
+  shrink-wrapped by the system's item-list styling) and no longer draw a
+  double box around their contents.
+- **Profile → Settings** (the GM-only actor settings) is now a single tidy
+  contained glass panel ("Settings · GM") at the bottom of the tab instead of a
+  raw, full-bleed form. Feature/advantage category columns no longer draw boxes.
+
 ## [1.6.0] - 2026-06-18
 
 ### Added — the sheet now matches the Obsidian design end to end

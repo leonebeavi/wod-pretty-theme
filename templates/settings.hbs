@@ -1,0 +1,75 @@
+{{!-- WoD Pretty Theme — GM Settings, relocated into a single contained glass
+      panel at the bottom of the Profile tab (GM-only; dropped for non-GM via
+      _configureRenderParts). The form fields are copied VERBATIM from the
+      system's actor-settings.hbs so all bindings/behaviour are preserved. --}}
+<section class="tab {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+    <div class="gg-panel gg-gm-settings">
+        <div class="gg-title-left">{{localize "WOD5E.Tabs.Settings"}} <span class="gg-notepad-gm">GM</span></div>
+
+        <div class="form-group">
+            <label>{{localize "WOD5E.ActorSettings.ActorHeaderBackground"}}</label>
+            <div class="form-fields">
+                <file-picker class="actor-header-bg-filepicker" name="system.settings.headerbg" type="imagevideo" value="{{headerbg}}"></file-picker>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>{{localize "WOD5E.ActorSettings.ActorBackground"}}</label>
+            <div class="form-fields">
+                <file-picker class="actor-background-filepicker" name="system.settings.background" type="imagevideo" value="{{actorbg}}"></file-picker>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>{{localize "WOD5E.ActorSettings.ActorType"}}</label>
+            <div class="form-fields">
+                <select class="actor-type-selector" name="{{actorTypePath}}" data-type="String"{{#if actor.limited}} disabled{{/if}}>
+                    {{selectOptions actorOptions selected=currentActorType localize=true}}
+                </select>
+            </div>
+        </div>
+
+        {{#if hasSkillAttributeData}}
+            <div class="form-group">
+                <label>{{localize "WOD5E.ActorSettings.UseInputFieldsForStats"}}</label>
+                <div class="form-fields">
+                    <input type="checkbox" name="system.settings.skillAttributeInputs" {{#if settings.skillAttributeInputs}}checked{{/if}}>
+                </div>
+            </div>
+        {{/if}}
+
+        {{#ifeq baseActorType 'spc'}}
+            <div class="form-group">
+                <label>{{localize "WOD5E.ActorSettings.ShowGeneralDifficulty"}}</label>
+                <div class="form-fields">
+                    <input type="checkbox" name="system.settings.generalDifficultyEnabled" {{#if generalDifficultyEnabled}}checked{{/if}}>
+                </div>
+            </div>
+        {{/ifeq}}
+
+        {{#if showOptionalPowers}}
+            {{#ifeq gamesystem 'vampire'}}
+                <div class="form-group">
+                    <label>{{localize "WOD5E.ActorSettings.ShowDisciplines"}}</label>
+                    <div class="form-fields">
+                        <input type="checkbox" name="system.settings.enableDisciplines" {{#if enableDisciplines}}checked{{/if}}>
+                    </div>
+                </div>
+            {{/ifeq}}
+            {{#ifeq gamesystem 'hunter'}}
+                <div class="form-group">
+                    <label>{{localize "WOD5E.ActorSettings.ShowEdges"}}</label>
+                    <div class="form-fields">
+                        <input type="checkbox" name="system.settings.enableEdges" {{#if enableEdges}}checked{{/if}}>
+                    </div>
+                </div>
+            {{/ifeq}}
+            {{#ifeq gamesystem 'werewolf'}}
+                <div class="form-group">
+                    <label>{{localize "WOD5E.ActorSettings.ShowGifts"}}</label>
+                    <div class="form-fields">
+                        <input type="checkbox" name="system.settings.enableGifts" {{#if enableGifts}}checked{{/if}}>
+                    </div>
+                </div>
+            {{/ifeq}}
+        {{/if}}
+    </div>
+</section>
