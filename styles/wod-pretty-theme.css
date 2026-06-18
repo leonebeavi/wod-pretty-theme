@@ -908,3 +908,91 @@ body.wod-pretty-theme.wpt-chrome .chat-message .message-delete:hover,
 body.wod-pretty-theme.wpt-chrome .chat-message .message-metadata a:hover {
   color: var(--wpt-text) !important;
 }
+
+/* =====================================================================
+   STRUCTURAL REORG — horizontal labeled top tab bar (Glass Gótico)
+   Only applies to reorganized sheets (their nav contains .tab-label);
+   SPC/Group keep the system's vertical icon rail.
+   ===================================================================== */
+body.wod-pretty-theme .wod5e .tabs-container:has(.tab-label) {
+  position: static;
+  left: 0;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  border-right: none;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+  height: auto;
+  gap: 2px;
+  padding: 4px 16px 0;
+  border-bottom: 1px solid var(--wpt-border);
+  background: rgba(8, 6, 8, 0.4);
+}
+/* remove the 45px left gutter the system reserves for the vertical rail */
+body.wod-pretty-theme .wod5e.sheet:has(.tab-label) .actor-header,
+body.wod-pretty-theme .wod5e.sheet:has(.tab-label) section.tab {
+  margin-left: 0 !important;
+}
+/* nav buttons → text tabs with an accent underline */
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] {
+  position: relative;
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px 12px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--wpt-text-dim);
+  font: 700 12px/1 var(--wpt-font-ui);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] .navicon {
+  width: auto;
+  font-size: 14px;
+  background: transparent !important;
+  border: none !important;
+  color: inherit;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] .tab-label {
+  font: inherit;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab]:hover { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab].active { color: var(--wpt-text); }
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab].active::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--wpt-accent), transparent);
+  box-shadow: 0 0 10px var(--wpt-accent);
+}
+/* push the lock button to the far right of the bar */
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) .lock-btn {
+  margin-left: auto;
+  align-self: center;
+}
+/* The merged Profile is several stacked sections — give them breathing room */
+body.wod-pretty-theme .wod5e section.tab[data-tab="profile"] + section.tab[data-tab="profile"] {
+  border-top: 1px solid var(--wpt-border);
+  margin-top: 6px;
+  padding-top: 12px;
+}
+/* GM settings block sits at the bottom of Profile, visually set apart */
+body.wod-pretty-theme .wod5e section.tab[data-tab="profile"].actor-settings,
+body.wod-pretty-theme .wod5e section.tab[data-tab="profile"]:last-of-type {
+  opacity: 0.96;
+}

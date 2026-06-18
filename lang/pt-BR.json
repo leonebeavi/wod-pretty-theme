@@ -8,7 +8,17 @@
       "StyleChrome": {
         "Name": "Restaurar a interface padrão do Foundry",
         "Hint": "Desfaz as sobrescritas do sistema wod5e na interface do Foundry (barra lateral direita, chat, diretórios, controles), trazendo de volta a aparência nativa do Foundry. Desligue para manter a interface estilizada pelo sistema."
+      },
+      "Restructure": {
+        "Name": "Reorganizar fichas (layout Glass Gótico)",
+        "Hint": "Junta as abas das fichas do wod5e em Núcleo · [splat] · Perfil · Inventário · Notas, com barra de abas no topo, e move as Configurações para um bloco só-GM dentro de Perfil. Desligue (e recarregue) para usar as abas originais do sistema."
       }
+    },
+    "Tabs": {
+      "Core": "Núcleo",
+      "Profile": "Perfil",
+      "Inventory": "Inventário",
+      "Notes": "Notas"
     }
   }
 }

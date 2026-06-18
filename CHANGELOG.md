@@ -5,6 +5,25 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-06-17
+
+### Added
+- **Sheet reorganization (Glass Gótico layout)** via per-splat sheet subclasses.
+  The system's ~10 tabs are consolidated into a compact set with a **horizontal
+  labeled top tab bar**:
+  - **Core** (stats), the splat's own tabs (Vampire: Disciplines + Blood;
+    Werewolf: Gifts + Wolf; Hunter: Edges; Ghoul: Disciplines), **Profile**
+    (Features + Experience + Biography merged), **Inventory**, **Notes**.
+  - **Settings** is relocated into a **GM-only** block inside Profile.
+  - Implemented by reusing the system's own part templates (no markup copied):
+    the merged Profile is several parts sharing `data-tab="profile"`, and each
+    part's tab is bound the way Foundry itself does it.
+  - Applies to PC splats (Vampire, Ghoul, Werewolf, Hunter, Mortal). SPC and
+    Group sheets keep their structure and just get the visual theme.
+- New **"Reorganize sheets"** world setting (default on, requires reload) — a
+  safety valve: turn it off to restore the system's original tabs while keeping
+  the Glass Gótico visual.
+
 ## [1.1.0] - 2026-06-17
 
 ### Changed

@@ -1,0 +1,14 @@
+{{!-- WoD Pretty Theme — labeled top tab bar (Glass Gótico reorg).
+      Same structure/data-actions as the system nav, with a text label added so
+      the horizontal bar reads "Core · … · Profile · Inventory · Notes". --}}
+<div class="tabs-container">
+    <nav class="sheet-tabs tabs" data-group="primary">
+        {{#each tabs as |tab|}}
+            <div class="{{tab.cssClass}}" data-action="tab" data-group="{{tab.group}}" data-tab="{{tab.id}}" title="{{localize tab.title}}">
+                <div class="navicon">{{{tab.icon}}}</div>
+                <span class="tab-label">{{localize tab.title}}</span>
+            </div>
+        {{/each}}
+        {{> "systems/wod5e/display/shared/actors/parts/lock-button.hbs"}}
+    </nav>
+</div>

@@ -48,6 +48,7 @@ jobs:
             module.json \
             styles \
             scripts \
+            templates \
             lang \
             README.md \
             LICENSE \

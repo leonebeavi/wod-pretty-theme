@@ -8,7 +8,17 @@
       "StyleChrome": {
         "Name": "Restore Foundry's default interface",
         "Hint": "Undo the wod5e system's overrides of the Foundry chrome (right sidebar, chat, directories, controls) so the native Foundry look returns. Turn off to keep the system's interface styling."
+      },
+      "Restructure": {
+        "Name": "Reorganize sheets (Glass Gótico layout)",
+        "Hint": "Consolidate the wod5e sheet tabs into Core · [splat] · Profile · Inventory · Notes with a horizontal top tab bar, and relocate Settings into a GM-only block inside Profile. Turn off (and reload) to use the system's original tabs."
       }
+    },
+    "Tabs": {
+      "Core": "Core",
+      "Profile": "Profile",
+      "Inventory": "Inventory",
+      "Notes": "Notes"
     }
   }
 }
