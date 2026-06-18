@@ -5,6 +5,20 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.4] - 2026-06-18
+
+### Changed (print-review pass 2)
+- **"Merit & Flaws" tab** (renamed from Advantages) now laid out as a **2×2 grid**
+  — Merit | Flaw on top, Background | Boon below — with each entry on a single
+  line and **horizontal** dot ratings (were stacking vertically).
+- **Tab bar is now dynamic**: the tabs flex to fill the full width at a larger
+  size, always edge-to-edge, still on one line.
+- **Profile** rebalanced: the Experience panel no longer has a big empty gap
+  (top row uses natural heights), and two more description cards were added —
+  **Convictions / Touchstones** (a WoD Pretty extra, the widest/most prominent
+  card) and a full-width **Chronicle Tenets** — alongside Biography & Appearance.
+- **Footer banner** is now an opaque bar (content no longer bleeds through it).
+
 ## [1.7.3] - 2026-06-18
 
 ### Fixed / Changed (print-review pass)

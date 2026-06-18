@@ -1825,32 +1825,46 @@ body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-thumb:hover {
   background: color-mix(in srgb, var(--wpt-accent) 75%, transparent);
   background-clip: padding-box;
 }
-/* Tab bar + buttons — compacted to keep all 8 tabs on ONE line (no wrap) */
+/* Tab bar — tabs FLEX to fill the full width (dynamic), one line, no wrap */
 body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) {
   flex-wrap: nowrap;
   gap: 0;
-  padding: 3px 10px 0;
+  padding: 0 8px;
+  align-items: stretch;
 }
 body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] {
-  padding: 11px 7px 12px;
-  gap: 5px;
-  font: 600 10px/1 var(--wpt-font-ui);
-  letter-spacing: 0.05em;
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+  padding: 12px 4px 13px;
+  gap: 6px;
+  font: 600 11px/1 var(--wpt-font-display);
+  letter-spacing: 0.08em;
   white-space: nowrap;
+  overflow: hidden;
 }
-body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] .navicon { font-size: 12px; }
-body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) .tab-label { white-space: nowrap; }
-/* Footer banner (design line 308): centered, wide tracking, vertical gradient */
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] .navicon { font-size: 13px; flex: 0 0 auto; }
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) .tab-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Footer banner: OPAQUE bar (content scrolls behind it without bleeding through),
+   centered, wide tracking, subtle accent gradient. */
 body.wod-pretty-theme .wod5e .sheet-banner {
   text-align: center;
   padding: 9px;
-  background: linear-gradient(180deg, transparent, rgba(130, 10, 26, 0.2)) !important;
+  background: linear-gradient(180deg,
+              rgba(11, 7, 9, 0.97),
+              color-mix(in srgb, var(--wpt-accent) 24%, #0b0709)) !important;
   border-top: 1px solid var(--wpt-border);
   font: 600 13px/1 var(--wpt-font-display) !important;
   letter-spacing: 0.4em;
   text-transform: uppercase;
   color: var(--wpt-text-muted);
 }
+/* keep the last scroll content clear of the pinned footer */
+body.wod-pretty-theme .wod5e.sheet:has(.tab-label) .window-content { padding-bottom: 4px; }
 
 /* ---- Rating dots: brighter lit fill + exact per-context sizes/gaps ---- */
 body.wod-pretty-theme .wod5e .resource-value .resource-value-step.active,
@@ -2083,18 +2097,32 @@ body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item-controls .item
 body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item-controls .item-control:hover { color: var(--wpt-accent); }
 
 /* ---- Profile: balanced card distribution ---- */
-body.wod-pretty-theme .wod5e .gg-profile-top { align-items: stretch; }
-body.wod-pretty-theme .wod5e .gg-profile-top > .gg-panel { display: flex; flex-direction: column; }
-/* Identity field cards: even 2-col grid, equal heights */
-body.wod-pretty-theme .wod5e .gg-profile .gg-panel > .gg-grid-2 { align-items: stretch; gap: 12px; }
-body.wod-pretty-theme .wod5e .gg-profile .gg-grid-2 > .gg-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+/* Top row at natural height so the Experience panel isn't padded with empty space */
+body.wod-pretty-theme .wod5e .gg-profile-top { align-items: start; }
+body.wod-pretty-theme .wod5e .gg-profile .gg-panel > .gg-grid-2 { gap: 12px; }
+/* Convictions (Touchstones) = the widest / most prominent description card */
+body.wod-pretty-theme .wod5e .gg-convictions-card .description-content { min-height: 200px; }
+body.wod-pretty-theme .wod5e .gg-profile .gg-panel > .gg-card { margin-top: 12px; }
+
+/* ---- Merit & Flaws: 2×2 grid (Merit | Flaw / Background | Boon), horizontal dots ---- */
+body.wod-pretty-theme .wod5e .gg-advantages .gg-adv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 32px;
 }
-/* push the Tenets card to fill the remaining Identity height */
-body.wod-pretty-theme .wod5e .gg-tenets-card { margin-top: auto; }
-body.wod-pretty-theme .wod5e .gg-tenets-card { padding-top: 12px; }
+body.wod-pretty-theme .wod5e .gg-advantages [data-category="merit"]      { order: 1; }
+body.wod-pretty-theme .wod5e .gg-advantages [data-category="flaw"]       { order: 2; }
+body.wod-pretty-theme .wod5e .gg-advantages [data-category="background"] { order: 3; }
+body.wod-pretty-theme .wod5e .gg-advantages [data-category="boon"]       { order: 4; }
+/* dots laid out horizontally inline with the name */
+body.wod-pretty-theme .wod5e .gg-advantages .dot-tracker { flex: 0 0 auto; }
+body.wod-pretty-theme .wod5e .gg-advantages .resource-value {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 3px;
+}
 
 /* =====================================================================
    Thematic typography — no plain/rounded sans on sheet content.

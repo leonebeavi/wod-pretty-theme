@@ -1,16 +1,16 @@
-{{!-- WoD Pretty Theme — ADVANTAGES tab (Glass Gótico).
-      The character's features grouped into Backgrounds / Merits / Flaws / Boons,
-      each a column with dot ratings + item controls. Reuses the system's exact
-      feature markup (generateLocalizedLabel, dot widget, item add/edit/delete,
-      drag) verbatim, so all functionality is preserved.
+{{!-- WoD Pretty Theme — MERIT & FLAWS tab (Glass Gótico).
+      The character's features in a 2×2 grid (CSS orders them Merit | Flaw /
+      Background | Boon). Each row is a single line: image · name · horizontal
+      dots · controls. Reuses the system's exact data-actions (search/create,
+      dot counters, itemChat/Edit/Delete, drag) so all functionality is kept.
       Context from prepareFeaturesContext: features (+ top-level locked). --}}
 <section class="tab {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
     <div class="gg-advantages">
         <div class="gg-panel">
             <div class="gg-title-left">{{localize "WPT.Tabs.Advantages"}}</div>
-            <div class="gg-grid-4 features-list item-list">
+            <div class="gg-adv-grid features-list item-list">
                 {{#each features as |feature key|}}
-                    <div class="category gg-feature-col">
+                    <div class="category gg-feature-col" data-category="{{key}}">
                         <div class="gg-col-head">
                             <span class="gg-cat-name">{{localize (generateLocalizedLabel key 'features')}}</span>
                             <span class="gg-col-controls">
@@ -24,25 +24,23 @@
                         </div>
                         {{#each feature as |item key|}}
                             <div class="collapsible-container gg-feature-row">
-                                <div class="flexrow item" data-drag="true" data-item-id="{{item.id}}" data-document-uuid="{{item.uuid}}" data-type="Item">
+                                <div class="item" data-drag="true" data-item-id="{{item.id}}" data-document-uuid="{{item.uuid}}" data-type="Item">
                                     <div class="item-image">
                                         <img src="{{item.img}}" class="clickable" data-action="itemChat" data-item-id="{{item._id}}" title="{{localize 'WOD5E.ItemsList.ShowToChat'}}">
                                     </div>
                                     <div class="item-name{{#if item.system.enrichedDescription}} collapsible{{/if}}" {{#if item.system.enrichedDescription}}data-action="toggleCollapse"{{/if}}>
                                         {{item.name}}
                                     </div>
-                                    {{#if ../../locked}}
-                                        {{#ifnoteq item.system.featuretype 'boon'}}
-                                            <div class="dot-tracker">
-                                                <div class="resource-value" data-value="{{item.system.points}}" data-name="items.{{item._id}}">
-                                                    <span class="resource-value-empty" data-action="dotCounterEmpty"></span>
-                                                    {{#numLoop 5}}
-                                                        <span class="resource-value-step" data-action="dotCounterChange" data-index="{{this}}"></span>
-                                                    {{/numLoop}}
-                                                </div>
+                                    {{#ifnoteq item.system.featuretype 'boon'}}
+                                        <div class="dot-tracker">
+                                            <div class="resource-value" data-value="{{item.system.points}}" data-name="items.{{item._id}}">
+                                                <span class="resource-value-empty" data-action="dotCounterEmpty"></span>
+                                                {{#numLoop 5}}
+                                                    <span class="resource-value-step" data-action="dotCounterChange" data-index="{{this}}"></span>
+                                                {{/numLoop}}
                                             </div>
-                                        {{/ifnoteq}}
-                                    {{/if}}
+                                        </div>
+                                    {{/ifnoteq}}
                                     <div class="item-controls">
                                         <a class="item-control item-edit" data-action="itemEdit" data-item-id="{{item._id}}" title="{{localize 'WOD5E.Edit'}}">
                                             <i class="fas fa-edit"></i>
@@ -51,33 +49,6 @@
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
-                                </div>
-                                <div class="flexrow">
-                                    {{#if item.system.uses.enabled}}
-                                        <div>
-                                            <span>
-                                                {{localize "WOD5E.ItemsList.UsesRemaining"}}: {{item.system.uses.current}}/{{item.system.uses.max}}
-                                            </span>
-                                            <a class="item-control item-use" data-action="expendItemUse" data-item-id="{{item._id}}" title="{{localize 'WOD5E.ItemsList.ExpendUse'}}">
-                                                <i class="fa-solid fa-angle-down"></i>
-                                            </a>
-                                            <a class="item-control item-restore" data-action="restoreItemUses" data-item-id="{{item._id}}" title="{{localize 'WOD5E.ItemsList.ResetUses'}}">
-                                                <i class="fa-solid fa-rotate-left"></i>
-                                            </a>
-                                        </div>
-                                    {{/if}}
-                                    {{#unless ../../locked}}
-                                        {{#ifnoteq item.system.featuretype 'boon'}}
-                                            <div class="dot-tracker">
-                                                <div class="resource-value" data-value="{{item.system.points}}" data-name="items.{{item._id}}">
-                                                    <span class="resource-value-empty" data-action="dotCounterEmpty"></span>
-                                                    {{#numLoop 5}}
-                                                        <span class="resource-value-step" data-action="dotCounterChange" data-index="{{this}}"></span>
-                                                    {{/numLoop}}
-                                                </div>
-                                            </div>
-                                        {{/ifnoteq}}
-                                    {{/unless}}
                                 </div>
                                 <div class="collapsible-content item-description">
                                     {{{item.system.enrichedDescription}}}
