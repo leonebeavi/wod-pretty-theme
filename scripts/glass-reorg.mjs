@@ -132,7 +132,10 @@ function buildGlassSheet(Base, splatTabs, type) {
         // Custom header needs `generation` (only the system's Blood part sets it).
         case "header":    context.generation = actor.system?.headers?.generation ?? ""; break;
         // Blood prep is done by super; just add the (optionally renamed) Humanity label.
-        case "blood":     context.humanityLabel = actor.getFlag(MODULE_ID, "humanityLabel") || game.i18n.localize("WOD5E.VTM.Humanity"); break;
+        case "blood":
+          context.humanityLabel = actor.getFlag(MODULE_ID, "humanityLabel") || game.i18n.localize("WOD5E.VTM.Humanity");
+          context.clanCompulsion = actor.getFlag(MODULE_ID, "clanCompulsion") || "";
+          break;
         case "core":       context = await this.prepareStatsContext(context, actor);     tabId = "core"; break;
         case "inventory":  context = await this.prepareEquipmentContext(context, actor); tabId = "inventory"; break;
         // Advantages = the character's features (backgrounds/merits/flaws/boons).

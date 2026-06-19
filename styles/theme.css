@@ -1,0 +1,23 @@
+/* =====================================================================
+ * WoD Pretty Theme — local font safety net
+ * =====================================================================
+ * The system stylesheet (which defines these @font-face rules) is currently
+ * loaded, so these are redundant — but kept as a safety net for the planned
+ * native-window de-bleed pass, which may disable parts of the system CSS. They
+ * point at the system's own local font files. The actual theme is glass.css.
+ * ===================================================================== */
+@font-face {
+  font-family: "wod5eSymbols";
+  src: url("../../../systems/wod5e/assets/fonts/wod5e-symbols.ttf") format("truetype");
+  font-display: block;
+}
+@font-face {
+  font-family: "vampireRevised";
+  src: url("../../../systems/wod5e/assets/fonts/vampire-revised.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "cormorantLight";
+  src: url("../../../systems/wod5e/assets/fonts/Cormorant-Light-webfont.woff") format("woff");
+  font-display: swap;
+}

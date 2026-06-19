@@ -1,6 +1,10 @@
 {
   "WPT": {
     "Settings": {
+      "Debleed": {
+        "Name": "Remover o estilo do sistema wod5e (tela em branco)",
+        "Hint": "Desativa por completo o stylesheet do sistema wod5e, fazendo tudo — a interface do próprio Foundry E as fichas de personagem/item e diálogos — voltar à aparência padrão do Foundry. Uma tela em branco para reconstruir o tema. Desligue para trazer o estilo do sistema de volta. Efeito instantâneo."
+      },
       "Enabled": {
         "Name": "Ativar WoD Pretty Theme",
         "Hint": "Liga ou desliga o visual escuro/glass. Desligado, usa a aparência padrão do wod5e."
@@ -25,6 +29,7 @@
       "Inventory": "Inventário",
       "Notes": "Notas",
       "Settings": "Configurações"
-    }
+    },
+    "ClanCompulsion": "Clan Compulsion"
   }
 }

@@ -112,6 +112,10 @@
                     {{/if}}
                 </div>
             </div>
+        </div>
+
+        {{!-- ROW 4: Clan Bane (read-only) + Clan Compulsion (editable), equal halves --}}
+        <div class="gg-grid-2">
             <div class="gg-card gg-bane-card">
                 <label class="gg-field-label">{{localize "WOD5E.VTM.ClanBane"}} <span class="gg-readonly-tag">read-only</span></label>
                 <div class="resource-contents prosemirror-resource resource bane">
@@ -119,6 +123,11 @@
                         {{{enrichedBane}}}
                     </div>
                 </div>
+            </div>
+            <div class="gg-card gg-bane-card gg-compulsion-card">
+                <label class="gg-field-label" for="flags.wod-pretty-theme.clanCompulsion">{{localize "WPT.ClanCompulsion"}}</label>
+                <textarea class="gg-compulsion" name="flags.wod-pretty-theme.clanCompulsion"
+                          placeholder="{{localize "WPT.ClanCompulsion"}}">{{clanCompulsion}}</textarea>
             </div>
         </div>
 

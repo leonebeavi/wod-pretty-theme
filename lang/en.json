@@ -1,6 +1,10 @@
 {
   "WPT": {
     "Settings": {
+      "Debleed": {
+        "Name": "Remove the wod5e system styling (clean slate)",
+        "Hint": "Disables the wod5e system's stylesheet entirely, so everything — Foundry's own interface AND the character/item sheets and dialogs — falls back to Foundry's plain default look. A blank canvas for rebuilding the theme. Turn off to bring the system's styling back. Takes effect instantly."
+      },
       "Enabled": {
         "Name": "Enable WoD Pretty Theme",
         "Hint": "Turn the dark/glass restyling on or off. When off, the default wod5e look is used."
@@ -25,6 +29,7 @@
       "Inventory": "Inventory",
       "Notes": "Notes",
       "Settings": "Settings"
-    }
+    },
+    "ClanCompulsion": "Clan Compulsion"
   }
 }

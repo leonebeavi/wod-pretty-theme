@@ -5,6 +5,30 @@ All notable changes to **WoD Pretty Theme** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-06-19
+
+A large overhaul of the module's internals and a fresh take on the **Glass Gótico**
+theme. **Sheet polishing is still in progress** — expect continued refinement in
+the upcoming releases.
+
+### Changed
+- Ground-up rework of how the module loads and applies the theme. The dark,
+  glass-gothic restyle of the wod5e character/item sheets — frosted panels,
+  per-splat accents, the consolidated horizontal tab layout (Core · [splat] ·
+  Merit & Flaws · Profile · Inventory · Notes · Settings) and the custom Vampire
+  header — is intact and now built on a cleaner foundation.
+
+### Added
+- Specialty markers rendered as small accent-coloured pills.
+- A per-actor **Clan Compulsion** field on the Blood tab, sharing its row with
+  Clan Bane.
+- A hover affordance on rollable resource labels (Willpower, Humanity) in place of
+  the dice icon.
+
+### Notes
+- Stopping the system's CSS from bleeding into Foundry's own native windows
+  (Scene/Token config, etc.) is planned as a separate, surgical pass.
+
 ## [1.7.17] - 2026-06-18
 
 ### Fixed
