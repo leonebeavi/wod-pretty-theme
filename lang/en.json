@@ -1,0 +1,35 @@
+{
+  "WPT": {
+    "Settings": {
+      "Debleed": {
+        "Name": "Remove the wod5e system styling (clean slate)",
+        "Hint": "Disables the wod5e system's stylesheet entirely, so everything — Foundry's own interface AND the character/item sheets and dialogs — falls back to Foundry's plain default look. A blank canvas for rebuilding the theme. Turn off to bring the system's styling back. Takes effect instantly."
+      },
+      "Enabled": {
+        "Name": "Enable WoD Pretty Theme",
+        "Hint": "Turn the dark/glass restyling on or off. When off, the default wod5e look is used."
+      },
+      "StyleChrome": {
+        "Name": "Restore Foundry's default interface",
+        "Hint": "Undo the wod5e system's overrides of the Foundry chrome (right sidebar, chat, directories, controls) so the native Foundry look returns. Turn off to keep the system's interface styling."
+      },
+      "Restructure": {
+        "Name": "Reorganize sheets (Glass Gótico layout)",
+        "Hint": "Consolidate the wod5e sheet tabs into a horizontal top tab bar: Core · [splat] · Advantages · Profile · Inventory · Notes · Settings (GM-only). Turn off (and reload) to use the system's original tabs."
+      },
+      "HumanityLabel": {
+        "Name": "Custom Humanity track name",
+        "Hint": "Rename this actor's Humanity track (leave blank to keep \"Humanity\")."
+      }
+    },
+    "Tabs": {
+      "Core": "Core",
+      "Advantages": "Merit & Flaws",
+      "Profile": "Profile",
+      "Inventory": "Inventory",
+      "Notes": "Notes",
+      "Settings": "Settings"
+    },
+    "ClanCompulsion": "Clan Compulsion"
+  }
+}

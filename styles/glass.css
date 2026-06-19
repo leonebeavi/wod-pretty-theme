@@ -1,0 +1,2665 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+/* =====================================================================
+   WoD Pretty Theme
+   A dark, modern, GLASS theme for the World of Darkness 5e (wod5e)
+   system. Inspired by the Progeny VtM v5 character creator.
+
+   Scope: everything is under the `.wod-pretty-theme` body class added by
+   scripts/wod-pretty-theme.mjs. Redefining the system's CSS variables on
+   <body> (a closer ancestor than <html>) wins for all sheet content.
+
+   Body classes:
+     .wod-pretty-theme  master switch
+     .wpt-chrome        restore Foundry's DEFAULT interface (undo the
+                        system's chrome overrides) — see section CHROME
+
+   Accent is ALWAYS per-splat (Vampire crimson, Werewolf green,
+   Hunter amber, Mortal slate). There is no accent-mode option.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. Design tokens
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme {
+  /* Warm near-black base */
+  --wpt-bg:        #0c0a0b;
+  --wpt-text:      #f1eae6;
+  --wpt-text-muted: rgba(241, 234, 230, 0.62);
+  --wpt-text-dim:  rgba(241, 234, 230, 0.40);
+
+  /* Glass surfaces (Obsidian "Glass Gótico" design) — translucent + frosted */
+  --wpt-sheet:     rgba(13, 8, 10, 0.84);    /* window-content (frosted) */
+  --wpt-glass:     rgba(17, 11, 13, 0.50);   /* panels / cards          */
+  --wpt-glass-2:   rgba(28, 18, 21, 0.46);   /* elevated / inputs       */
+  --wpt-glass-3:   rgba(44, 28, 32, 0.52);   /* hover / active surfaces */
+  --wpt-blur:      blur(13px);
+
+  /* Very subtle structure — no hard white outlines */
+  --wpt-border:        rgba(255, 255, 255, 0.08);
+  --wpt-border-strong: rgba(255, 255, 255, 0.16);
+  --wpt-hilite:        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  /* Per-splat accent colours (vampire = approved Obsidian crimson) */
+  --wpt-c-vampire:  #d2122e;
+  --wpt-c-werewolf: #6f9450;
+  --wpt-c-hunter:   #cf8233;
+  --wpt-c-mortal:   #8b93c9;
+  --wpt-danger:     #d6453f;
+
+  --wpt-accent-contrast:    #fff;
+
+  /* Rounded, soft, glassy shape (design: 22px window, 14px panels) */
+  --wpt-radius-sm: 8px;
+  --wpt-radius:    14px;
+  --wpt-radius-lg: 22px;
+  --wpt-radius-window: 6px;   /* window corners: subtle, Foundry-like */
+  --wpt-shadow:    0 40px 100px rgba(0, 0, 0, 0.65);
+  --wpt-shadow-sm: 0 12px 30px rgba(0, 0, 0, 0.40);
+  --wpt-panel-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 30px rgba(0, 0, 0, 0.40);
+  --wpt-dot-ring:  rgba(255, 255, 255, 0.22);   /* dot/box outlines */
+
+  /* Two fonts (approved design): Cormorant Garamond (elegant serif display)
+     for titles, Manrope (modern sans) for everything else. */
+  --wpt-font-display: "Cormorant Garamond", "Cinzel", Georgia, serif;
+  --wpt-font-ui:      "Manrope", "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+/* Per-splat accent on the sheet roots (ghouls carry the `vampire` class).
+   The derived shades are declared HERE — on the same element as the splat
+   class — so color-mix() re-evaluates var(--wpt-accent) with the correct
+   per-splat value instead of the body-level default (which made every
+   splat's tints crimson). */
+body.wod-pretty-theme .wod5e {
+  --wpt-accent: var(--wpt-c-vampire);
+  --wpt-accent-fill:        color-mix(in srgb, var(--wpt-accent) 18%, transparent);
+  --wpt-accent-fill-strong: color-mix(in srgb, var(--wpt-accent) 32%, transparent);
+  --wpt-accent-border:      color-mix(in srgb, var(--wpt-accent) 46%, transparent);
+  --wpt-accent-glow:        color-mix(in srgb, var(--wpt-accent) 40%, transparent);
+  --wpt-accent-soft:        color-mix(in srgb, var(--wpt-accent) 55%, transparent);
+  /* Lit dots are a touch brighter than the accent (design --dot-on #df1d38) */
+  --wpt-dot-on:             color-mix(in srgb, var(--wpt-accent), #fff 8%);
+}
+body.wod-pretty-theme .wod5e.werewolf { --wpt-accent: var(--wpt-c-werewolf); }
+body.wod-pretty-theme .wod5e.hunter   { --wpt-accent: var(--wpt-c-hunter); }
+body.wod-pretty-theme .wod5e.mortal   { --wpt-accent: var(--wpt-c-mortal); }
+
+/* Themed text selection follows the accent */
+body.wod-pretty-theme .wod5e ::selection {
+  background: var(--wpt-accent-fill-strong);
+  color: var(--wpt-text);
+}
+
+/* ---------------------------------------------------------------------
+   2. Remap the system palette (surfaces, textures, splat accents)
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme {
+  --ui-background-texture:    none;
+  --sidebar-background:       none;
+  --actor-background-default: none;
+  --actor-header-default:     none;
+  --actor-background-dark:    none;
+
+  --base-theme-filter:     transparent;
+  --dark-theme-filter:     transparent;
+  --vampire-theme-filter:  transparent;
+  --werewolf-theme-filter: transparent;
+  --hunter-theme-filter:   transparent;
+
+  --system-color-1:  var(--wpt-glass);
+  --system-color-2:  var(--wpt-text);
+  --system-color-3:  var(--wpt-accent);
+  --system-color-4:  var(--wpt-glass);
+  --system-color-7:  var(--wpt-glass-2);
+  --system-color-8:  var(--wpt-glass-2);
+  --system-color-9:  var(--wpt-accent);
+  --system-color-10: var(--wpt-glass-3);
+  --system-color-11: var(--wpt-glass-2);
+
+  --system-dark-color-1: var(--wpt-glass-2);
+  --system-dark-color-2: var(--wpt-glass);
+  --system-dark-color-3: var(--wpt-glass-3);
+  --system-dark-color-7: var(--wpt-glass-3);
+  --system-dark-color-8: var(--wpt-text-muted);
+
+  --input-text-color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e.vampire {
+  --vampire-color-1: var(--wpt-glass);
+  --vampire-color-2: var(--wpt-accent);
+  --vampire-color-3: var(--wpt-accent);
+  --coterie-group-header: color-mix(in srgb, var(--wpt-accent) 26%, var(--wpt-glass));
+}
+body.wod-pretty-theme .wod5e.werewolf {
+  --werewolf-color-1: var(--wpt-glass);
+  --werewolf-color-2: var(--wpt-accent);
+  --werewolf-color-3: var(--wpt-accent);
+  --pack-group-header: color-mix(in srgb, var(--wpt-accent) 26%, var(--wpt-glass));
+}
+body.wod-pretty-theme .wod5e.hunter {
+  --hunter-color-1: var(--wpt-accent);
+  --hunter-color-2: var(--wpt-accent);
+  --hunter-color-3: var(--wpt-accent);
+  --cell-group-header: color-mix(in srgb, var(--wpt-accent) 26%, var(--wpt-glass));
+}
+body.wod-pretty-theme .wod5e.mortal {
+  --mortal-color-1: var(--wpt-accent);
+  --mortal-color-2: var(--wpt-accent);
+  --mortal-color-3: var(--wpt-accent);
+}
+
+/* ---------------------------------------------------------------------
+   3. Sheet shell — frosted glass
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e.sheet {
+  color: var(--wpt-text);
+  font-family: var(--wpt-font-ui);
+  box-shadow: var(--wpt-shadow);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-window);
+  overflow: hidden;
+}
+/* Solid warm-black base with a per-splat glow at the top (panels glass over it) */
+body.wod-pretty-theme .wod5e.sheet .window-content {
+  background:
+    radial-gradient(120% 70% at 50% -6%, color-mix(in srgb, var(--wpt-accent) 30%, transparent), transparent 52%),
+    linear-gradient(180deg, #150d10, #0c0709 58%, #0a0607) !important;
+  color: var(--wpt-text);
+  scrollbar-color: var(--wpt-accent-border) transparent;
+}
+body.wod-pretty-theme .wod5e.sheet .window-header {
+  background: rgba(8, 6, 6, 0.7);
+  backdrop-filter: var(--wpt-blur);
+  -webkit-backdrop-filter: var(--wpt-blur);
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e.sheet .window-header .window-title {
+  font-family: var(--wpt-font-ui);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+/* =====================================================================
+   Dialogs / roll & prompt windows — opaque, elegant, standardized with the
+   sheet theme. Covers DialogV2 (.application.dialog), the wod5e roll dialog
+   (.wod5e.roll-dialog), select dialogs, roll-menu, and legacy .dialog popups.
+   ===================================================================== */
+/* Generic (non-wod5e) dialogs need a default accent for the themed buttons */
+body.wod-pretty-theme .application.dialog:not(.wod5e) {
+  --wpt-accent: var(--wpt-c-vampire);
+  --wpt-accent-fill:   color-mix(in srgb, var(--wpt-accent) 18%, transparent);
+  --wpt-accent-border: color-mix(in srgb, var(--wpt-accent) 46%, transparent);
+}
+/* Window frame */
+body.wod-pretty-theme .application.dialog,
+body.wod-pretty-theme .wod5e.roll-dialog,
+body.wod-pretty-theme .wod5e.dialog,
+body.wod-pretty-theme .roll-menu {
+  border: 1px solid var(--wpt-border-strong) !important;
+  border-radius: var(--wpt-radius) !important;
+  box-shadow: var(--wpt-shadow) !important;
+  color: var(--wpt-text) !important;
+}
+/* Header */
+body.wod-pretty-theme .application.dialog .window-header,
+body.wod-pretty-theme .wod5e.dialog .window-header,
+body.wod-pretty-theme .roll-menu .window-header {
+  background: rgba(8, 6, 6, 0.92) !important;
+  border-bottom: 1px solid var(--wpt-border) !important;
+}
+body.wod-pretty-theme .application.dialog .window-title {
+  color: #fff !important;
+  font-family: var(--wpt-font-display) !important;
+}
+/* Content — opaque dark glass (no longer see-through) */
+body.wod-pretty-theme .application.dialog .window-content,
+body.wod-pretty-theme .application.dialog .dialog-content,
+body.wod-pretty-theme .wod5e:not(.sheet) .window-content,
+body.wod-pretty-theme .roll-menu .window-content,
+body.wod-pretty-theme .wod5e.dialog .window-content {
+  background: linear-gradient(180deg, rgba(20, 13, 15, 0.985), rgba(12, 8, 9, 0.99)) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--wpt-text) !important;
+}
+body.wod-pretty-theme .application.dialog label,
+body.wod-pretty-theme .application.dialog .dialog-content,
+body.wod-pretty-theme .application.dialog p { color: var(--wpt-text) !important; }
+/* Inputs / selects */
+body.wod-pretty-theme .application.dialog input,
+body.wod-pretty-theme .application.dialog select,
+body.wod-pretty-theme .roll-menu input,
+body.wod-pretty-theme .roll-menu select {
+  background: var(--wpt-glass-2) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: var(--wpt-radius-sm) !important;
+  color: var(--wpt-text) !important;
+}
+/* Buttons — themed; the default/roll action carries the accent */
+body.wod-pretty-theme .application.dialog button,
+body.wod-pretty-theme .application.dialog .dialog-buttons button,
+body.wod-pretty-theme .application.dialog .form-footer button {
+  background: var(--wpt-glass-2) !important;
+  border: 1px solid var(--wpt-border-strong) !important;
+  border-radius: var(--wpt-radius-sm) !important;
+  color: var(--wpt-text) !important;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+body.wod-pretty-theme .application.dialog button:hover {
+  background: var(--wpt-accent-fill) !important;
+  border-color: var(--wpt-accent-border) !important;
+}
+body.wod-pretty-theme .application.dialog button.default,
+body.wod-pretty-theme .application.dialog button[data-action="roll"] {
+  background: var(--wpt-accent-fill) !important;
+  border-color: var(--wpt-accent-border) !important;
+  color: #fff !important;
+}
+/* The roll dialog's floating modifier popouts need their own opaque backing */
+body.wod-pretty-theme .dialog-content .situational-modifiers,
+body.wod-pretty-theme .situational-modifiers,
+body.wod-pretty-theme .roll-menu .roll-menu-sidebar,
+body.wod-pretty-theme .selectable-modifiers,
+body.wod-pretty-theme .custom-modifiers {
+  background: rgba(14, 9, 10, 0.99) !important;
+  border: 1px solid var(--wpt-border-strong) !important;
+  border-radius: var(--wpt-radius) !important;
+  box-shadow: var(--wpt-shadow) !important;
+  color: var(--wpt-text) !important;
+}
+
+/* Text legibility floor (works in any Foundry colour scheme) */
+body.wod-pretty-theme .wod5e.sheet,
+body.wod-pretty-theme .wod5e .tab,
+body.wod-pretty-theme .wod5e .actor-header,
+body.wod-pretty-theme .wod5e .item-header,
+body.wod-pretty-theme .wod5e.sheet label,
+body.wod-pretty-theme .wod5e.sheet span,
+body.wod-pretty-theme .wod5e.sheet p,
+body.wod-pretty-theme .wod5e.sheet a,
+body.wod-pretty-theme .wod5e.sheet h1,
+body.wod-pretty-theme .wod5e.sheet h2,
+body.wod-pretty-theme .wod5e.sheet h3,
+body.wod-pretty-theme .wod5e.sheet h4 {
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .collapsible-content,
+body.wod-pretty-theme .wod5e .limited-description-body {
+  color: var(--wpt-text);
+  background: var(--wpt-glass);
+}
+body.wod-pretty-theme .wod5e .toggle-limited,
+body.wod-pretty-theme .wod5e .toggle-limited:not(.visible) {
+  color: var(--wpt-text-muted);
+}
+
+/* ---------------------------------------------------------------------
+   4. Header / profile / name  (fixes the truncated name)
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .actor-header,
+body.wod-pretty-theme .wod5e .item-header {
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--wpt-accent) 12%, var(--wpt-glass)),
+              transparent);
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e .header-profile-img,
+body.wod-pretty-theme .wod5e img.profile-img {
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius);
+  box-shadow: var(--wpt-shadow-sm);
+}
+/* Keep the name plate anchored to the BOTTOM of the portrait, but let it grow
+   upward so long names wrap instead of truncating. */
+body.wod-pretty-theme .wod5e .actor-header .header-profile .name-field {
+  width: 100%;
+  height: auto !important;
+  min-height: 35px;
+  top: auto !important;
+  bottom: 0 !important;
+}
+body.wod-pretty-theme .wod5e .actor-header .charname:not(input),
+body.wod-pretty-theme .wod5e .actor-header input.charname,
+body.wod-pretty-theme .wod5e .charname,
+body.wod-pretty-theme .wod5e input.charname,
+body.wod-pretty-theme .wod5e input.itemname {
+  font-family: var(--wpt-font-display) !important; /* same gothic display font as the body titles */
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+  line-height: 1.18;
+  color: #ffffff !important;       /* simple, legible white */
+  -webkit-text-stroke: 0 !important; /* kill the system's black outline (the "broken" view-mode effect) */
+  -webkit-text-fill-color: #ffffff !important;
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  white-space: normal !important;   /* wrap long names instead of truncating */
+  overflow: visible !important;
+  text-overflow: clip !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+  background: rgba(8, 6, 6, 0.82); /* opaque enough to stay readable over the portrait */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm);
+  padding: 4px 12px;
+}
+body.wod-pretty-theme .wod5e input.charname:focus,
+body.wod-pretty-theme .wod5e input.itemname:focus {
+  border-color: var(--wpt-accent-border);
+  box-shadow: 0 0 0 2px var(--wpt-accent-fill);
+  outline: none;
+}
+
+/* ---------------------------------------------------------------------
+   5. Tab navigation (glass; accent on hover/active; no white chips)
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .tabs-container {
+  background: rgba(8, 6, 6, 0.55);
+  backdrop-filter: var(--wpt-blur);
+  -webkit-backdrop-filter: var(--wpt-blur);
+  border-right: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e .sheet-tabs .lock-btn,
+body.wod-pretty-theme .wod5e .sheet-tabs > [data-tab] .navicon {
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--wpt-radius-sm);
+  color: var(--wpt-text-muted);
+  transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs > [data-tab]:not(.active) .navicon i,
+body.wod-pretty-theme .wod5e .sheet-tabs > [data-tab]:not(.active) .navicon .wod5e-symbol {
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .sheet-tabs > [data-tab]:hover .navicon {
+  background-color: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .sheet-tabs > [data-tab].active .navicon {
+  background-color: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+  color: var(--wpt-accent);
+}
+body.wod-pretty-theme .wod5e .sheet-tabs .lock-btn:hover {
+  color: var(--wpt-accent);
+}
+body.wod-pretty-theme .wod5e.item .sheet-tabs {
+  background: rgba(8, 6, 6, 0.5);
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e.item .sheet-tabs a {
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e.item .sheet-tabs a.active {
+  color: var(--wpt-accent);
+  border-bottom: 2px solid var(--wpt-accent);
+}
+
+/* ---------------------------------------------------------------------
+   6. Section / column headers  (right-sized — were 20pt)
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .resource-header {
+  font-family: var(--wpt-font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wpt-text);
+  border-bottom: 1px solid var(--wpt-border);
+  padding-bottom: 3px;
+}
+body.wod-pretty-theme .wod5e .field-header {
+  font-family: var(--wpt-font-display);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .big-header {
+  color: var(--wpt-accent);
+  font-size: 1.05rem;
+}
+
+/* Standardized typography — exactly two fonts:
+   • Cinzel (elegant gothic display) ONLY for titles & subtitles
+     (section headers + the type banner), and
+   • Inter (clean modern sans) for everything else, including names.
+   !important beats the system's mixed fonts. Icons (.fa*, .wod5e-symbol)
+   are never targeted, so they keep their own fonts. */
+body.wod-pretty-theme .wod5e.sheet { font-family: var(--wpt-font-ui); }
+/* Titles & subtitles only → the gothic display font */
+body.wod-pretty-theme .wod5e .resource-header,
+body.wod-pretty-theme .wod5e .field-header,
+body.wod-pretty-theme .wod5e .big-header,
+body.wod-pretty-theme .wod5e .sheet-banner,
+body.wod-pretty-theme .wod5e .sheet-banner .sheet-label,
+body.wod-pretty-theme .wod5e .sheet-banner .actor-type-field {
+  font-family: var(--wpt-font-display) !important;
+}
+/* Force the system's stray fonts (Modesto / Amarante / Vollkorn) on content
+   elements back to the UI sans, so the sheet uses just the two fonts. */
+body.wod-pretty-theme .wod5e .collapsible-content,
+body.wod-pretty-theme .wod5e .resource-label,
+body.wod-pretty-theme .wod5e .data-item,
+body.wod-pretty-theme .wod5e .specialty,
+body.wod-pretty-theme .wod5e .item-name,
+body.wod-pretty-theme .wod5e input,
+body.wod-pretty-theme .wod5e select,
+body.wod-pretty-theme .wod5e textarea {
+  font-family: var(--wpt-font-ui) !important;
+}
+/* Header labels (HEALTH / WILLPOWER / CLAN / FRENZY / HUNGER) are
+   label.field-header.resource-label — re-assert the display font here so the
+   header matches the body section titles. Body trait labels (.resource-label
+   alone, e.g. Strength) stay in the UI font via the rule above. */
+body.wod-pretty-theme .wod5e .actor-header .field-header,
+body.wod-pretty-theme .wod5e .actor-header .resource-label,
+body.wod-pretty-theme .wod5e .field-header.resource-label {
+  font-family: var(--wpt-font-display) !important;
+}
+
+/* Tighten section titles to their cards (side panel especially) */
+body.wod-pretty-theme .wod5e .resource-header {
+  margin-bottom: 4px;
+}
+body.wod-pretty-theme .wod5e .side-panel .resource-header {
+  margin: 6px 0 4px;
+}
+body.wod-pretty-theme .wod5e .side-panel .stats-container,
+body.wod-pretty-theme .wod5e .side-panel .items-list {
+  margin-top: 0;
+}
+
+/* ---------------------------------------------------------------------
+   7. Glass panels / containers (rounded, soft, no hard boxes)
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .stats-container,
+body.wod-pretty-theme .wod5e .side-panel,
+body.wod-pretty-theme .wod5e .experience-trackers,
+body.wod-pretty-theme .wod5e .tracker,
+body.wod-pretty-theme .wod5e .description-field,
+body.wod-pretty-theme .wod5e .spc-stats-body,
+body.wod-pretty-theme .wod5e .general-difficulty,
+body.wod-pretty-theme .wod5e .balance-trackers .wolf-resource,
+body.wod-pretty-theme .wod5e .renown .resource-content,
+body.wod-pretty-theme .wod5e.spc .stat-resource-background,
+body.wod-pretty-theme .wod5e.spc .standard-pools-list,
+body.wod-pretty-theme .wod5e.spc .exceptional-pools-list,
+body.wod-pretty-theme .wod5e .group-member {
+  background: var(--wpt-glass) !important;
+  backdrop-filter: var(--wpt-blur);
+  -webkit-backdrop-filter: var(--wpt-blur);
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: var(--wpt-radius) !important;
+  box-shadow: var(--wpt-hilite), 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+/* Resource boxes (health / willpower / hunger / data items) → glass, rounded */
+body.wod-pretty-theme .wod5e .resource {
+  background: var(--wpt-glass-2) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: var(--wpt-radius-sm) !important;
+}
+/* Item categories: drop the hard #1b1b1b box */
+body.wod-pretty-theme .wod5e .item-list .category {
+  background: transparent !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: var(--wpt-radius) !important;
+}
+
+/* Rows: hover/select tint follows the splat accent */
+body.wod-pretty-theme .wod5e .attribute,
+body.wod-pretty-theme .wod5e .skill {
+  border-radius: var(--wpt-radius-sm);
+  transition: background 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .attribute:hover,
+body.wod-pretty-theme .wod5e .skill:hover,
+body.wod-pretty-theme .wod5e .item-list .item:hover,
+body.wod-pretty-theme .wod5e .items-list .item:hover,
+body.wod-pretty-theme .wod5e .group-member:hover {
+  background: var(--wpt-accent-fill) !important;
+}
+body.wod-pretty-theme .wod5e .rollable {
+  cursor: pointer;
+  transition: color 0.12s ease, text-shadow 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .rollable:hover {
+  color: var(--wpt-accent);
+  text-shadow: 0 0 8px var(--wpt-accent-glow);
+}
+
+/* ---------------------------------------------------------------------
+   8. Rating dots (active fill comes from the splat-trio remap)
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .resource-value .resource-value-step {
+  border: 1px solid var(--wpt-border-strong);
+  background-color: color-mix(in srgb, var(--wpt-text) 10%, transparent);
+}
+body.wod-pretty-theme .resource-value-static .resource-value-static-step {
+  border: 1px solid var(--wpt-border-strong);
+}
+body.wod-pretty-theme .wod5e .resource-value .resource-value-step.active,
+body.wod-pretty-theme .wod5e .resource-value-static .resource-value-static-step.active {
+  background-color: var(--wpt-accent);
+  border-color: var(--wpt-accent);
+  box-shadow: 0 0 6px var(--wpt-accent-glow);
+}
+/* "clear to 0" affordance: a faint empty ring (not an ugly cross) */
+body.wod-pretty-theme .resource-value .resource-value-empty {
+  border: 1px solid var(--wpt-border);
+  background: none;
+  opacity: 0.4;
+}
+body.wod-pretty-theme .resource-value .resource-value-empty:hover {
+  border-color: var(--wpt-accent);
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------
+   9. Health / Willpower / Humanity square counters
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .resource-counter .resource-counter-step,
+body.wod-pretty-theme .cell-resource-counter .cell-resource-counter-step {
+  border: 1px solid var(--wpt-border-strong);
+  background-color: color-mix(in srgb, var(--wpt-text) 5%, transparent);
+  border-radius: 3px;
+}
+/* Damage / track marks — clean fills (no messy line gradients):
+   superficial (/) = diagonal half-fill accent · aggravated (x) = solid danger */
+body.wod-pretty-theme .resource-counter .resource-counter-step[data-state="/"],
+body.wod-pretty-theme .cell-resource-counter .cell-resource-counter-step[data-state="/"] {
+  background: linear-gradient(135deg, transparent 50%, var(--wpt-accent) 50%);
+}
+body.wod-pretty-theme .resource-counter .resource-counter-step[data-state="x"],
+body.wod-pretty-theme .cell-resource-counter .cell-resource-counter-step[data-state="x"] {
+  background-color: var(--wpt-danger);
+  border-color: var(--wpt-danger);
+}
+/* Humanity: value (-) = solid accent · stains (/) = solid danger */
+body.wod-pretty-theme .resource-counter .resource-counter-step[data-state="-"] {
+  background-color: var(--wpt-accent);
+  border-color: var(--wpt-accent);
+}
+body.wod-pretty-theme .humanity .resource-counter-step[data-state="/"] {
+  background: var(--wpt-danger);
+  border-color: var(--wpt-danger);
+}
+body.wod-pretty-theme .wod5e .resource-control { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .resource-control:hover { color: var(--wpt-accent); }
+
+/* ---------------------------------------------------------------------
+   10. Item rows
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .item-list .item,
+body.wod-pretty-theme .wod5e .items-list .item {
+  border-bottom: 1px solid var(--wpt-border);
+  transition: background 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .item-image {
+  border-radius: var(--wpt-radius-sm) !important;
+  border: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e .item-control,
+body.wod-pretty-theme .wod5e .item-controls a { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .item-control:hover,
+body.wod-pretty-theme .wod5e .item-controls a:hover { color: var(--wpt-accent); }
+
+/* ---------------------------------------------------------------------
+   11. Powers tree
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .powers-display-tree .icon {
+  border-radius: var(--wpt-radius-sm);
+  border: 1px solid var(--wpt-border);
+  background: var(--wpt-glass-2);
+}
+body.wod-pretty-theme .wod5e .powers-display-tree .icon.selected {
+  border-color: var(--wpt-accent);
+  background: var(--wpt-accent-fill);
+  box-shadow: 0 0 8px var(--wpt-accent-glow);
+}
+body.wod-pretty-theme .wod5e .powers-display-tree ul::before,
+body.wod-pretty-theme .wod5e .powers-display-tree li::before {
+  border-color: var(--wpt-border-strong) !important;
+}
+body.wod-pretty-theme .wod5e .power-category-header,
+body.wod-pretty-theme .wod5e .power-description {
+  background: var(--wpt-glass);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm);
+}
+
+/* ---------------------------------------------------------------------
+   12. Inputs / selects / buttons (glass, rounded)
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e input,
+body.wod-pretty-theme .wod5e select,
+body.wod-pretty-theme .wod5e textarea {
+  background: var(--wpt-glass-2);
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm) !important;
+}
+body.wod-pretty-theme .wod5e input:focus,
+body.wod-pretty-theme .wod5e select:focus,
+body.wod-pretty-theme .wod5e textarea:focus {
+  border-color: var(--wpt-accent-border);
+  box-shadow: 0 0 0 2px var(--wpt-accent-fill);
+  outline: none;
+}
+body.wod-pretty-theme .wod5e select option,
+body.wod-pretty-theme .wod5e select optgroup {
+  background: #1a1413;
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e ::placeholder { color: var(--wpt-text-dim); }
+
+body.wod-pretty-theme .wod5e button,
+body.wod-pretty-theme .wod5e .button {
+  background: var(--wpt-glass-2);
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius-sm);
+  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+body.wod-pretty-theme .wod5e button:hover,
+body.wod-pretty-theme .wod5e .button:hover {
+  background: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+  box-shadow: 0 0 12px var(--wpt-accent-glow);
+}
+body.wod-pretty-theme .wod5e button.rollable {
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--wpt-accent) 78%, black),
+              color-mix(in srgb, var(--wpt-accent) 60%, black));
+  color: var(--wpt-accent-contrast);
+  border-color: var(--wpt-accent-border);
+}
+body.wod-pretty-theme .wod5e button.rollable:hover { box-shadow: 0 0 14px var(--wpt-accent-glow); }
+body.wod-pretty-theme .wod5e button.vampire-button,
+body.wod-pretty-theme .wod5e button.werewolf-button,
+body.wod-pretty-theme .wod5e .rage-button,
+body.wod-pretty-theme .wod5e .rouse-button {
+  background: var(--wpt-glass-3);
+  color: var(--wpt-text);
+  border: 1px solid var(--wpt-border-strong);
+  border-radius: var(--wpt-radius-sm);
+}
+body.wod-pretty-theme .wod5e button.vampire-button:hover,
+body.wod-pretty-theme .wod5e button.werewolf-button:hover,
+body.wod-pretty-theme .wod5e .rage-button:hover,
+body.wod-pretty-theme .wod5e .rouse-button:hover,
+body.wod-pretty-theme .wod5e button.vampire-button.active,
+body.wod-pretty-theme .wod5e button.werewolf-button.active {
+  background: var(--wpt-accent-fill);
+  border-color: var(--wpt-accent-border);
+  box-shadow: 0 0 12px var(--wpt-accent-glow);
+}
+body.wod-pretty-theme .wod5e prose-mirror,
+body.wod-pretty-theme .wod5e .editor {
+  background: var(--wpt-glass);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm);
+}
+
+/* ---------------------------------------------------------------------
+   13. Type banner & splat extras
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .sheet-banner {
+  background: linear-gradient(90deg,
+              color-mix(in srgb, var(--wpt-accent) 24%, transparent),
+              transparent) !important;
+  border-top: 1px solid var(--wpt-accent-border);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .sheet-banner .sheet-label,
+body.wod-pretty-theme .wod5e .sheet-banner .actor-type-field {
+  font-family: var(--wpt-font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+body.wod-pretty-theme .wod5e .despair-box .despair-toggle {
+  border: 1px solid var(--wpt-border-strong);
+  background-color: color-mix(in srgb, var(--wpt-text) 5%, transparent);
+}
+body.wod-pretty-theme .wod5e .despair-box .despair-toggle.active {
+  background-color: var(--wpt-accent);
+  border-color: var(--wpt-accent);
+  box-shadow: 0 0 6px var(--wpt-accent-glow);
+}
+body.wod-pretty-theme .wod5e .frenzy .frenzy-status.active {
+  color: var(--wpt-danger);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--wpt-danger) 40%, transparent);
+}
+body.wod-pretty-theme .wod5e .xp-header,
+body.wod-pretty-theme .wod5e .exp-tracker { border-bottom: 1px solid var(--wpt-border); }
+body.wod-pretty-theme .wod5e .add-experience,
+body.wod-pretty-theme .wod5e .spend-experience { color: var(--wpt-accent); }
+
+/* Sheet scrollbars */
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar { width: 10px; height: 10px; }
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-thumb {
+  background: var(--wpt-accent-border);
+  border-radius: 999px;
+}
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-track { background: transparent; }
+
+/* =====================================================================
+   CHROME (.wpt-chrome)
+   Foundry's @layer order is: ... applications, system, modules ...
+   The wod5e system's styles live in the `system` layer — ABOVE Foundry's
+   `applications` layer — so `revert-layer` only reaches the system value,
+   never Foundry's. We must therefore set EXPLICIT values from our `modules`
+   layer (which wins over `system`) to undo the system's chrome overrides.
+   ===================================================================== */
+
+/* Right sidebar tab bar: the system forces a black strip + white underline.
+   Clearing it reveals Foundry's native tab squares (which the system never
+   restyles in V14 — they are .ui-control[data-action="tab"]). */
+body.wod-pretty-theme.wpt-chrome #sidebar-tabs {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Directory headers / footers / subfolders / settings headings:
+   drop the system greys so Foundry's clean transparent look returns. */
+body.wod-pretty-theme.wpt-chrome .directory .directory-header,
+body.wod-pretty-theme.wpt-chrome .directory .directory-footer:not(:empty),
+body.wod-pretty-theme.wpt-chrome .subdirectory,
+body.wod-pretty-theme.wpt-chrome .combat-sidebar .combat-tracker-header,
+body.wod-pretty-theme.wpt-chrome .settings-sidebar h2,
+body.wod-pretty-theme.wpt-chrome .actors-sidebar .group-item > .group-header {
+  background: transparent !important;
+  border: none !important;
+  color: var(--color-text-primary, #f0f0e0) !important;
+}
+
+/* Sidebar / chat / compendium buttons: drop the system blurple (#2e2d77)
+   for a clean dark Foundry-palette button. */
+body.wod-pretty-theme.wpt-chrome .directory .action-buttons button,
+body.wod-pretty-theme.wpt-chrome .compendium-sidebar .wod5e-compendium-search,
+body.wod-pretty-theme.wpt-chrome .chat-message button,
+body.wod-pretty-theme.wpt-chrome .chat-controls button {
+  background: var(--color-cool-5-90, rgba(20, 22, 30, 0.85)) !important;
+  color: var(--color-text-primary, #f0f0e0) !important;
+  border: 1px solid var(--color-cool-4, rgba(255, 255, 255, 0.12)) !important;
+  border-radius: 4px !important;
+}
+
+/* ---------------------------------------------------------------------
+   Chat — glass dark, cohesive with the sheets, fully legible
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme.wpt-chrome #chat-log .message,
+body.wod-pretty-theme.wpt-chrome .chat-message {
+  background: linear-gradient(180deg, rgba(24, 15, 17, 0.92), rgba(11, 8, 9, 0.95)) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.32) !important;
+  color: var(--wpt-text) !important;
+  margin: 9px 4px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+/* the system's <hr> under the header is redundant with the header border */
+body.wod-pretty-theme.wpt-chrome .chat-message > hr { display: none !important; }
+/* Body padding so nothing hugs the card edges */
+body.wod-pretty-theme.wpt-chrome .chat-message .message-content {
+  padding: 14px !important;
+}
+/* Roll cards are centered (plain text messages stay left-aligned) */
+body.wod-pretty-theme.wpt-chrome .chat-message .message-content:has(.dice-roll) {
+  text-align: center;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-content:has(.dice-roll) .roll-label {
+  text-align: center;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message.whisper {
+  background: rgba(30, 22, 32, 0.95) !important;
+  border-left: 2px solid rgba(150, 120, 200, 0.55) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message.blind {
+  background: rgba(28, 20, 19, 0.95) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-content,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-header,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-sender,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-timestamp,
+body.wod-pretty-theme.wpt-chrome .chat-message h1,
+body.wod-pretty-theme.wpt-chrome .chat-message h2,
+body.wod-pretty-theme.wpt-chrome .chat-message h3,
+body.wod-pretty-theme.wpt-chrome .chat-message h4,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-label,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-content,
+body.wod-pretty-theme.wpt-chrome .chat-message .dice-total,
+body.wod-pretty-theme.wpt-chrome .chat-message .total-title,
+body.wod-pretty-theme.wpt-chrome .chat-message .difficulty-title {
+  color: var(--wpt-text) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-sender {
+  font-family: var(--wpt-font-display);
+}
+body.wod-pretty-theme.wpt-chrome .chat-message a.content-link,
+body.wod-pretty-theme.wpt-chrome .chat-message a.inline-roll {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: var(--wpt-text) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: var(--wpt-radius-sm) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-img {
+  border: 1px solid var(--wpt-border-strong) !important;
+  border-radius: var(--wpt-radius-sm) !important;
+}
+/* Chat avatar: drop the hard square border, round it softly */
+body.wod-pretty-theme.wpt-chrome .chat-message .portrait.token > img,
+body.wod-pretty-theme.wpt-chrome .chat-message .portrait > img {
+  border: none !important;
+  border-radius: var(--wpt-radius-sm) !important;
+}
+/* Compact, modern header: [avatar] [sender]·············[time] [trash]
+   all on one row; sender wraps internally if long, metadata stays right. */
+body.wod-pretty-theme.wpt-chrome .chat-message .message-header {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(90deg, var(--wpt-accent-fill), transparent 70%);
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-header .portrait.token {
+  flex: 0 0 auto;
+  padding: 0;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-header .portrait.token > img {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  object-fit: cover;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-names {
+  min-width: 0;
+  flex: 1 1 auto;
+  align-self: center;
+  padding: 0 !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-sender {
+  font-size: 0.92rem !important;
+  line-height: 1.15;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-metadata {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex: 0 0 auto;
+  align-self: center;
+  padding: 0;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-timestamp {
+  color: var(--wpt-text-dim) !important;
+  font-size: 0.66rem;
+  font-style: normal;
+  white-space: nowrap;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .flavor-text {
+  flex: 1 1 100%;
+  margin-top: 2px;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-names .message-sender,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-sender {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: break-word;
+}
+
+/* ---- Refined roll-card elements --------------------------------------- */
+/* Dice tiles: softer corners + a little depth */
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-img {
+  border-radius: 6px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  margin: 2px !important;
+}
+/* Total / difficulty strip → a clean dark glass bar */
+body.wod-pretty-theme.wpt-chrome .chat-message .total-and-difficulty {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: var(--wpt-radius-sm) !important;
+  overflow: hidden;
+  margin-top: 4px;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .total-title,
+body.wod-pretty-theme.wpt-chrome .chat-message .difficulty-title {
+  color: var(--wpt-text-muted) !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.72rem;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-total,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-difficulty {
+  color: var(--wpt-text) !important;
+  padding: 3px 6px;
+}
+/* Result banner → full-width footer bar at the card's bottom edge (design) */
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label {
+  border: none !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 0 !important;
+  text-shadow: none !important;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font: 700 0.8rem/1 var(--wpt-font-ui) !important;
+  padding: 11px 10px !important;
+  margin: 14px -14px -14px !important;
+  color: #f0e9ea !important;
+}
+/* default (no difficulty → "X Successes"): green */
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.success,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.critical-success {
+  background: linear-gradient(90deg, rgba(28, 46, 32, 0.7), rgba(18, 32, 22, 0.7)) !important;
+  color: #cfe6cf !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.failure,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.critical-failure,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.bestial-failure,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.messy-critical {
+  background: linear-gradient(90deg, rgba(150, 16, 32, 0.62), rgba(70, 8, 16, 0.62)) !important;
+  color: #f4d2d6 !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.desperation-success,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.desperation-failure,
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-result-label.rage-failure {
+  background: linear-gradient(90deg, rgba(90, 50, 18, 0.6), rgba(50, 28, 12, 0.6)) !important;
+  color: #f0d8b0 !important;
+}
+/* Modifier tags → subtle dark pills, centered as a row in the card */
+body.wod-pretty-theme.wpt-chrome .chat-message .modifiers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0 0;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .modifiers .mod {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid var(--wpt-border) !important;
+  color: var(--wpt-text-muted) !important;
+  border-radius: 999px !important;
+  padding: 2px 10px !important;
+  margin: 0 !important;
+}
+/* Roll title (e.g. "Charisma + Composure + Auspex") — smaller, mixed-case serif */
+body.wod-pretty-theme.wpt-chrome .chat-message .roll-label,
+body.wod-pretty-theme.wpt-chrome .chat-message h3.item-name {
+  font: 600 1.05rem/1.25 var(--wpt-font-display) !important;
+  letter-spacing: 0.01em;
+  text-transform: none !important;
+  color: var(--wpt-text) !important;
+  margin: 0 0 2px !important;
+}
+/* Dice tiles — smaller and tidy, centered row */
+body.wod-pretty-theme.wpt-chrome .chat-message .dice-icons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 12px;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .dice-icons img,
+body.wod-pretty-theme.wpt-chrome .chat-message .dice-icons .roll-img {
+  width: 30px !important;
+  height: 30px !important;
+  margin: 0 !important;
+}
+/* Flavor / sub-text under the title */
+body.wod-pretty-theme.wpt-chrome .chat-message .message-content .flavor-text,
+body.wod-pretty-theme.wpt-chrome .chat-message .collapsible-content {
+  font: 400 0.82rem/1.4 var(--wpt-font-ui) !important;
+  color: var(--wpt-text-muted) !important;
+}
+/* Chat sidebar panel: no grey background (transparent, like the design) */
+body.wod-pretty-theme.wpt-chrome .chat-sidebar,
+body.wod-pretty-theme.wpt-chrome .chat-sidebar .chat-log,
+body.wod-pretty-theme.wpt-chrome #chat,
+body.wod-pretty-theme.wpt-chrome #chat-log,
+body.wod-pretty-theme.wpt-chrome section.chat-sidebar,
+body.wod-pretty-theme.wpt-chrome .sidebar-tab.chat-sidebar {
+  background: transparent !important;
+  border: none !important;
+}
+/* Trash / control icons: muted until hovered */
+body.wod-pretty-theme.wpt-chrome .chat-message .message-delete,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-metadata a {
+  color: var(--wpt-text-dim) !important;
+}
+body.wod-pretty-theme.wpt-chrome .chat-message .message-delete:hover,
+body.wod-pretty-theme.wpt-chrome .chat-message .message-metadata a:hover {
+  color: var(--wpt-text) !important;
+}
+
+/* =====================================================================
+   STRUCTURAL REORG — horizontal labeled top tab bar (Glass Gótico)
+   Only applies to reorganized sheets (their nav contains .tab-label);
+   SPC/Group keep the system's vertical icon rail.
+   ===================================================================== */
+body.wod-pretty-theme .wod5e .tabs-container:has(.tab-label) {
+  position: static;
+  left: 0;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  border-right: none;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+  height: auto;
+  gap: 2px;
+  padding: 4px 16px 0;
+  border-bottom: 1px solid var(--wpt-border);
+  background: rgba(8, 6, 8, 0.4);
+}
+/* remove the 45px left gutter the system reserves for the vertical rail */
+body.wod-pretty-theme .wod5e.sheet:has(.tab-label) .actor-header,
+body.wod-pretty-theme .wod5e.sheet:has(.tab-label) section.tab {
+  margin-left: 0 !important;
+}
+/* nav buttons → text tabs with an accent underline */
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] {
+  position: relative;
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px 12px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--wpt-text-dim);
+  font: 700 12px/1 var(--wpt-font-ui);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] .navicon {
+  width: auto;
+  font-size: 14px;
+  background: transparent !important;
+  border: none !important;
+  color: inherit;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] .tab-label {
+  font: inherit;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab]:hover { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab].active { color: var(--wpt-text); }
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab].active::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--wpt-accent), transparent);
+  box-shadow: 0 0 10px var(--wpt-accent);
+}
+/* push the lock button to the far right of the bar */
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) .lock-btn {
+  margin-left: auto;
+  align-self: center;
+}
+/* The merged Profile is several stacked sections — give them breathing room */
+body.wod-pretty-theme .wod5e section.tab[data-tab="profile"] + section.tab[data-tab="profile"] {
+  border-top: 1px solid var(--wpt-border);
+  margin-top: 6px;
+  padding-top: 12px;
+}
+/* GM settings block sits at the bottom of Profile, visually set apart */
+body.wod-pretty-theme .wod5e section.tab[data-tab="profile"].actor-settings,
+body.wod-pretty-theme .wod5e section.tab[data-tab="profile"]:last-of-type {
+  opacity: 0.96;
+}
+
+/* ---- Custom CORE tab (full-width attributes + skills) --------------- */
+body.wod-pretty-theme .wod5e .gg-core {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 28px 28px;
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-container {
+  margin: 0;
+  padding: 14px 18px 16px;
+}
+/* the three attribute/skill groups span the full width evenly */
+body.wod-pretty-theme .wod5e .gg-core .stats-container .stats-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 28px;
+  padding: 6px 2px 0;
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-container .stats-list {
+  width: 100%;
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-footer.grid-3col {
+  gap: 28px;
+}
+body.wod-pretty-theme .wod5e .gg-core .attribute,
+body.wod-pretty-theme .wod5e .gg-core .skill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 6px;
+  border-radius: var(--wpt-radius-sm);
+}
+/* Conditions / Custom Rolls kept compact below */
+body.wod-pretty-theme .wod5e .gg-core-extras {
+  gap: 16px;
+  margin-top: 4px;
+}
+body.wod-pretty-theme .wod5e .gg-core-extras .stat-panel-section { min-width: 0; }
+body.wod-pretty-theme .wod5e .gg-core-extras .resource-header { font-size: 0.95rem; }
+
+/* ---- Custom DISCIPLINES tab (master-detail) ------------------------ */
+body.wod-pretty-theme .wod5e .gg-disc {
+  display: grid;
+  grid-template-columns: minmax(240px, 360px) 1fr;
+  gap: 18px;
+  padding: 18px 24px 24px;
+  align-items: start;
+}
+body.wod-pretty-theme .wod5e .gg-disc-list {
+  background: var(--wpt-glass);
+  backdrop-filter: var(--wpt-blur);
+  -webkit-backdrop-filter: var(--wpt-blur);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius);
+  box-shadow: var(--wpt-hilite), 0 12px 30px rgba(0, 0, 0, 0.4);
+  padding: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-disc-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 6px 8px;
+}
+body.wod-pretty-theme .wod5e .gg-disc-list-head .resource-header { border: none; padding: 0; }
+body.wod-pretty-theme .wod5e .gg-disc-items { display: flex; flex-direction: column; gap: 6px; }
+body.wod-pretty-theme .wod5e .gg-disc-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--wpt-border);
+  border-left: 3px solid transparent;
+  border-radius: var(--wpt-radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .gg-disc-item:hover { background: var(--wpt-accent-fill); }
+body.wod-pretty-theme .wod5e .gg-disc-item.selected {
+  border-color: var(--wpt-accent-border);
+  border-left-color: var(--wpt-accent);
+  background: var(--wpt-accent-fill);
+  box-shadow: 0 0 12px var(--wpt-accent-glow);
+}
+body.wod-pretty-theme .wod5e .gg-disc-name {
+  font-family: var(--wpt-font-display);
+  font-size: 1.02rem;
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .gg-disc-item .power-resource-dots { margin: 0; }
+
+body.wod-pretty-theme .wod5e .gg-disc-detail { min-width: 0; }
+body.wod-pretty-theme .wod5e .gg-disc-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 4px 12px;
+  border-bottom: 1px solid var(--wpt-border);
+  margin-bottom: 12px;
+}
+body.wod-pretty-theme .wod5e .gg-disc-detail-title {
+  font-family: var(--wpt-font-display);
+  font-size: 1.5rem;
+  color: var(--wpt-text);
+  letter-spacing: 0.02em;
+}
+body.wod-pretty-theme .wod5e .gg-power-cards { display: flex; flex-direction: column; gap: 10px; }
+body.wod-pretty-theme .wod5e .gg-power-card {
+  background: var(--wpt-glass);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius);
+  box-shadow: var(--wpt-hilite);
+  padding: 12px 14px;
+  transition: border-color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .gg-power-card:hover { border-color: var(--wpt-accent-border); }
+body.wod-pretty-theme .wod5e .gg-power-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-power-name {
+  font-family: var(--wpt-font-display);
+  font-size: 1.08rem;
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .gg-power-lv {
+  flex: 0 0 auto;
+  font: 700 0.66rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wpt-accent);
+  background: var(--wpt-accent-fill);
+  border: 1px solid var(--wpt-accent-border);
+  border-radius: 999px;
+  padding: 4px 9px;
+}
+body.wod-pretty-theme .wod5e .gg-power-desc {
+  color: var(--wpt-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin-top: 6px;
+}
+body.wod-pretty-theme .wod5e .gg-power-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .gg-power-card:hover .gg-power-controls { opacity: 1; }
+body.wod-pretty-theme .wod5e .gg-power-controls .item-control { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .gg-power-controls .item-control:hover { color: var(--wpt-accent); }
+body.wod-pretty-theme .wod5e .gg-disc-empty {
+  color: var(--wpt-text-dim);
+  text-align: center;
+  padding: 32px 12px;
+  font-style: italic;
+}
+/* give the master-detail panels presence so the tab doesn't look empty */
+body.wod-pretty-theme .wod5e .gg-disc-list,
+body.wod-pretty-theme .wod5e .gg-disc-detail { min-height: 360px; }
+
+/* ---- Custom BLOOD tab (Blood Potency + Humanity + vitae fields) ---- */
+/* Centered glass panels for the Blood Potency dots and the Humanity squares.
+   The dot/square widgets themselves are the system's own markup, re-skinned
+   globally via the --system-color-* / --vampire-color-* overrides — we only
+   center and wrap their rows here. */
+body.wod-pretty-theme .wod5e .gg-blood-center { text-align: center; }
+body.wod-pretty-theme .wod5e .gg-blood-center .resource-content,
+body.wod-pretty-theme .wod5e .gg-blood-center .humanity .resource-content {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+/* Humanity title is a roll affordance — keep the dice icon inline with text */
+body.wod-pretty-theme .wod5e .gg-blood-center .remorse-roll { cursor: pointer; }
+/* keep block layout so the gradient underline (::after) stays BELOW the title,
+   with the dice icon inline after the text */
+body.wod-pretty-theme .wod5e .gg-blood-center .remorse-roll .gg-section-title {
+  display: block;
+}
+body.wod-pretty-theme .wod5e .gg-blood-center .remorse-roll .gg-section-title i { margin-left: 8px; }
+body.wod-pretty-theme .wod5e .gg-blood-center .remorse-roll:hover .gg-section-title {
+  color: var(--wpt-accent);
+}
+
+/* Predator / Resonance value row: item name + edit/search/add/delete controls */
+body.wod-pretty-theme .wod5e .gg-data-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 1.4rem;
+  font: 500 0.86rem/1.3 var(--wpt-font-ui);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .gg-data-item-row .data-item {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body.wod-pretty-theme .wod5e .gg-data-item-row a { flex: 0 0 auto; color: var(--wpt-text-muted); cursor: pointer; }
+body.wod-pretty-theme .wod5e .gg-data-item-row a:hover { color: var(--wpt-accent); }
+/* When empty (search + add), push the controls to the right */
+body.wod-pretty-theme .wod5e .gg-data-item-row .search-data-item { margin-left: auto; }
+/* The feeding-roll predator label is a roll affordance */
+body.wod-pretty-theme .wod5e .gg-card .feeding-roll { cursor: pointer; }
+body.wod-pretty-theme .wod5e .gg-card .feeding-roll .gg-field-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  cursor: pointer;
+}
+body.wod-pretty-theme .wod5e .gg-card .feeding-roll:hover .gg-field-label { color: var(--wpt-accent); }
+
+/* Clan Bane is a read-only enriched display (sourced from the Clan item); it
+   sits as a normal grid cell like the other vitae fields (design = equal cards). */
+body.wod-pretty-theme .wod5e .gg-bane-card .bane:empty::before {
+  content: "—";
+  color: var(--wpt-text-dim);
+}
+body.wod-pretty-theme .wod5e .gg-bane-card .bane {
+  font: 400 0.84rem/1.6 var(--wpt-font-ui);
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .gg-bane-card .bane p:last-child { margin-bottom: 0; }
+
+/* =====================================================================
+   GLASS GÓTICO — INVENTORY tab layout
+   Group panels (one per item type) with a title + system controls header,
+   then card-style item rows. Composes with the shared gg- classes; the dot
+   widgets and item-controls are styled globally elsewhere.
+   ===================================================================== */
+body.wod-pretty-theme .wod5e .gg-inv .category { margin: 0; }
+body.wod-pretty-theme .wod5e .gg-inv-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-inv-head .gg-title-left { margin-bottom: 0; }
+body.wod-pretty-theme .wod5e .gg-inv-head .item-controls { display: flex; gap: 10px; }
+body.wod-pretty-theme .wod5e .gg-inv-head .item-control { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .gg-inv-head .item-control:hover { color: var(--wpt-accent); }
+body.wod-pretty-theme .wod5e .gg-inv-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+body.wod-pretty-theme .wod5e .gg-inv-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 14px;
+  transition: border-color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .gg-inv-row:hover { border-color: var(--wpt-accent-border); }
+body.wod-pretty-theme .wod5e .gg-inv-row .item-image { flex: 0 0 auto; line-height: 0; }
+body.wod-pretty-theme .wod5e .gg-inv-row .item-image img {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--wpt-border);
+  border-radius: 6px;
+  object-fit: cover;
+}
+body.wod-pretty-theme .wod5e .gg-inv-row .item-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font: 500 0.86rem/1.2 var(--wpt-font-ui);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .gg-inv-row .item-name.collapsible { cursor: pointer; }
+body.wod-pretty-theme .wod5e .gg-inv-stat {
+  margin-left: 6px;
+  font-size: 0.78rem;
+  color: var(--wpt-text-muted);
+  letter-spacing: 0.04em;
+}
+body.wod-pretty-theme .wod5e .gg-inv-row .item-controls {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+body.wod-pretty-theme .wod5e .gg-inv-row .item-controls .item-control,
+body.wod-pretty-theme .wod5e .gg-inv-row .item-controls .rollable-item { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .gg-inv-row .item-controls .item-control:hover,
+body.wod-pretty-theme .wod5e .gg-inv-row .item-controls .rollable-item:hover { color: var(--wpt-accent); }
+body.wod-pretty-theme .wod5e .gg-inv .collapsible-content.item-description {
+  color: var(--wpt-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  padding: 0 6px;
+}
+
+/* =====================================================================
+   GLASS GÓTICO — shared building blocks (from the Obsidian design HTML)
+   Reusable classes the custom tabs compose with, so every panel/title/
+   card/field is consistent and matches the reference exactly.
+   ===================================================================== */
+/* Frosted glass panel */
+body.wod-pretty-theme .wod5e .gg-panel {
+  background: var(--wpt-glass);
+  -webkit-backdrop-filter: var(--wpt-blur);
+  backdrop-filter: var(--wpt-blur);
+  border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius);
+  box-shadow: var(--wpt-panel-shadow);
+  padding: 16px 22px 18px;
+}
+body.wod-pretty-theme .wod5e .gg-panel.gg-pad-sm { padding: 14px 20px 16px; }
+/* Inner card */
+body.wod-pretty-theme .wod5e .gg-card {
+  background: var(--wpt-glass-2);
+  border: 1px solid var(--wpt-border);
+  border-radius: 12px;
+  padding: 13px 16px;
+}
+/* Centered section title with a gradient underline */
+body.wod-pretty-theme .wod5e .gg-section-title {
+  text-align: center;
+  margin-bottom: 14px;
+  font: 600 1.05rem/1 var(--wpt-font-display);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .gg-section-title::after {
+  content: "";
+  display: block;
+  width: 46px;
+  height: 2px;
+  margin: 7px auto 0;
+  background: linear-gradient(90deg, transparent, var(--wpt-accent), transparent);
+}
+/* Left-aligned heading variant (flex so a trailing toggle centers with the text) */
+body.wod-pretty-theme .wod5e .gg-title-left {
+  display: flex;
+  align-items: center;
+  font: 600 1rem/1 var(--wpt-font-display);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--wpt-text);
+  margin-bottom: 12px;
+}
+/* Column subhead with underline */
+body.wod-pretty-theme .wod5e .gg-col-head {
+  font: 700 0.66rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted);
+  padding-bottom: 9px;
+  margin-bottom: 11px;
+  border-bottom: 1px solid var(--wpt-border);
+}
+/* Small uppercase field label + value */
+body.wod-pretty-theme .wod5e .gg-field-label {
+  display: block;
+  font: 700 0.62rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted);
+  margin-bottom: 7px;
+}
+body.wod-pretty-theme .wod5e .gg-kv-value {
+  font: 500 0.86rem/1.3 var(--wpt-font-ui);
+  color: var(--wpt-text);
+}
+/* Name + dots row */
+body.wod-pretty-theme .wod5e .gg-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+body.wod-pretty-theme .wod5e .gg-row-name {
+  font: 500 0.82rem/1.1 var(--wpt-font-ui);
+  color: var(--wpt-text);
+  white-space: nowrap;
+}
+/* Small accent pill (level badges, tags) */
+body.wod-pretty-theme .wod5e .gg-pill {
+  font: 700 0.6rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #e7c9cd;
+  padding: 4px 9px;
+  border-radius: 20px;
+  border: 1px solid var(--wpt-accent-border);
+  background: var(--wpt-accent-fill);
+  white-space: nowrap;
+}
+/* Grid + stack helpers */
+body.wod-pretty-theme .wod5e .gg-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+body.wod-pretty-theme .wod5e .gg-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+body.wod-pretty-theme .wod5e .gg-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+body.wod-pretty-theme .wod5e .gg-stack  { display: flex; flex-direction: column; gap: 16px; }
+/* Reading box (locked notes / biography) */
+body.wod-pretty-theme .wod5e .gg-readbox {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--wpt-border);
+  border-radius: 11px;
+  padding: 14px;
+  font: 400 0.82rem/1.7 var(--wpt-font-ui);
+  color: var(--wpt-text-muted);
+}
+
+/* Generic header compaction for splats that keep the system header */
+body.wod-pretty-theme .wod5e .actor-header .header-profile-img,
+body.wod-pretty-theme .wod5e .actor-header .header-profile-img img {
+  width: 150px !important;
+  height: 150px !important;
+  max-width: 150px !important;
+  max-height: 150px !important;
+}
+
+/* Resist/End Frenzy → crimson pill (design), applies to any header */
+body.wod-pretty-theme .wod5e .frenzy .vampire-button,
+body.wod-pretty-theme .wod5e .frenzy-roll,
+body.wod-pretty-theme .wod5e .end-frenzy {
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--wpt-accent) 40%, transparent),
+              color-mix(in srgb, var(--wpt-accent) 16%, rgba(0,0,0,0.3))) !important;
+  border: 1px solid var(--wpt-accent-border) !important;
+  color: #e7c9cd !important;
+  border-radius: 20px !important;
+  padding: 7px 14px !important;
+  font: 600 0.68rem/1 var(--wpt-font-ui) !important;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  width: fit-content;
+  align-self: center;
+  box-shadow: 0 4px 14px var(--wpt-accent-glow);
+}
+body.wod-pretty-theme .wod5e .frenzy .vampire-button:hover {
+  background: var(--wpt-accent-fill-strong) !important;
+  box-shadow: 0 0 14px var(--wpt-accent-glow);
+}
+
+/* ---- Custom Vampire header (Glass Gótico — exact design) ----------- */
+body.wod-pretty-theme .wod5e .actor-header.gg-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 26px 14px;
+}
+/* LEFT — health / willpower (clean labels, hide +/- step controls) */
+body.wod-pretty-theme .wod5e .gg-header-vitals {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-label,
+body.wod-pretty-theme .wod5e .gg-header-vitals .willpower-roll {
+  justify-content: flex-start;
+  font: 700 0.66rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-control { display: none; }
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-counter { gap: 5px; }
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-counter-step {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 4px !important;
+}
+
+/* CENTER — portrait (name overlaid at bottom) + subtitle */
+body.wod-pretty-theme .wod5e .gg-header-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+body.wod-pretty-theme .wod5e .actor-header.gg-header .gg-portrait {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid var(--wpt-border) !important;
+  box-shadow: none !important;
+  flex: none;
+}
+/* Uploaded portraits must fill the tile (no side bars, no edge vignette) */
+body.wod-pretty-theme .wod5e .actor-header.gg-header .gg-portrait .profile-img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+/* Name overlaid on the bottom of the portrait, plain white */
+body.wod-pretty-theme .wod5e .gg-header .gg-name-overlay {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 7px 6px 6px !important;
+  background: linear-gradient(0deg, rgba(8, 4, 5, 0.86), transparent) !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  justify-content: center;
+  text-align: center;
+}
+body.wod-pretty-theme .wod5e .gg-header .gg-name-overlay .charname {
+  width: 100%;
+  text-align: center;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: none !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  font: 600 1rem/1.1 var(--wpt-font-display) !important;
+}
+/* Subtitle: VAMPIRE · CLAN · GEN */
+body.wod-pretty-theme .wod5e .gg-header-subtitle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font: 500 0.6rem/1.3 var(--wpt-font-ui);
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .gg-sub-sep { opacity: 0.45; }
+
+/* RIGHT — clan / gen, hunger, frenzy (right-aligned) */
+body.wod-pretty-theme .wod5e .gg-header-status {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  align-items: flex-end;
+}
+body.wod-pretty-theme .wod5e .gg-status-fields {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field { text-align: right; }
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-label {
+  letter-spacing: 0.2em;
+  margin-bottom: 6px;
+}
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-value {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-height: 1.2em;
+  background: none;
+  border: none;
+  padding: 0;
+  font: 600 0.94rem/1 var(--wpt-font-display);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .gg-field-divider {
+  width: 1px;
+  background: var(--wpt-border);
+  align-self: stretch;
+}
+body.wod-pretty-theme .wod5e .gg-gen-input {
+  width: 58px;
+  text-align: right;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--wpt-border);
+  color: var(--wpt-text);
+  font: 600 0.94rem/1 var(--wpt-font-display);
+}
+body.wod-pretty-theme .wod5e .gg-hunger-block { text-align: right; }
+body.wod-pretty-theme .wod5e .gg-hunger-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+/* The design shows just the Resist Frenzy pill, not the status line */
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .field-header { display: none; }
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap { display: flex; justify-content: flex-end; }
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .frenzy { width: auto; align-items: flex-end; }
+
+/* ---------------------------------------------------------------------
+   Notepad tab (Glass Gótico) — two glass panels, full-height editors.
+   Mirrors the Obsidian design: 1fr/1fr grid, ~320px min editor area,
+   muted "GM only" tag in the Private Notes title.
+   --------------------------------------------------------------------- */
+body.wod-pretty-theme .wod5e .gg-notepad { height: 100%; }
+body.wod-pretty-theme .wod5e .gg-notepad-panel {
+  display: flex;
+  flex-direction: column;
+}
+/* Editor area fills the panel and never collapses below the design floor */
+body.wod-pretty-theme .wod5e .gg-notepad-editor {
+  flex: 1;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+body.wod-pretty-theme .wod5e .gg-notepad-editor > prose-mirror {
+  flex: 1;
+  min-height: 0;
+}
+/* Muted, smaller "GM only" tag beside the Private Notes title, with the
+   design's middle-dot separator rendered as decoration (no markup change). */
+body.wod-pretty-theme .wod5e .gg-notepad-gm {
+  font: 500 0.62rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.12em;
+  text-transform: none;
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .gg-notepad-gm::before {
+  content: "\00B7";
+  margin: 0 6px;
+  color: var(--wpt-text-muted);
+}
+
+/* =====================================================================
+   Glass Gótico — PROFILE tab (merged Features + Experience + Biography)
+   Profile-specific delta only. Shared .gg-* classes are defined globally.
+   Dot widgets (.resource-value) are styled globally and intentionally
+   NOT touched here.
+   ===================================================================== */
+
+/* Top row: Identity (wide) + Experience, matching the design's 1.3fr/1fr */
+body.wod-pretty-theme .wod5e .gg-profile-top {
+  grid-template-columns: 1.3fr 1fr;
+}
+
+/* Inputs sit cleanly inside cards: strip the global glass-box chrome so the
+   Identity fields read as in-card text and the XP fields as plain numbers. */
+body.wod-pretty-theme .wod5e .gg-profile .gg-card input {
+  width: 100%;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0;
+  font: 500 0.9rem/1.3 var(--wpt-font-ui);
+  color: var(--wpt-text);
+}
+body.wod-pretty-theme .wod5e .gg-profile .gg-card input:focus {
+  box-shadow: none !important;
+  outline: none;
+}
+body.wod-pretty-theme .wod5e .gg-profile .gg-card input:disabled {
+  color: var(--wpt-text);
+  opacity: 1;
+}
+
+/* Tenets card spacing under the Identity field grid */
+body.wod-pretty-theme .wod5e .gg-tenets-card { margin-top: 14px; }
+body.wod-pretty-theme .wod5e .gg-tenets-card .description-field { margin: 0; }
+body.wod-pretty-theme .wod5e .gg-tenets-card .field-header { justify-content: flex-start; }
+
+/* Experience panel — subtle accent gradient like the design */
+body.wod-pretty-theme .wod5e .gg-exp-panel {
+  background:
+    linear-gradient(180deg, var(--wpt-accent-fill), transparent),
+    var(--wpt-glass);
+}
+
+/* Two big-number XP cards (Remaining / Total) */
+body.wod-pretty-theme .wod5e .gg-exp-numbers { gap: 12px; }
+body.wod-pretty-theme .wod5e .gg-profile .exp-tracker {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.28);
+}
+body.wod-pretty-theme .wod5e .gg-profile .exp-tracker input {
+  text-align: center;
+  font: 700 1.75rem/1 var(--wpt-font-display) !important;
+  color: var(--wpt-text);
+  margin-bottom: 6px;
+}
+body.wod-pretty-theme .wod5e .gg-profile .exp-tracker .gg-field-label {
+  margin-bottom: 0;
+  text-align: center;
+}
+/* ---- Legacy-XP branch (manual XP tracking) — clean, not "buggy" ---- */
+body.wod-pretty-theme .wod5e .gg-exp-panel .experience-trackers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--wpt-border);
+  border-radius: 11px;
+  padding: 12px 14px;
+}
+/* the "Remaining EXP" / "Total EXP" titles → subtle label, not big red */
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker .big-header {
+  color: var(--wpt-text-muted) !important;
+  font: 700 0.62rem/1 var(--wpt-font-ui) !important;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker > .flexrow {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 9px;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker > .flexrow > .flexcol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker input {
+  width: 66px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.32) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: 8px !important;
+  color: var(--wpt-text) !important;
+  font: 700 1.5rem/1 var(--wpt-font-display) !important;
+  padding: 6px 4px !important;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker input:disabled { opacity: 0.75; }
+body.wod-pretty-theme .wod5e .gg-exp-panel .tracker > .flexrow > .flexcol > div {
+  font: 700 0.55rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wpt-text-dim);
+}
+
+/* Add / Spend controls as centered pills */
+body.wod-pretty-theme .wod5e .gg-exp-controls {
+  gap: 8px;
+  margin-top: 13px;
+}
+body.wod-pretty-theme .wod5e .gg-exp-controls .gg-pill {
+  flex: 1;
+  text-align: center;
+  padding: 9px;
+  cursor: pointer;
+}
+/* Spend is the quieter, non-accent pill (design line 228) */
+body.wod-pretty-theme .wod5e .gg-exp-controls .spend-experience {
+  color: var(--wpt-text-muted);
+  border-color: var(--wpt-border);
+  background: rgba(0, 0, 0, 0.20);
+}
+
+/* XP history list inside its card */
+body.wod-pretty-theme .wod5e .gg-exp-history { margin-top: 13px; }
+body.wod-pretty-theme .wod5e .gg-exp-history .xp-header,
+body.wod-pretty-theme .wod5e .gg-exp-history .flexrow {
+  align-items: center;
+  gap: 6px;
+}
+
+/* Advantages: feature columns + rows */
+body.wod-pretty-theme .wod5e .gg-feature-col { display: flex; flex-direction: column; }
+body.wod-pretty-theme .wod5e .gg-feature-col .gg-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+body.wod-pretty-theme .wod5e .gg-feature-col .gg-col-head .item-name { flex: 1; }
+body.wod-pretty-theme .wod5e .gg-feature-row { margin-bottom: 8px; }
+body.wod-pretty-theme .wod5e .gg-feature-row .item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+body.wod-pretty-theme .wod5e .gg-feature-row .item .item-name { flex: 1; }
+
+/* =====================================================================
+   Glass Gótico — print-pass fixes
+   ===================================================================== */
+/* Header Health/Willpower: bare squares under the label (no boxed container) */
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource,
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-content,
+body.wod-pretty-theme .wod5e .gg-header-vitals .field-section {
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-content { justify-content: flex-start; }
+
+/* Inventory: equipment group panels span the full width (override the system
+   .item-list/.equipment-list shrink) and drop the inner boxed .category. */
+body.wod-pretty-theme .wod5e .gg-inv > .gg-panel {
+  width: 100%;
+  align-self: stretch;
+}
+body.wod-pretty-theme .wod5e .gg-inv .category {
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+/* Profile / Advantages: feature category columns are open (no boxed .category) */
+body.wod-pretty-theme .wod5e .gg-profile .category,
+body.wod-pretty-theme .wod5e .gg-advantages .category {
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+/* Advantages tab: give the panel presence and keep the 4 columns open */
+body.wod-pretty-theme .wod5e .gg-advantages .gg-panel { min-height: 300px; }
+
+/* Profile: roomier Biography / Appearance editors (like the Notes tab) */
+body.wod-pretty-theme .wod5e .gg-profile .description-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 170px;
+}
+body.wod-pretty-theme .wod5e .gg-profile .description-content > prose-mirror {
+  flex: 1;
+  min-height: 0;
+}
+
+/* =====================================================================
+   Glass Gótico — design-accurate polish pass (audited vs the reference HTML)
+   Typography / spacing / radii / dot sizing tightened to the exact design.
+   ===================================================================== */
+
+/* ---- Global chrome ---- */
+/* Window title in the display serif (design line 31) */
+body.wod-pretty-theme .wod5e.sheet .window-header .window-title {
+  font-family: var(--wpt-font-display) !important;
+  letter-spacing: 0.04em;
+}
+/* Scrollbar: 11px, accent-tinted thumb with padding-box inset + hover (per-splat) */
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar { width: 11px; height: 11px; }
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--wpt-accent) 55%, transparent);
+  border: 3px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+body.wod-pretty-theme .wod5e .window-content::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--wpt-accent) 75%, transparent);
+  background-clip: padding-box;
+}
+/* Tab bar — tabs FLEX to fill the full width (dynamic), one line, no wrap */
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) {
+  flex-wrap: nowrap;
+  gap: 0;
+  padding: 0 8px;
+  align-items: stretch;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] {
+  flex: 1 1 auto;
+  justify-content: center;
+  padding: 12px 6px 13px;
+  gap: 6px;
+  font: 600 11px/1 var(--wpt-font-display);
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) > [data-tab] .navicon { font-size: 13px; flex: 0 0 auto; }
+body.wod-pretty-theme .wod5e .sheet-tabs:has(.tab-label) .tab-label { white-space: nowrap; }
+/* Footer banner: OPAQUE bar (content scrolls behind it without bleeding through),
+   centered, wide tracking, subtle accent gradient. */
+body.wod-pretty-theme .wod5e .sheet-banner {
+  text-align: center;
+  padding: 9px;
+  background: linear-gradient(180deg,
+              rgba(11, 7, 9, 0.97),
+              color-mix(in srgb, var(--wpt-accent) 24%, #0b0709)) !important;
+  border-top: 1px solid var(--wpt-border);
+  font: 600 13px/1 var(--wpt-font-display) !important;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted);
+}
+/* keep the last scroll content clear of the pinned footer */
+body.wod-pretty-theme .wod5e.sheet:has(.tab-label) .window-content { padding-bottom: 4px; }
+
+/* ---- Rating dots: brighter lit fill + exact per-context sizes/gaps ---- */
+body.wod-pretty-theme .wod5e .resource-value .resource-value-step.active,
+body.wod-pretty-theme .wod5e .resource-value-static .resource-value-static-step.active {
+  background-color: var(--wpt-dot-on);
+  border-color: var(--wpt-dot-on);
+}
+/* Core — Attributes 12px/gap5, Skills 10px/gap4 */
+body.wod-pretty-theme .wod5e .gg-core .stats-container.attributes .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-core .stats-container.attributes .resource-value-empty {
+  width: 12px !important; height: 12px !important;
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-container.attributes .resource-value { gap: 5px; }
+body.wod-pretty-theme .wod5e .gg-core .stats-container.skills .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-core .stats-container.skills .resource-value-empty {
+  width: 10px !important; height: 10px !important;
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-container.skills .resource-value { gap: 4px; }
+/* Disciplines list — 10px/gap5 */
+body.wod-pretty-theme .wod5e .gg-disc-item .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-disc-item .resource-value-empty {
+  width: 10px !important; height: 10px !important;
+}
+body.wod-pretty-theme .wod5e .gg-disc-item .resource-value { gap: 5px; }
+/* Blood Potency — 14px/gap6 */
+body.wod-pretty-theme .wod5e .gg-blood-center .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-blood-center .resource-value-empty {
+  width: 14px !important; height: 14px !important;
+}
+body.wod-pretty-theme .wod5e .gg-blood-center .resource-value { gap: 6px; }
+/* Advantages — 8px/gap3 */
+body.wod-pretty-theme .wod5e .gg-advantages .dot-tracker .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-advantages .dot-tracker .resource-value-empty {
+  width: 8px !important; height: 8px !important;
+}
+body.wod-pretty-theme .wod5e .gg-advantages .dot-tracker .resource-value { gap: 3px; }
+/* Hunger — 15px/gap6 + glow */
+body.wod-pretty-theme .wod5e .gg-hunger-block .resource-value-step,
+body.wod-pretty-theme .wod5e .gg-hunger-block .resource-value-empty {
+  width: 15px !important; height: 15px !important;
+}
+body.wod-pretty-theme .wod5e .gg-hunger-block .resource-value { gap: 6px; }
+body.wod-pretty-theme .wod5e .gg-hunger-block .resource-value-step.active {
+  box-shadow: 0 0 8px var(--wpt-accent-glow);
+}
+body.wod-pretty-theme .wod5e .gg-hunger-row { gap: 6px; }
+/* Humanity squares — 18px/gap5 */
+body.wod-pretty-theme .wod5e .humanity .resource-counter-step {
+  width: 18px !important; height: 18px !important; border-radius: 4px !important;
+}
+body.wod-pretty-theme .wod5e .humanity .resource-counter { gap: 5px; }
+
+/* ---- Header typography (design lines 41-66) ---- */
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-label,
+body.wod-pretty-theme .wod5e .gg-header-vitals .willpower-roll {
+  font: 700 0.6875rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.22em;
+  margin-bottom: 8px;
+}
+body.wod-pretty-theme .wod5e .gg-header-subtitle { font-size: 0.625rem; }
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-label { font-size: 0.6875rem; }
+/* name overlay: zero horizontal padding (design line 53) */
+body.wod-pretty-theme .wod5e .gg-header .gg-name-overlay { padding: 7px 0 6px !important; }
+/* portrait diagonal hatch (only shows behind a missing/transparent image) */
+body.wod-pretty-theme .wod5e .actor-header.gg-header .gg-portrait {
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.045) 0 9px, rgba(255,255,255,0.012) 9px 18px),
+    rgba(0,0,0,0.32);
+}
+
+/* ---- Core titles: centered Cormorant 18px + short gradient underline ---- */
+body.wod-pretty-theme .wod5e .gg-core > .resource-header {
+  font-size: 18px;
+  letter-spacing: 0.2em;
+  text-align: center;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 14px;
+  position: relative;
+}
+body.wod-pretty-theme .wod5e .gg-core > .resource-header::after {
+  content: "";
+  display: block;
+  width: 46px;
+  height: 2px;
+  margin: 7px auto 0;
+  background: linear-gradient(90deg, transparent, var(--wpt-accent), transparent);
+}
+body.wod-pretty-theme .wod5e .gg-core .stats-footer .field-header {
+  font: 700 0.66rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.2em;
+  color: var(--wpt-text-muted);
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--wpt-border);
+  text-align: center;
+}
+body.wod-pretty-theme .wod5e .gg-core .attributes .resource-label { font-size: 14px; }
+body.wod-pretty-theme .wod5e .gg-core .skills .resource-label { font-size: 13px; }
+
+/* ---- Disciplines + Blood card metrics (design lines 139/148/153/184) ---- */
+body.wod-pretty-theme .wod5e .gg-disc-item { padding: 13px 15px; border-radius: 12px; }
+body.wod-pretty-theme .wod5e .gg-disc-detail-title { font-size: 1.375rem; }
+body.wod-pretty-theme .wod5e .gg-power-card { padding: 13px 16px; border-radius: 11px; }
+body.wod-pretty-theme .wod5e .gg-kv-value {
+  font: 600 0.9375rem/1.2 var(--wpt-font-display);
+}
+
+/* ---- Profile + Advantages (design lines 208/227-228/238/242) ---- */
+body.wod-pretty-theme .wod5e .gg-profile .gg-card { padding: 11px 14px; border-radius: 11px; }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-col-head {
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-feature-row .item .item-name { font: 500 0.75rem/1.2 var(--wpt-font-ui); }
+body.wod-pretty-theme .wod5e .gg-feature-row .item .dot-tracker { display: flex; gap: 3px; }
+body.wod-pretty-theme .wod5e .gg-exp-controls .gg-pill {
+  font: 600 0.6875rem/1 var(--wpt-font-ui);
+  letter-spacing: 0.1em;
+  border-radius: 9px;
+  padding: 9px;
+}
+
+/* ---- Inventory + Notes (design lines 271/276/278/296) ---- */
+body.wod-pretty-theme .wod5e .gg-inv-row { padding: 11px 15px; border-radius: 10px; }
+body.wod-pretty-theme .wod5e .gg-inv-stat { font-weight: 600; letter-spacing: 0.06em; }
+body.wod-pretty-theme .wod5e .gg-inv .gg-inv-head .gg-title-left { font-size: 15px; }
+body.wod-pretty-theme .wod5e .gg-notepad-editor {
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 11px;
+}
+
+/* GM Settings: a tidy contained panel at the bottom of Profile */
+body.wod-pretty-theme .wod5e .gg-gm-settings { margin-top: 2px; }
+body.wod-pretty-theme .wod5e .gg-gm-settings .form-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--wpt-border);
+}
+body.wod-pretty-theme .wod5e .gg-gm-settings .form-group:last-child { border-bottom: none; }
+body.wod-pretty-theme .wod5e .gg-gm-settings .form-group > label {
+  flex: 1 1 auto;
+  font: 600 0.8rem/1.3 var(--wpt-font-ui);
+  color: var(--wpt-text-muted);
+  margin: 0;
+}
+body.wod-pretty-theme .wod5e .gg-gm-settings .form-fields {
+  flex: 0 1 58%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+body.wod-pretty-theme .wod5e .gg-gm-settings .form-fields file-picker,
+body.wod-pretty-theme .wod5e .gg-gm-settings .form-fields select { width: 100%; }
+body.wod-pretty-theme .wod5e .gg-gm-settings .form-fields input[type="checkbox"] { flex: 0 0 auto; }
+
+/* =====================================================================
+   Glass Gótico — feedback pass (print review)
+   ===================================================================== */
+
+/* Disciplines: search + add controls side by side (were stacking) */
+body.wod-pretty-theme .wod5e .gg-disc-list-head .item-controls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Read-only tag (e.g. Clan Bane label) */
+body.wod-pretty-theme .wod5e .gg-readonly-tag {
+  font-weight: 600;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--wpt-text-dim);
+}
+
+/* ---- Advantages tab: clean 4 columns (no big red-underlined headers) ---- */
+body.wod-pretty-theme .wod5e .gg-advantages .gg-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: none !important;
+  border-bottom: 1px solid var(--wpt-border);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+body.wod-pretty-theme .wod5e .gg-advantages .gg-cat-name {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .gg-advantages .gg-col-controls { display: flex; gap: 8px; flex: 0 0 auto; }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-col-controls .item-control { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-col-controls .item-control:hover { color: var(--wpt-accent); }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row { margin-bottom: 6px; }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+}
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item .item-image { flex: 0 0 auto; line-height: 0; }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item .item-image img {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid var(--wpt-border);
+  object-fit: cover;
+}
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item .item-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item-controls { flex: 0 0 auto; display: flex; gap: 6px; }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item-controls .item-control { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .gg-advantages .gg-feature-row .item-controls .item-control:hover { color: var(--wpt-accent); }
+
+/* ---- Profile: balanced card distribution ---- */
+/* Experience panel matches the Identity panel's height (equal top row) */
+body.wod-pretty-theme .wod5e .gg-profile-top { align-items: stretch; }
+body.wod-pretty-theme .wod5e .gg-profile .gg-panel > .gg-grid-2 { gap: 12px; }
+/* spread Experience content so it fills the equal-height panel without a gap */
+body.wod-pretty-theme .wod5e .gg-exp-panel { display: flex; flex-direction: column; }
+body.wod-pretty-theme .wod5e .gg-exp-panel .gg-exp-controls { margin-top: auto; }
+
+/* Eye / eye-slash "reveal to all" toggle — small, subtle, inline with the title */
+body.wod-pretty-theme .wod5e .gg-profile .toggle-limited,
+body.wod-pretty-theme .wod5e .gg-title-left .toggle-limited {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  font-size: 0.7em;
+  color: var(--wpt-text-dim);
+  opacity: 0.55;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: opacity 0.12s ease, color 0.12s ease;
+}
+body.wod-pretty-theme .wod5e .gg-profile .toggle-limited:hover,
+body.wod-pretty-theme .wod5e .gg-title-left .toggle-limited:hover {
+  opacity: 1;
+  color: var(--wpt-accent);
+}
+
+/* Header vitals: label + squares both left-aligned (were misaligned/centered) */
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource,
+body.wod-pretty-theme .wod5e .gg-header-vitals .flex-group-center,
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-content {
+  justify-content: flex-start !important;
+  align-items: flex-start;
+}
+
+/* =====================================================================
+   Header fix pass — converge to the design (Health/WP, Clan/Gen, Hunger,
+   Frenzy status) and tidy the eye toggle.
+   ===================================================================== */
+/* Eye / eye-slash toggle: vertically centered with its title */
+body.wod-pretty-theme .wod5e .gg-title-left:has(.toggle-limited) {
+  display: flex;
+  align-items: center;
+}
+/* Vitals: force Health & Willpower (labels + square rows) uniformly left */
+body.wod-pretty-theme .wod5e .gg-header-vitals .field-section,
+body.wod-pretty-theme .wod5e .gg-header-vitals .field-section > .flexcol {
+  align-items: flex-start !important;
+  width: 100%;
+}
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-label,
+body.wod-pretty-theme .wod5e .gg-header-vitals .field-header,
+body.wod-pretty-theme .wod5e .gg-header-vitals .willpower-roll {
+  justify-content: flex-start !important;
+  width: auto;
+  text-align: left;
+}
+/* Strip the glass boxes from CLAN / GEN / HUNGER (design = bare label+value/dots) */
+body.wod-pretty-theme .wod5e .gg-header-status .resource,
+body.wod-pretty-theme .wod5e .gg-header-status .resource-content,
+body.wod-pretty-theme .wod5e .gg-header .hunger,
+body.wod-pretty-theme .wod5e .gg-hunger-row .resource {
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+/* Hunger keeps the clear-to-0 ring (the only way to set hunger to 0); it's now
+   the clean faint ring styled globally, not the old "×". */
+/* Frenzy status (Active / Inactive) shown compact above the Resist Frenzy pill */
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .frenzy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  width: auto;
+}
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .field-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wpt-text-dim);
+}
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .frenzy-status { color: var(--wpt-text-muted); }
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .frenzy-status.active {
+  color: var(--wpt-danger);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--wpt-danger) 40%, transparent);
+}
+
+/* Header values must never truncate (e.g. the Clan name) */
+body.wod-pretty-theme .wod5e .gg-header-status .data-item,
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-value {
+  overflow: visible;
+  text-overflow: clip;
+  max-width: none;
+  flex: 0 1 auto;
+}
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-value .data-item {
+  white-space: normal;
+}
+
+/* ---- Custom footer banner (rebuilt; clean in-flow bar, no overlap) ---- */
+body.wod-pretty-theme .wod5e .gg-footer {
+  position: static;
+  margin-top: 14px;
+  padding: 10px 9px;
+  text-align: center;
+  border-top: 1px solid var(--wpt-border);
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--wpt-accent) 14%, transparent));
+  font: 600 13px/1 var(--wpt-font-display);
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted);
+}
+/* Convictions (Touchstones) = the widest / most prominent description card */
+body.wod-pretty-theme .wod5e .gg-convictions-card .description-content { min-height: 200px; }
+body.wod-pretty-theme .wod5e .gg-profile .gg-panel > .gg-card { margin-top: 12px; }
+
+/* ---- Merit & Flaws: 2×2 grid (Merit | Flaw / Background | Boon), horizontal dots ---- */
+body.wod-pretty-theme .wod5e .gg-advantages .gg-adv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 32px;
+}
+body.wod-pretty-theme .wod5e .gg-advantages [data-category="merit"]      { order: 1; }
+body.wod-pretty-theme .wod5e .gg-advantages [data-category="flaw"]       { order: 2; }
+body.wod-pretty-theme .wod5e .gg-advantages [data-category="background"] { order: 3; }
+body.wod-pretty-theme .wod5e .gg-advantages [data-category="boon"]       { order: 4; }
+/* dots laid out horizontally inline with the name */
+body.wod-pretty-theme .wod5e .gg-advantages .dot-tracker { flex: 0 0 auto; }
+body.wod-pretty-theme .wod5e .gg-advantages .resource-value {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 3px;
+}
+
+/* =====================================================================
+   Thematic typography — no plain/rounded sans on sheet content.
+   Cormorant Garamond (the display serif) is used for ALL sheet text;
+   icon fonts (.fa*, .wod5e-symbol) keep their own font (set on themselves).
+   ===================================================================== */
+/* ONE font everywhere for consistency — the elegant display serif — on every
+   text element. Icons keep their own font: anything that is an <i>, has a
+   Font Awesome class (fa-…), or is a .wod5e-symbol is excluded. */
+body.wod-pretty-theme .wod5e.sheet,
+body.wod-pretty-theme .wod5e.sheet *:not(i):not([class*="fa-"]):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.wod5e-symbol):not(input):not(textarea):not(select):not(prose-mirror):not(.ProseMirror) {
+  font-family: var(--wpt-font-display) !important;
+}
+/* Editable / writing fields use the clean sans for legibility while typing
+   (display text & names keep the elegant serif). */
+body.wod-pretty-theme .wod5e input:not(.charname):not(.itemname),
+body.wod-pretty-theme .wod5e textarea,
+body.wod-pretty-theme .wod5e select,
+body.wod-pretty-theme .wod5e prose-mirror,
+body.wod-pretty-theme .wod5e .ProseMirror,
+body.wod-pretty-theme .wod5e .editor,
+body.wod-pretty-theme .wod5e .editor-content,
+body.wod-pretty-theme .application.dialog input,
+body.wod-pretty-theme .application.dialog textarea,
+body.wod-pretty-theme .application.dialog select {
+  font-family: var(--wpt-font-ui) !important;
+}
+/* Roomy, legible rich-text editors — bright text, clean sans, comfortable size */
+body.wod-pretty-theme .wod5e prose-mirror,
+body.wod-pretty-theme .wod5e .ProseMirror,
+body.wod-pretty-theme .wod5e .editor-content,
+body.wod-pretty-theme .wod5e .description-content,
+body.wod-pretty-theme .wod5e prose-mirror p,
+body.wod-pretty-theme .wod5e prose-mirror li,
+body.wod-pretty-theme .wod5e .ProseMirror p,
+body.wod-pretty-theme .wod5e .ProseMirror li,
+body.wod-pretty-theme .wod5e .description-content p,
+body.wod-pretty-theme .wod5e .description-content li {
+  font-size: 1rem !important;
+  line-height: 1.7 !important;
+  color: var(--wpt-text) !important;
+}
+/* Solid dark backing so the text reads with strong contrast */
+body.wod-pretty-theme .wod5e .description-content,
+body.wod-pretty-theme .wod5e .gg-notepad-editor,
+body.wod-pretty-theme .wod5e .gg-notepad-editor > prose-mirror,
+body.wod-pretty-theme .wod5e .gg-card .description-content {
+  background: rgba(0, 0, 0, 0.34) !important;
+}
+/* The editor while typing also reads bright */
+body.wod-pretty-theme .wod5e prose-mirror .editor-content.ProseMirror,
+body.wod-pretty-theme .wod5e prose-mirror .editor-content.ProseMirror * {
+  color: var(--wpt-text) !important;
+}
+
+/* =====================================================================
+   Header feedback pass 3
+   ===================================================================== */
+/* Frenzy: clear spacing between the status line and the Resist Frenzy pill */
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .flexcol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 9px;
+}
+body.wod-pretty-theme .wod5e .gg-frenzy-wrap .field-header { margin: 0; }
+
+/* Clan: the edit pen sits inline AFTER the name (was overlapping it in edit mode) */
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-value {
+  flex-wrap: nowrap;
+  position: relative;
+}
+body.wod-pretty-theme .wod5e .gg-header-status .gg-field-value .data-item {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+body.wod-pretty-theme .wod5e .gg-header-status .edit-data-item,
+body.wod-pretty-theme .wod5e .gg-header-status .search-data-item,
+body.wod-pretty-theme .wod5e .gg-header-status .add-data-item {
+  position: static !important;
+  flex: 0 0 auto;
+}
+
+/* Vitals: square trackers sit closer to their Health / Willpower labels */
+body.wod-pretty-theme .wod5e .gg-header-vitals .field-section { gap: 0; }
+body.wod-pretty-theme .wod5e .gg-header-vitals .field-section > .flexcol { gap: 2px; }
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource-label,
+body.wod-pretty-theme .wod5e .gg-header-vitals .willpower-roll { margin-bottom: 3px !important; }
+body.wod-pretty-theme .wod5e .gg-header-vitals .resource { margin-top: 0 !important; }
+
+/* =====================================================================
+   ITEM SHEETS — match the Obsidian "Item Sheet" design (icon tile, name,
+   stat field cards, padded body, footer). Applies to every item type.
+   ===================================================================== */
+body.wod-pretty-theme .wod5e.sheet .item-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px 12px;
+  background: none;
+}
+/* Icon tile */
+body.wod-pretty-theme .wod5e.sheet .item-header .profile-img {
+  width: 74px !important;
+  height: 74px !important;
+  flex: 0 0 auto;
+  border-radius: 13px !important;
+  border: 1px solid var(--wpt-border) !important;
+  background: radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.3)) !important;
+  box-shadow: inset 0 0 32px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+  object-fit: cover;
+}
+body.wod-pretty-theme .wod5e.sheet .item-header .header-fields {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+/* Name input */
+body.wod-pretty-theme .wod5e.sheet .item-header .itemname {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.26) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: 9px !important;
+  padding: 8px 13px !important;
+  color: var(--wpt-text) !important;
+  font: 600 1.15rem/1.1 var(--wpt-font-display) !important;
+}
+/* Stat field cards (Level / Cost / Discipline Type …) */
+body.wod-pretty-theme .wod5e.sheet .item-header .header-fields > .flexrow {
+  display: flex;
+  gap: 9px;
+  align-items: stretch;
+}
+body.wod-pretty-theme .wod5e.sheet .item-header .item-resource {
+  background: var(--wpt-glass-2) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: 10px !important;
+  padding: 7px 13px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+  min-width: 0;
+}
+body.wod-pretty-theme .wod5e.sheet .item-header .item-resource.discipline { flex: 1 1 auto; }
+body.wod-pretty-theme .wod5e.sheet .item-header .item-resource b {
+  font: 700 0.58rem/1 var(--wpt-font-ui) !important;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted) !important;
+}
+body.wod-pretty-theme .wod5e.sheet .item-header .item-resource input,
+body.wod-pretty-theme .wod5e.sheet .item-header .item-resource select {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid var(--wpt-border) !important;
+  border-radius: 7px !important;
+  color: var(--wpt-text) !important;
+  font: 600 0.9rem/1 var(--wpt-font-display) !important;
+  padding: 5px 8px !important;
+  text-align: center;
+}
+/* Item body: comfortable padding so nothing hugs the edges (item sheets only —
+   scoped to siblings of .item-header so actor tabs are unaffected) */
+body.wod-pretty-theme .wod5e.sheet .item-header ~ section.sheet-body,
+body.wod-pretty-theme .wod5e.sheet .item-header ~ .tab,
+body.wod-pretty-theme .wod5e.sheet .item-header ~ .sheet-tabs ~ section,
+body.wod-pretty-theme .wod5e.sheet:has(.item-header) .sheet-body {
+  padding: 18px 22px 22px;
+}
+
+/* Core: the whole attribute/skill row is the roll target (the dots still set
+   values — Foundry dispatches only the closest data-action). */
+body.wod-pretty-theme .wod5e .gg-core .attribute[data-action="roll"],
+body.wod-pretty-theme .wod5e .gg-core .skill[data-action="roll"] {
+  cursor: pointer;
+  padding: 3px 8px;
+  margin: 0 -8px;
+}
+body.wod-pretty-theme .wod5e .gg-core .attribute[data-action="roll"] .resource-label,
+body.wod-pretty-theme .wod5e .gg-core .skill[data-action="roll"] .resource-label { cursor: pointer; }
+
+/* =====================================================================
+   DE-BLEED — undo the wod5e system's GLOBAL (unscoped) CSS that leaks into
+   Foundry's own windows (Scene Config, Settings, journals, etc.), so they
+   show Foundry defaults + our theme rather than the system's styling.
+   ===================================================================== */
+/* The system squares & shrinks EVERY number input (max-width:35px; radius:0),
+   which infects core windows and caps our own fields — undo it. */
+body.wod-pretty-theme input[type="number"] {
+  max-width: none !important;
+  min-width: 0 !important;
+}
+/* Non-wod5e (Foundry core) windows: undo the system's squared inputs and let
+   their fields read normally. */
+body.wod-pretty-theme .application:not(.wod5e) input:not([type="checkbox"]),
+body.wod-pretty-theme .application:not(.wod5e) select,
+body.wod-pretty-theme .application:not(.wod5e) textarea,
+body.wod-pretty-theme .window-app:not(.wod5e) input:not([type="checkbox"]) {
+  border-radius: 4px !important;
+  min-height: revert;
+}
+/* The system forces Vollkorn serif on collapsible descriptions everywhere —
+   keep our font (also covered by the global font rule, asserted here too). */
+body.wod-pretty-theme .application:not(.wod5e) .collapsible-content {
+  font-family: var(--wpt-font-ui) !important;
+}
+
+/* ---- Lean Experience bar: two editable fields (Remaining + Total) ---- */
+body.wod-pretty-theme .wod5e .gg-exp-panel .gg-xp-bar {
+  display: flex;
+  gap: 12px;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .gg-xp-field {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--wpt-border);
+  border-radius: 10px;
+  padding: 9px 13px;
+  cursor: text;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .gg-xp-cap {
+  font: 700 0.6rem/1.2 var(--wpt-font-ui);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wpt-text-muted);
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .gg-xp-field input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--wpt-text) !important;
+  font: 700 1.35rem/1 var(--wpt-font-display) !important;
+  text-align: right;
+  padding: 0 !important;
+}
+body.wod-pretty-theme .wod5e .gg-exp-panel .gg-xp-field input:focus { outline: none; }

@@ -1,0 +1,59 @@
+{
+  "id": "wod-pretty-theme",
+  "title": "WoD Pretty Theme",
+  "description": "A dark, glass-gothic re-theme for the World of Darkness 5e (wod5e) system. Restyles and restructures the character/item sheets — frosted glass panels, soft shadows, per-splat accent colors (Vampire crimson, Werewolf green, Hunter amber, Mortal slate), a consolidated horizontal tab layout and a custom Vampire header — inspired by the Progeny VtM v5 character creator. Cosmetic only; ongoing polish.",
+  "version": "2.0.0",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14",
+    "maximum": ""
+  },
+  "authors": [
+    {
+      "name": "leonebeavi",
+      "url": "https://github.com/leonebeavi"
+    }
+  ],
+  "esmodules": [
+    "scripts/wod-pretty-theme.mjs",
+    "scripts/glass-reorg.mjs"
+  ],
+  "styles": [
+    "styles/theme.css",
+    "styles/glass.css",
+    "styles/tweaks.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-BR.json"
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "wod5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "5.0.0",
+          "verified": "5.3.19"
+        }
+      }
+    ]
+  },
+  "socket": false,
+  "library": false,
+  "url": "https://github.com/leonebeavi/wod-pretty-theme",
+  "readme": "https://github.com/leonebeavi/wod-pretty-theme/blob/main/README.md",
+  "changelog": "https://github.com/leonebeavi/wod-pretty-theme/blob/main/CHANGELOG.md",
+  "bugs": "https://github.com/leonebeavi/wod-pretty-theme/issues",
+  "license": "https://github.com/leonebeavi/wod-pretty-theme/blob/main/LICENSE",
+  "manifest": "https://github.com/leonebeavi/wod-pretty-theme/releases/latest/download/module.json",
+  "download": "https://github.com/leonebeavi/wod-pretty-theme/releases/download/v2.0.0/module.zip"
+}

@@ -1,0 +1,58 @@
+/* =====================================================================
+ * WoD Pretty Theme — Stage 2 tweaks
+ * =====================================================================
+ * Per-request refinements layered on top of the archived Glass Gótico theme
+ * (styles/glass.css). Loaded last so these win. Keeping them here keeps the
+ * archived base pristine and the changes traceable.
+ * ===================================================================== */
+
+/* Rollable resource labels (Willpower, Humanity, …): drop the d10 icon — the
+ * hover glow alone signals that the label rolls — and add that hover glow. */
+body.wod-pretty-theme .wod5e .system-rollable i.fa-dice-d10 { display: none; }
+body.wod-pretty-theme .wod5e .system-rollable { transition: color .12s ease, text-shadow .12s ease; }
+body.wod-pretty-theme .wod5e .system-rollable:hover,
+body.wod-pretty-theme .wod5e .system-rollable:hover .gg-section-title,
+body.wod-pretty-theme .wod5e .system-rollable:hover label {
+  color: var(--wpt-accent);
+  text-shadow: 0 0 8px var(--wpt-accent-glow);
+  cursor: pointer;
+}
+
+/* Hunger / Rouse skull button → a touch smaller. */
+body.wod-pretty-theme .wod5e .rouse-button {
+  width: 26px; height: 26px; min-width: 0; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+body.wod-pretty-theme .wod5e .rouse-button .wod5e-symbol { font-size: 13px; }
+
+/* Clan Compulsion editable field (shares its row 1:1 with Clan Bane). */
+body.wod-pretty-theme .wod5e .gg-compulsion {
+  width: 100%; min-height: 96px; resize: vertical;
+  background: var(--wpt-glass-2); border: 1px solid var(--wpt-border);
+  border-radius: var(--wpt-radius-sm); color: var(--wpt-text);
+  font-family: var(--wpt-font-ui, "Manrope"), sans-serif; padding: 8px 10px; line-height: 1.5;
+}
+body.wod-pretty-theme .wod5e .gg-compulsion:focus {
+  outline: none; border-color: var(--wpt-accent);
+}
+
+/* Specialty marker ("S" next to a skill) → a small accent-coloured pill. */
+body.wod-pretty-theme .wod5e .specialty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--wpt-font-ui, "Manrope"), sans-serif;
+  font-size: 0.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: var(--wpt-accent);
+  border: none;
+  border-radius: 999px;
+  padding: 1px 5px;
+  margin-left: 4px;
+  letter-spacing: 0.03em;
+  vertical-align: middle;
+  cursor: help;
+  box-shadow: 0 0 5px color-mix(in srgb, var(--wpt-accent) 45%, transparent);
+}

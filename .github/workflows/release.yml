@@ -1,0 +1,63 @@
+name: Release
+
+# Build a Foundry-installable package and publish a GitHub Release whenever a
+# version tag (e.g. v1.0.0) is pushed. The release exposes:
+#   - module.json  (the manifest, with version + download URLs injected)
+#   - module.zip   (the installable package)
+# so that the "latest" manifest URL always resolves to the newest release.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Derive version from tag
+        id: version
+        run: echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Inject version and URLs into module.json
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          MANIFEST="https://github.com/${REPO}/releases/latest/download/module.json"
+          DOWNLOAD="https://github.com/${REPO}/releases/download/${TAG}/module.zip"
+          jq --arg v "$VERSION" \
+             --arg m "$MANIFEST" \
+             --arg d "$DOWNLOAD" \
+             '.version=$v | .manifest=$m | .download=$d' \
+             module.json > module.tmp.json
+          mv module.tmp.json module.json
+          echo "----- module.json -----"
+          cat module.json
+
+      - name: Build module.zip
+        run: |
+          zip -r module.zip \
+            module.json \
+            styles \
+            scripts \
+            templates \
+            lang \
+            README.md \
+            LICENSE \
+            CHANGELOG.md
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          files: |
+            module.json
+            module.zip

@@ -1,0 +1,19 @@
+# OS / editor cruft
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*~
+
+# Build artifacts
+module.zip
+*.zip
+dist/
+node_modules/
+
+# Logs
+*.log
+
+# Dev-only (not part of the installable module)
+archive/
+.claude/

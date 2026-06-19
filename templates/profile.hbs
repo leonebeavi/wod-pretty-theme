@@ -1,0 +1,138 @@
+{{!-- WoD Pretty Theme — merged PROFILE tab (Glass Gótico).
+      Union of prepareFeaturesContext + prepareExperienceContext + prepareBiographyContext.
+      Reuses the system's EXACT interactive markup verbatim (identity header inputs,
+      experience inputs + add/spend actions, feature dot widgets + item controls,
+      prose-mirror editors) — only re-arranged into the new layout.
+      Context: concept, chronicle, ambition, desire, features, tenets, enrichedTenets,
+      showAmbitionDesire, settings, locked (features); experiences, exp, derivedXP,
+      showLegacyXP (experience); biography, enrichedBiography, appearance,
+      enrichedAppearance, currentActorType (biography). --}}
+<section class="tab {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+    <div class="gg-stack gg-profile">
+
+        {{!-- ROW 1: Identity (wide) + Experience --}}
+        <div class="gg-grid-2 gg-profile-top">
+
+            {{!-- IDENTITY --}}
+            <div class="gg-panel">
+                <div class="gg-title-left">Identity</div>
+                <div class="gg-grid-2">
+                    <div class="gg-card">
+                        <label class="gg-field-label" for="system.headers.concept">{{localize "WOD5E.BiographyList.Concept"}}</label>
+                        <input id="system.headers.concept" type="text" name="system.headers.concept" value="{{concept}}" placeholder="{{localize 'WOD5E.BiographyList.Concept'}}" />
+                    </div>
+                    <div class="gg-card">
+                        <label class="gg-field-label" for="system.headers.chronicle">{{localize "WOD5E.BiographyList.Chronicle"}}</label>
+                        <input id="system.headers.chronicle" type="text" name="system.headers.chronicle" value="{{chronicle}}" placeholder="{{localize 'WOD5E.BiographyList.Chronicle'}}" />
+                    </div>
+                    {{#if showAmbitionDesire}}
+                        <div class="gg-card">
+                            <label class="gg-field-label" for="system.headers.ambition">{{localize "WOD5E.BiographyList.Ambition"}}</label>
+                            <input id="system.headers.ambition" type="text" name="system.headers.ambition" value="{{ambition}}" placeholder="{{localize 'WOD5E.BiographyList.Ambition'}}" />
+                        </div>
+                        <div class="gg-card">
+                            <label class="gg-field-label" for="system.headers.desire">{{localize "WOD5E.BiographyList.Desire"}}</label>
+                            <input id="system.headers.desire" type="text" name="system.headers.desire" value="{{desire}}" placeholder="{{localize 'WOD5E.BiographyList.Desire'}}" />
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+
+            {{!-- EXPERIENCE --}}
+            <div class="gg-panel gg-exp-panel">
+                <div class="gg-title-left">{{localize "WOD5E.Experience.Label"}}</div>
+
+                {{!-- Lean XP: two editable fields — Remaining + Total. --}}
+                <div class="gg-xp-bar">
+                    <label class="gg-xp-field">
+                        <span class="gg-xp-cap">{{localize "WOD5E.Experience.Remaining"}}</span>
+                        <input type="number" name="system.exp.value" value="{{exp.value}}"/>
+                    </label>
+                    <label class="gg-xp-field">
+                        <span class="gg-xp-cap">{{localize "WOD5E.Experience.Total"}}</span>
+                        <input type="number" name="system.exp.max" value="{{exp.max}}"/>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        {{!-- ROW 2: Convictions (WoD Pretty extra — the widest card) --}}
+        <div class="gg-panel gg-convictions-card">
+            <div class="gg-title-left">
+                {{#ifeq gamesystem 'vampire'}}{{localize "WOD5E.BiographyList.TouchstonesAndConvictions"}}{{else}}{{localize "WOD5E.BiographyList.Touchstones"}}{{/ifeq}}
+                <div class="toggle-limited{{#if settings.limited.touchstones}} visible{{/if}}" data-action="toggleLimited" data-name="system.settings.limited.touchstones"
+                    title="{{#if settings.limited.touchstones}}{{localize "WOD5E.Tabs.IsVisible"}}{{else}}{{localize "WOD5E.Tabs.IsNotVisible"}}{{/if}}">
+                    {{#ifnoteq baseActorType 'group'}}
+                        {{#if settings.limited.touchstones}}<i class="fa-solid fa-eye"></i>{{else}}<i class="fa-solid fa-eye-slash"></i>{{/if}}
+                    {{/ifnoteq}}
+                </div>
+            </div>
+            <div class="gg-card">
+                <div class="description-content resource">
+                    <prose-mirror name="system.headers.touchstones" value="{{touchstones}}"
+                        toggled="true" compact="true">
+                        {{{enrichedTouchstones}}}
+                    </prose-mirror>
+                </div>
+            </div>
+        </div>
+
+        {{!-- ROW 3: Chronicle Tenets (full width) --}}
+        <div class="gg-panel">
+            <div class="gg-title-left">
+                {{localize "WOD5E.BiographyList.ChronicleTenets"}}
+                <div class="toggle-limited{{#if settings.limited.tenets}} visible{{/if}}" data-action="toggleLimited" data-name="system.settings.limited.tenets"
+                    title="{{#if settings.limited.tenets}}{{localize "WOD5E.Tabs.IsVisible"}}{{else}}{{localize "WOD5E.Tabs.IsNotVisible"}}{{/if}}">
+                    {{#ifnoteq baseActorType 'group'}}
+                        {{#if settings.limited.tenets}}<i class="fa-solid fa-eye"></i>{{else}}<i class="fa-solid fa-eye-slash"></i>{{/if}}
+                    {{/ifnoteq}}
+                </div>
+            </div>
+            <div class="gg-card">
+                <div class="description-content resource">
+                    <prose-mirror name="system.headers.tenets" value="{{tenets}}"
+                        toggled="true" compact="true">
+                        {{{enrichedTenets}}}
+                    </prose-mirror>
+                </div>
+            </div>
+        </div>
+
+        {{!-- ROW 4: Biography + Appearance --}}
+        <div class="gg-grid-2">
+            <div class="gg-panel">
+                <div class="gg-title-left">{{localize "WOD5E.BiographyList.Label"}}
+                    <div class="toggle-limited{{#if settings.limited.biography}} visible{{/if}}" data-action="toggleLimited" data-name="system.settings.limited.biography"
+                        title="{{#if settings.limited.biography}}{{localize "WOD5E.Tabs.IsVisible"}}{{else}}{{localize "WOD5E.Tabs.IsNotVisible"}}{{/if}}">
+                        {{#if settings.limited.biography}}<i class="fa-solid fa-eye"></i>{{else}}<i class="fa-solid fa-eye-slash"></i>{{/if}}
+                    </div>
+                </div>
+                <div class="gg-card">
+                    <div class="description-content resource">
+                        <prose-mirror name="system.biography" value="{{biography}}"
+                            toggled="true" compact="true">
+                            {{{enrichedBiography}}}
+                        </prose-mirror>
+                    </div>
+                </div>
+            </div>
+            <div class="gg-panel">
+                <div class="gg-title-left">{{localize "WOD5E.BiographyList.Appearance"}}
+                    <div class="toggle-limited{{#if settings.limited.appearance}} visible{{/if}}" data-action="toggleLimited" data-name="system.settings.limited.appearance"
+                        title="{{#if settings.limited.appearance}}{{localize "WOD5E.Tabs.IsVisible"}}{{else}}{{localize "WOD5E.Tabs.IsNotVisible"}}{{/if}}">
+                        {{#if settings.limited.appearance}}<i class="fa-solid fa-eye"></i>{{else}}<i class="fa-solid fa-eye-slash"></i>{{/if}}
+                    </div>
+                </div>
+                <div class="gg-card">
+                    <div class="description-content resource">
+                        <prose-mirror name="system.appearance" value="{{appearance}}"
+                            toggled="true" compact="true">
+                            {{{enrichedAppearance}}}
+                        </prose-mirror>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
